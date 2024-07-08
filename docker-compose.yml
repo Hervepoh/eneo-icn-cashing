@@ -1,0 +1,68 @@
+# version: "3.8"
+services:
+
+    db:
+        image: mysql
+        container_name: db_icn
+        restart: always
+        volumes:
+            - db-data:/var/lib/mysql
+        environment:
+            MYSQL_ALLOW_EMPTY_PASSWORD: 'yes'
+        networks:
+            - dev
+
+    phpmyadmin:
+        image: phpmyadmin
+        container_name: phpmyadmin
+        restart: always
+        depends_on:
+            - db
+        ports:
+            - 8081:80
+        environment:
+            PMA_HOST: db
+        networks:
+            - dev
+
+    maildev:
+        image: maildev/maildev
+        container_name: maildev
+        command: bin/maildev --web 80 --smtp 25 --hide-extensions STARTTLS
+        ports:
+          - "8082:80"
+        restart: always
+        networks:
+            - dev
+
+    backend:
+        build: 
+            context: ./backend/.php
+            dockerfile: Dockerfile
+        container_name: backend-www
+        ports:
+          - "8080:80"
+        volumes:
+            - ./backend/.php/vhosts:/etc/apache2/sites-enabled
+            - ./backend/:/var/www
+        restart: always
+        networks:
+            - dev
+
+    frontend:
+        build: 
+            context: ./frontend
+            dockerfile: Dockerfile
+        container_name: frontend-www
+        ports:
+            - 8000:3000
+        volumes:
+            - ./frontend:/app
+        networks:
+            - dev
+
+networks:
+    dev:
+
+volumes:
+    db-data:

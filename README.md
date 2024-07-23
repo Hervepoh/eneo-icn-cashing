@@ -10,7 +10,7 @@ ICA management platform (Internal Credit Notices)
 - Fullscreen mode
 
 
-## Tech Stack
+## Tech Stack test
 
 **Client:** Typescript , React/Next, TailwindCSS
 

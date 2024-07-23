@@ -8,7 +8,6 @@ ICA management platform (Internal Credit Notices)
 - Light/dark mode toggle
 - Live previews
 - Fullscreen mode
-- Cross platform
 
 
 ## Tech Stack

@@ -1,53 +1,25 @@
-#---Symfony-And-Docker-Makefile---------------#
-# Author: https://github.com/yoanbernabeu
-# License: MIT
+#---------------------------------------------#
+#--  Makefile   -----------------#
+#---------------------------------------------#
+#   Author: https://github.com/Hervepoh
+#   License: MIT
 #---------------------------------------------#
 
 #---VARIABLES---------------------------------#
-#---DOCKER---#
-DOCKER = docker
-DOCKER_RUN = $(DOCKER) run
-DOCKER_COMPOSE = docker compose
-DOCKER_COMPOSE_UP = $(DOCKER_COMPOSE) up -d
-DOCKER_COMPOSE_STOP = $(DOCKER_COMPOSE) stop
-#------------#
-
-#---SYMFONY--#
-SYMFONY = symfony
-SYMFONY_SERVER_START = $(SYMFONY) serve -d
-SYMFONY_SERVER_STOP = $(SYMFONY) server:stop
-SYMFONY_CONSOLE = $(SYMFONY) console
-SYMFONY_LINT = $(SYMFONY_CONSOLE) lint:
-#------------#
-
-#---COMPOSER-#
-COMPOSER = composer
-COMPOSER_INSTALL = $(COMPOSER) install
-COMPOSER_UPDATE = $(COMPOSER) update
-#------------#
-
 #---NPM-----#
 NPM = npm
-NPM_INSTALL = $(NPM) install --force
+NPM_INSTALL = $(NPM) install
+NPM_INSTALL_F = $(NPM) install --force
 NPM_UPDATE = $(NPM) update
+NPM_RUN = $(NPM) run 
 NPM_BUILD = $(NPM) run build
 NPM_DEV = $(NPM) run dev
 NPM_WATCH = $(NPM) run watch
 #------------#
 
-#---PHPQA---#
-PHPQA = jakzal/phpqa
-PHPQA_RUN = $(DOCKER_RUN) --init -it --rm -v $(PWD):/project -w /project $(PHPQA)
-#------------#
-
-#---PHPUNIT-#
-PHPUNIT = APP_ENV=test $(SYMFONY) php bin/phpunit
-#------------#
-#---------------------------------------------#
-
 ## === 🆘  HELP ==================================================
 help: ## Show this help.
-	@echo "Symfony-And-Docker-Makefile"
+	@echo "Genius-stack"
 	@echo "---------------------------"
 	@echo "Usage: make [target]"
 	@echo ""
@@ -55,221 +27,88 @@ help: ## Show this help.
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 #---------------------------------------------#
 
-## === 🐋  DOCKER ================================================
-docker-up: ## Start docker containers.
-	$(DOCKER_COMPOSE_UP)
-.PHONY: docker-up
+dev: ## Quick development.
+	$(NPM_DEV)
+.PHONY: dev
 
-docker-stop: ## Stop docker containers.
-	$(DOCKER_COMPOSE_STOP)
-.PHONY: docker-stop
-#---------------------------------------------#
-
-## === 🎛️  SYMFONY ===============================================
-sf: ## List and Use All Symfony commands (make sf command="commande-name").
-	$(SYMFONY_CONSOLE) $(command)
-.PHONY: sf
-
-sf-start: ## Start symfony server.
-	$(SYMFONY_SERVER_START)
-.PHONY: sf-start
-
-sf-stop: ## Stop symfony server.
-	$(SYMFONY_SERVER_STOP)
-.PHONY: sf-stop
-
-sf-cc: ## Clear symfony cache.
-	$(SYMFONY_CONSOLE) cache:clear
-.PHONY: sf-cc
-
-sf-log: ## Show symfony logs.
-	$(SYMFONY) server:log
-.PHONY: sf-log
-
-sf-dc: ## Create symfony database.
-	$(SYMFONY_CONSOLE) doctrine:database:create --if-not-exists
-.PHONY: sf-dc
-
-sf-dd: ## Drop symfony database.
-	$(SYMFONY_CONSOLE) doctrine:database:drop --if-exists --force
-.PHONY: sf-dd
-
-sf-su: ## Update symfony schema database.
-	$(SYMFONY_CONSOLE) doctrine:schema:update --force
-.PHONY: sf-su
-
-sf-mm: ## Make migrations.
-	$(SYMFONY_CONSOLE) make:migration
-.PHONY: sf-mm
-
-sf-dmm: ## Migrate.
-	$(SYMFONY_CONSOLE) doctrine:migrations:migrate --no-interaction
-.PHONY: sf-dmm
-
-sf-fixtures: ## Load fixtures.
-	$(SYMFONY_CONSOLE) doctrine:fixtures:load --no-interaction
-.PHONY: sf-fixtures
-
-sf-me: ## Make symfony entity
-	$(SYMFONY_CONSOLE) make:entity
-.PHONY: sf-me
-
-sf-mc: ## Make symfony controller
-	$(SYMFONY_CONSOLE) make:controller
-.PHONY: sf-mc
-
-sf-mf: ## Make symfony Form
-	$(SYMFONY_CONSOLE) make:form
-.PHONY: sf-mf
-
-sf-perm: ## Fix permissions.
-	chmod -R 777 var
-.PHONY: sf-perm
-
-sf-sudo-perm: ## Fix permissions with sudo.
-	sudo chmod -R 777 var
-.PHONY: sf-sudo-perm
-
-sf-dump-env: ## Dump env.
-	$(SYMFONY_CONSOLE) debug:dotenv
-.PHONY: sf-dump-env
-
-sf-dump-env-container: ## Dump Env container.
-	$(SYMFONY_CONSOLE) debug:container --env-vars
-.PHONY: sf-dump-env-container
-
-sf-dump-routes: ## Dump routes.
-	$(SYMFONY_CONSOLE) debug:router
-.PHONY: sf-dump-routes
-
-sf-open: ## Open project in a browser.
-	$(SYMFONY) open:local
-.PHONY: sf-open
-
-sf-open-email: ## Open Email catcher.
-	$(SYMFONY) open:local:webmail
-.PHONY: sf-open-email
-
-sf-check-requirements: ## Check requirements.
-	$(SYMFONY) check:requirements
-.PHONY: sf-check-requirements
-#---------------------------------------------#
-
-## === 📦  COMPOSER ==============================================
-composer-install: ## Install composer dependencies.
-	$(COMPOSER_INSTALL)
-.PHONY: composer-install
-
-composer-update: ## Update composer dependencies.
-	$(COMPOSER_UPDATE)
-.PHONY: composer-update
-
-composer-validate: ## Validate composer.json file.
-	$(COMPOSER) validate
-.PHONY: composer-validate
-
-composer-validate-deep: ## Validate composer.json and composer.lock files in strict mode.
-	$(COMPOSER) validate --strict --check-lock
-.PHONY: composer-validate-deep
-#---------------------------------------------#
 
 ## === 📦  NPM ===================================================
-npm-install: ## Install npm dependencies.
+npm-i: ## Install npm dependencies.
 	$(NPM_INSTALL)
-.PHONY: npm-install
+.PHONY: npm-i
 
-npm-update: ## Update npm dependencies.
+npm-u: ## Update npm dependencies.
 	$(NPM_UPDATE)
-.PHONY: npm-update
+.PHONY: npm-u
 
-npm-build: ## Build assets.
+npm-b: ## Build assets.
 	$(NPM_BUILD)
-.PHONY: npm-build
+.PHONY: npm-b
 
-npm-dev: ## Build assets in dev mode.
+npm-d: ## Build assets in dev mode.
 	$(NPM_DEV)
-.PHONY: npm-dev
+.PHONY: npm-d
 
 npm-watch: ## Watch assets.
 	$(NPM_WATCH)
 .PHONY: npm-watch
 #---------------------------------------------#
 
-## === 🐛  PHPQA =================================================
-qa-cs-fixer-dry-run: ## Run php-cs-fixer in dry-run mode.
-	$(PHPQA_RUN) php-cs-fixer fix ./src --rules=@Symfony --verbose --dry-run
-.PHONY: qa-cs-fixer-dry-run
+## === 📦 Drizzle ===================================================
+drizzle-push: ## Push drizzle schema in the Postgres database
+	npx drizzle-kit push
+.PHONY: drizzle-push
 
-qa-cs-fixer: ## Run php-cs-fixer.
-	$(PHPQA_RUN) php-cs-fixer fix ./src --rules=@Symfony --verbose
-.PHONY: qa-cs-fixer
+drizzle-studio: ## Start the drizzle studio to view the database
+	npx drizzle-kit studio
+.PHONY: drizzle-studio
 
-qa-phpstan: ## Run phpstan.
-	$(PHPQA_RUN) phpstan analyse ./src --level=7
-.PHONY: qa-phpstan
 
-qa-security-checker: ## Run security-checker.
-	$(SYMFONY) security:check
-.PHONY: qa-security-checker
 
-qa-phpcpd: ## Run phpcpd (copy/paste detector).
-	$(PHPQA_RUN) phpcpd ./src
-.PHONY: qa-phpcpd
+db-push: ## Push drizzle schema in the Postgres database
+	$(NPM_RUN) db:push
+.PHONY: db-push
 
-qa-php-metrics: ## Run php-metrics.
-	$(PHPQA_RUN) phpmetrics --report-html=var/phpmetrics ./src
-.PHONY: qa-php-metrics
+db-studio: ## Start the drizzle studio to view the database
+	$(NPM_RUN) db:studio
+.PHONY: db-studio
 
-qa-lint-twigs: ## Lint twig files.
-	$(SYMFONY_LINT)twig ./templates
-.PHONY: qa-lint-twigs
+db-up: ## Drizzle can upgrade all the snapshots to latest version
+	npx drizzle-kit up
+.PHONY: db-up
 
-qa-lint-yaml: ## Lint yaml files.
-	$(SYMFONY_LINT)yaml ./config
-.PHONY: qa-lint-yaml
+db-gen: ## Drizzle can generate all migration files
+	$(NPM_RUN) db:generate 
+.PHONY: db-gen
 
-qa-lint-container: ## Lint container.
-	$(SYMFONY_LINT)container
-.PHONY: qa-lint-container
+db-migrate: ## Apply generated migrations to your database directly
+	$(NPM_RUN) db:migrate
+.PHONY: db-migrate
 
-qa-lint-schema: ## Lint Doctrine schema.
-	$(SYMFONY_CONSOLE) doctrine:schema:validate --skip-sync -vvv --no-interaction
-.PHONY: qa-lint-schema
+db-seed: ## Seeding the database
+	$(NPM_RUN) db:seed
+.PHONY: db-seed
 
-qa-audit: ## Run composer audit.
-	$(COMPOSER) audit
-.PHONY: qa-audit
+db-prod: ## Seeding the database
+	$(NPM_RUN) db:prod
+.PHONY: db-prod
+
+db-reset: ## Seeding the database
+	$(NPM_RUN) db:reset
+.PHONY: db-reset
 #---------------------------------------------#
 
-## === 🔎  TESTS =================================================
-tests: ## Run tests.
-	$(PHPUNIT) --testdox
-.PHONY: tests
-
-tests-coverage: ## Run tests with coverage.
-	$(PHPUNIT) --coverage-html var/coverage
-.PHONY: tests-coverage
+## === 📦 Shadcn-ui ===================================================
+shadcn-ui-add-sonner: ## Install sonner
+	npx shadcn-ui@latest add sonner
+.PHONY: shadcn-ui-add-sonner
 #---------------------------------------------#
 
-## === ⭐  OTHERS =================================================
-before-commit: qa-cs-fixer qa-phpstan qa-security-checker qa-phpcpd qa-lint-twigs qa-lint-yaml qa-lint-container qa-lint-schema tests ## Run before commit.
-.PHONY: before-commit
+## === 📦 Stripe ===================================================
+stripe-listen: ## 
+	stripe listen --forward-to localhost:3000/api/webhooks/stripe
+.PHONY: stripe-listen
 
-first-install: docker-up composer-install npm-install npm-build sf-perm sf-dc sf-dmm sf-start sf-open ## First install.
-.PHONY: first-install
-
-start: docker-up sf-start sf-open ## Start project.
-.PHONY: start
-
-stop: docker-stop sf-stop ## Stop project.
-.PHONY: stop
-
-reset-db: ## Reset database.
-	$(eval CONFIRM := $(shell read -p "Are you sure you want to reset the database? [y/N] " CONFIRM && echo $${CONFIRM:-N}))
-	@if [ "$(CONFIRM)" = "y" ]; then \
-		$(MAKE) sf-dd; \
-		$(MAKE) sf-dc; \
-		$(MAKE) sf-dmm; \
-	fi
-.PHONY: reset-db
-#---------------------------------------------#
+stripe-trigger: ## 
+	stripe trigger payment_intent.succeede
+.PHONY: stripe-trigger

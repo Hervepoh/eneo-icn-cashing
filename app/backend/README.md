@@ -1,8 +1,6 @@
 ##  Features
 
-### Server
-
-##### Authentication
+#### Authentication
 - [x] user registration
 - [x] user activation
 - [x] user login
@@ -19,5 +17,5 @@
 - [ ] user ldap-auth
 - [ ] user two-factor-auth 
 
-##### Get Unpaid Bill Information
+#### Get Unpaid Bill Information
 - [ ] Search unpaid bill by Invoice Number

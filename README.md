@@ -3,18 +3,36 @@
 
 ICA management platform (Internal Credit Notices)
 (https://readme.so/fr/editor)
+
 ## Features
 
+### Client 
 - Light/dark mode toggle
-- Live previews
 - Fullscreen mode
+- full responvive (Mobile first UX)
 
+### Server 
+- [x] user registration
+- [x] user activation
+- [x] user login
+- [x] user logout 
+- [x] user refresh access token 
+- [x] middleware isAuthentificated
+- [x] middleware authorizeRole
+- [x] Assign a role to a user
+- [x] get user information
+- [x] get all users --only for admin
+- [x] update user information
+- [x] update user password
+- [x] delete user
+- [ ] user ldap-auth
+- [ ] user two-factor-auth 
 
 ## Tech Stack test
 
-**Client:** Typescript , React/Next, TailwindCSS
+**Client:** Typescript , React/Next, TailwindCSS , Shadcn-ui
 
-**Server:** PHP , Codeigniter
+**Server:** Typescript , node.js/bun , express , redis , ejs
 
 
 ## Environment Variables
@@ -28,7 +46,7 @@ To run this project, you will need to add the following environment variables to
 
 ## Authors
 
-- [@eugenekoule](https://www.github.com/octokatherine)
-- [@hervepoh](https://www.github.com/octokatherine)
-- [@Jacques Armand Nyog](https://www.github.com/octokatherine)
+- [@eugenekoule](https://github.com/Eugene2016)
+- [@hervepoh](https://github.com/Hervepoh)
+- [@Jacques Armand Nyog](https://github.com/Maccabee1989)
 

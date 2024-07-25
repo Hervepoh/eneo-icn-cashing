@@ -5,6 +5,6 @@ import { getUnpaidBillsByInvoiceNumber  } from "../controllers/unpaid.controller
 
 const unpaidRouter = express.Router();
 
-unpaidRouter.get('/notifications', isAuthentificated, getUnpaidBillsByInvoiceNumber);
+unpaidRouter.get('/unpaid', isAuthentificated, getUnpaidBillsByInvoiceNumber);
 
 export default unpaidRouter; 

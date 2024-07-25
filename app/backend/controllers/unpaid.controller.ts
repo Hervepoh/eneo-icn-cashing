@@ -2,86 +2,40 @@ require("dotenv").config();
 import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import ErrorHandler from "../utils/errorHandler";
-import connectOracleDB from "../utils/db.oracle";
 import { sqlQuery } from "../config/request";
+import { getConnection, releaseConnection } from "../utils/db.oracle";
 
 //---------------------------------------------------------
 //              get all Unpaid Bills By Invoice Number 
 //---------------------------------------------------------
 export const getUnpaidBillsByInvoiceNumber = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
+
+    let connection;
     try {
-      const query = sqlQuery.unpaid_bills_by_contract_number ;
-      console.log(query);
+      // Get Invoice Number from the request body
+      const { invoice_number } = req.body;
 
-      // res.status(200).json({
-      //   success: true,
-      //   notifications,
-      // });
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
+      // Fetch data from the database
+      connection = await getConnection();
+      const result = await connection.execute(sqlQuery.unpaid_bills_by_invoice_number, [invoice_number]);
 
-//-----------------------------------------------
-//              get user notifications
-//-----------------------------------------------
-export const getUserNotification = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      // const notifications = await notificationModel
-      //   .find({ user: req.user?._id })
-      //   .sort({ createdAt: -1 });
-
-      // res.status(200).json({
-      //   success: true,
-      //   notifications,
-      // });
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
-
-//-----------------------------------------------
-//              update notifications status
-//-----------------------------------------------
-export const updateNotification = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const notification = await notificationModel.findById(req.params.id);
-
-      if (!notification) {
-        return next(new ErrorHandler("Notification not found", 404));
-      }
-      if (notification.status) {
-        notification.status = "read";
-        await notification.save();
-      }
-
-      const notifications = await notificationModel
-        .find()
-        .sort({ createdAt: -1 });
-
-      res.status(201).json({
+      // send the response
+      res.status(200).json({
         success: true,
-        notifications,
+        bills: result.rows
       });
-
     } catch (error: any) {
+      // Catch the error and return and error response
+      console.error('Internal error:', error);
       return next(new ErrorHandler(error.message, 500));
+      //res.status(500).json({ error: 'Erreur interne du serveur' });
+    } finally {
+      // close the connection to the database
+      if (connection) {
+        await releaseConnection(connection);
+      }
     }
   }
-);
 
-//-----------------------------------------------
-//              delete notifications -- only for admin
-//-----------------------------------------------
-cron.schedule('0 0 0 * * *', async() => {
-  const thirtyDayAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
-  await notificationModel.deleteMany({status: "read", createdAt: {$lt: thirtyDayAgo}});
-  console.log('----------------------------');
-  console.log('Delete read notifications');
-  console.log('----------------------------');
-});
+);

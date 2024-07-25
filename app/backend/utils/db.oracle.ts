@@ -1,35 +1,41 @@
 require("dotenv").config();
-let connectOracleDB;
 var oracledb = require('oracledb');
 
-(async function() {
-try{
-    const user:string = process.env.DB_CMS_USERNAME || "";
-    const password:string = process.env.DB_CMS_PASSWORD || "";
-    const host:string = process.env.DB_CMS_HOST || "";
-    const port:string = process.env.DB_CMS_PORT || "";
-    const service:string = process.env.DB_CMS_SERVICE_NAME || "";
-    
-    const connectString:string = `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${host})(PORT=${port}))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=${service})))`;
-    
-    connectOracleDB = await oracledb.getConnection({
-        user : user ,
-        password : password ,
-        connectString : connectString
-   });
+// Database configuration
+const user:string = process.env.DB_CMS_USERNAME || "";
+const password:string = process.env.DB_CMS_PASSWORD || "";
+const host:string = process.env.DB_CMS_HOST || "";
+const port:string = process.env.DB_CMS_PORT || "";
+const service:string = process.env.DB_CMS_SERVICE_NAME || "";
 
-   console.log("Successfully connected to Oracle!")
-} catch(err) {
-    console.log("Error: ", err);
-  } finally {
-    if (connectOracleDB) {
-      try {
-        await connectOracleDB.close();
-      } catch(err) {
-        console.log("Error when closing the database connection: ", err);
-      }
-    }
+const connectString:string = `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${host})(PORT=${port}))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=${service})))`;
+
+// Configure connection information for the Oracle database
+const dbConfig = {
+  user : user ,
+    password : password ,
+    connectString : connectString
+};
+
+// Function to establish a connection to the database
+async function getConnection() {
+  try {
+    const connection = await oracledb.getConnection(dbConfig);
+    return connection;
+  } catch (err) {
+    console.error('Erreur lors de la connexion à la base de données:', err);
+    throw err;
   }
-})()
+}
 
-export default connectOracleDB;
+// Function to close the database connection
+async function releaseConnection(connection: any) {
+  try {
+    await connection.close();
+  } catch (err) {
+    console.error('Erreur lors de la fermeture de la connexion:', err);
+    throw err;
+  }
+}
+
+export { getConnection, releaseConnection };

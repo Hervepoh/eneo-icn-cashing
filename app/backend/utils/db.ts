@@ -1,16 +1,28 @@
 import mongoose from "mongoose";
 require("dotenv").config();
 
-const db_url:string = process.env.DB_URL || "";
+const {
+    MONGO_USERNAME,
+    MONGO_PASSWORD,
+    MONGO_HOSTNAME,
+    MONGO_PORT,
+    MONGO_DB
+} = process.env;
+
+const db_url: string = `mongodb://${MONGO_USERNAME}:${MONGO_PASSWORD}@${MONGO_HOSTNAME}:${MONGO_PORT}/${MONGO_DB}?authSource=admin` || "";
+console.log(db_url);
+
 
 const connectDB = async () => {
     try {
-        await mongoose.connect(db_url).then((data:any)=>{
+        console.log("Start Check db configuration")
+        await mongoose.connect(db_url).then((data: any) => {
             console.log(`Database connected with ${data.connection.host}`)
         })
-    } catch (error:any) {
+        console.log("End Check db configuration")
+    } catch (error: any) {
         console.log(error.message)
-        setTimeout(connectDB,5000);
+        setTimeout(connectDB, 5000);
     }
 }
 

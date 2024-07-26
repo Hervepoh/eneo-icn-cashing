@@ -6,6 +6,16 @@
 #---------------------------------------------#
 
 #---VARIABLES---------------------------------#
+
+#---DOCKER---#
+DOCKER = docker
+DOCKER_RUN = $(DOCKER) run
+DOCKER_COMPOSE = docker compose
+DOCKER_COMPOSE_UP = $(DOCKER_COMPOSE) up -d
+DOCKER_COMPOSE_UP_ENV = $(DOCKER_COMPOSE) --env-file .env up -d
+DOCKER_COMPOSE_STOP = $(DOCKER_COMPOSE) stop
+#------------#
+
 #---NPM-----#
 NPM = npm
 NPM_INSTALL = $(NPM) install
@@ -19,7 +29,7 @@ NPM_WATCH = $(NPM) run watch
 
 ## === 🆘  HELP ==================================================
 help: ## Show this help.
-	@echo "Genius-stack"
+	@echo "Stack Docker-Typescript-Mongo-Express-Node"
 	@echo "---------------------------"
 	@echo "Usage: make [target]"
 	@echo ""
@@ -27,10 +37,20 @@ help: ## Show this help.
 	@grep -E '(^[a-zA-Z0-9_-]+:.*?##.*$$)|(^##)' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}{printf "\033[32m%-30s\033[0m %s\n", $$1, $$2}' | sed -e 's/\[32m##/[33m/'
 #---------------------------------------------#
 
-dev: ## Quick development.
-	$(NPM_DEV)
-.PHONY: dev
 
+## === 🐋  DOCKER ================================================
+docker-up-env: ## Start docker containers.
+	$(DOCKER_COMPOSE_UP_ENV)
+.PHONY: docker-up
+
+docker-up: ## Start docker containers.
+	$(DOCKER_COMPOSE_UP)
+.PHONY: docker-up
+
+docker-stop: ## Stop docker containers.
+	$(DOCKER_COMPOSE_STOP)
+.PHONY: docker-stop
+#---------------------------------------------#
 
 ## === 📦  NPM ===================================================
 npm-i: ## Install npm dependencies.
@@ -112,3 +132,25 @@ stripe-listen: ##
 stripe-trigger: ## 
 	stripe trigger payment_intent.succeede
 .PHONY: stripe-trigger
+
+
+## === 🔎  TESTS =================================================
+
+#---------------------------------------------#
+
+## === ⭐  OTHERS =================================================
+start: docker-up-env  #sf-start sf-open ## Start project.
+.PHONY: start
+
+stop: docker-stop  #sf-stop ## Stop project.
+.PHONY: stop
+
+reset-db: ## Reset database.
+	$(eval CONFIRM := $(shell read -p "Are you sure you want to reset the database? [y/N] " CONFIRM && echo $${CONFIRM:-N}))
+	@if [ "$(CONFIRM)" = "y" ]; then \
+		$(MAKE) sf-dd; \
+		$(MAKE) sf-dc; \
+		$(MAKE) sf-dmm; \
+	fi
+.PHONY: reset-db
+#---------------------------------------------#

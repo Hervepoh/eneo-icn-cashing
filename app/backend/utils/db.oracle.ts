@@ -1,21 +1,9 @@
 require("dotenv").config();
+
+import { dbConfig } from "../config/db.config";
+import ErrorHandler from "./errorHandler";
+
 var oracledb = require('oracledb');
-
-// Database configuration
-const user:string = process.env.DB_CMS_USERNAME || "";
-const password:string = process.env.DB_CMS_PASSWORD || "";
-const host:string = process.env.DB_CMS_HOST || "";
-const port:string = process.env.DB_CMS_PORT || "";
-const service:string = process.env.DB_CMS_SERVICE_NAME || "";
-
-const connectString:string = `(DESCRIPTION=(ADDRESS=(PROTOCOL=TCP)(HOST=${host})(PORT=${port}))(CONNECT_DATA=(SERVER=DEDICATED)(SERVICE_NAME=${service})))`;
-
-// Configure connection information for the Oracle database
-const dbConfig = {
-  user : user ,
-    password : password ,
-    connectString : connectString
-};
 
 // Function to establish a connection to the database
 async function getConnection() {
@@ -38,4 +26,25 @@ async function releaseConnection(connection: any) {
   }
 }
 
-export { getConnection, releaseConnection };
+// Function to runQuery (execute Query) in the database
+const executeQuery = async (query: string, values: any,next : any) => {
+    let connection;
+    try {
+      // Fetch data from the database
+      connection = await getConnection();
+      const result = await connection.execute(query, values);
+      return result;
+
+    } catch (error: any) {
+      // Catch the error and return and error response
+      console.error('Internal error:', error);
+      return next(new ErrorHandler(error.message, 500));
+    } finally {
+      // close the connection to the database
+      if (connection) {
+        await releaseConnection(connection);
+      }
+    }
+}
+
+export { getConnection, releaseConnection , executeQuery };

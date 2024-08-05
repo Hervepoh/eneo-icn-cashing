@@ -2,6 +2,7 @@ SHELL := /bin/bash
 
 install: export APP_ENV=dev
 install:
+        docker run -d --name redis-stack -p 6379:6379 -p 8001:8001 redis/redis-stack:latest
 	cd frontend && npm install && cd ../
 	cd backend && composer install && cd ../
 .PHONY: install

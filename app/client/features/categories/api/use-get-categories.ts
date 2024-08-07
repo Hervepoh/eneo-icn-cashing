@@ -1,21 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
-
-// import { client } from "@/lib/hono";
-
+import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 export const useGetCategories = () => {
+
   const query = useQuery({
     queryKey: ["categories"],
     queryFn: async () => {
-      // const response = await client.api.categories.$get();
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch categories information")
-      // }
+      const config: AxiosRequestConfig = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8000/api/v1/categories',
+        headers: {
+        },
+        withCredentials: true, // Set this to true
+        data: ''
+      };
 
-      // const { data } = await response.json();
-      // return data;
-      return [];
+      try {
+        const response = await axios.request(config);
+        return response.data?.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw error;
+        } else {
+          throw new Error('Une erreur inconnue s\'est produite');
+        }
+      }
     },
   });
 

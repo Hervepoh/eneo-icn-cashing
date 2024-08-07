@@ -28,6 +28,7 @@ import { DataTable } from '@/components/data-table';
 import { columns } from './columns';
 import { UploadButton } from './upload-button';
 import { ImportCard } from './import-card';
+import { useGetRequests } from '@/features/requests/api/use-get-requests';
 
 
 
@@ -51,9 +52,10 @@ export default function TransactionsPage(props: Props) {
     // const createTransactionsQuery = useBulkCreateTransactions();
     // const deleteTransactionsQuery = useBulkDeleteTransactions();
     // const getTransactionsQuery = useGetTransactions();
-    // const transactions = getTransactionsQuery.data || [];
+    const getTransactionsQuery = useGetRequests();
+    const transactions = getTransactionsQuery.data || [];
 
-    // const isDisabled = getTransactionsQuery.isLoading || deleteTransactionsQuery.isPending
+    const isDisabled = getTransactionsQuery.isLoading // || deleteTransactionsQuery.isPending
 
     // Import features
     const [variant, setVariant] = useState<VARIANTS>(VARIANTS.LIST);
@@ -146,16 +148,17 @@ export default function TransactionsPage(props: Props) {
                     </div>
                 </CardHeader>
                 <CardContent>
-                    {/* <DataTable
+                     <DataTable
                         columns={columns}
                         data={transactions}
-                        filterKey='account'
+                        filterKey='reference'
                         onDelete={(row) => {
-                            const ids = row.map((r) => r.original.id);
-                            deleteTransactionsQuery.mutate({ ids });
+                            ""
+                            // const ids = row.map((r) => r.original.id);
+                            // deleteTransactionsQuery.mutate({ ids });
                         }}
                         disabled={isDisabled}
-                    /> */}
+                    /> 
                 </CardContent>
             </Card>
         </div>

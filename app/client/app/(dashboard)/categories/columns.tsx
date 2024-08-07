@@ -1,16 +1,17 @@
 "use client"
 
-import { InferResponseType } from "hono";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 
 import { ColumnDef } from "@tanstack/react-table"
-// import { client } from "@/lib/hono";
 import { Actions } from "./actions";
 
-// type ResponseType = InferResponseType<typeof client.api.categories.$get ,200>["data"][0];
+interface ResponseType {
+  _id: string;
+  name: string;
+}
 
 export const columns: ColumnDef<ResponseType>[] = [
   {
@@ -35,13 +36,8 @@ export const columns: ColumnDef<ResponseType>[] = [
     enableSorting: false,
     enableHiding: false,
   },
-  // {
-  //   accessorKey: "status",
-  //   header: "Status",
-  // },
   {
     accessorKey: "name",
-    // header: "Name",
     header: ({ column }) => {
       return (
         <Button
@@ -55,24 +51,10 @@ export const columns: ColumnDef<ResponseType>[] = [
       )
     },
   },
-  // {
-  //   accessorKey: "amount",
-  //   header: "Amount",
-  //   cell: ({ row }) => {
-  //     const amount = parseFloat(row.getValue("amount"))
-  //     const formatted = new Intl.NumberFormat("en-US", {
-  //       style: "currency",
-  //       currency: "USD",
-  //     }).format(amount)
-
-  //     return <div className="font-medium">{formatted}</div>
-  //   },
-  // },
   {
     id: "actions",
     cell: ({ row }) => (
-      ""
-      // <Actions id={ row.original.id }/>
+      <Actions id={ row.original._id }/>
     ),
     enableSorting: false,
   }

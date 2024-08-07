@@ -17,12 +17,12 @@ import { appConfig } from "../config/app.config";
 //-----------------------------------------------
 export const getAllRequests = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-
+    console.log("getAllRequests")
     try {
-      const request = await requestModel.find().sort({ createdAt: -1 });
+      const data = await requestModel.find().sort({ createdAt: -1 });
       return res.status(200).json({
         success: true,
-        request,
+        data,
       });
 
     } catch (error: any) {
@@ -58,7 +58,7 @@ export const createRequest = CatchAsyncError(
 
       res.status(201).json({
         success: true,
-        request
+        data: request
       });
 
 
@@ -97,7 +97,7 @@ export const getRequest = CatchAsyncError(
 
         return res.status(200).json({
           success: true,
-          request,
+          data : request,
         });
       }
 
@@ -128,7 +128,7 @@ export const updateRequest = CatchAsyncError(
       // TODO update redis courseId and allCourses
       return res.status(200).json({
         success: true,
-        request,
+        data:  request,
       });
 
 

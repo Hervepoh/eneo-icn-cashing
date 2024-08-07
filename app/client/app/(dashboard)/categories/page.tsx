@@ -23,11 +23,11 @@ type Props = {}
 
 export default function CategoriesPage(props: Props) {
     const newCategory = useNewCategory();
-    const deleteCategoriesQuery = useBulkDeleteCategories();
+    // const deleteCategoriesQuery = useBulkDeleteCategories();
     const getCategoriesQuery = useGetCategories();
+   
     const categories = getCategoriesQuery.data || [];
-
-    const isDisabled = getCategoriesQuery.isLoading || deleteCategoriesQuery.isPending
+    const isDisabled = getCategoriesQuery.isLoading //|| deleteCategoriesQuery.isPending
 
     if (getCategoriesQuery.isLoading) {
         return (
@@ -55,16 +55,16 @@ export default function CategoriesPage(props: Props) {
                     </Button>
                 </CardHeader>
                 <CardContent>
-                    {/* <DataTable
+                     <DataTable
                         columns={columns}
                         data={categories}
                         filterKey='name'
                         onDelete={(row) => {
-                            const ids = row.map((r) => r.original.id);
-                            deleteCategoriesQuery.mutate({ ids });
+                            // const ids = row.map((r) => r.original.id);
+                            // deleteCategoriesQuery.mutate({ ids });
                         }}
                         disabled={isDisabled}
-                    /> */}
+                    /> 
                 </CardContent>
             </Card>
         </div>

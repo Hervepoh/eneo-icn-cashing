@@ -38,26 +38,15 @@ export const create = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      // get the user information
-      const user = await userModel.findById(req.user?._id);
-      if (!user) {
-        return next(new ErrorHandler("Unauthorize ressource", 401));
-      }
-
       const data = {
-        ...req.body,
-        payment_date: parseDMY(req.body.payment_date),
-        createdBy:user.name,
-        userId:user._id,
+        ...req.body
       };
 
-      console.log(data);
-
-      const request = await requestModel.create(data);
+      const category = await categoryModel.create(data);
 
       res.status(201).json({
         success: true,
-        request
+        data:category
       });
 
 
@@ -148,18 +137,18 @@ export const deletion = CatchAsyncError(
       const { id } = req.params;
       // check if the provided courseId is valid
       if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid request id", 400));
+        return next(new ErrorHandler("Invalid category id", 400));
       }
-      const request = await requestModel.findById(id);
-      if (!request) {
-        return next(new ErrorHandler("Request not found", 404));
+      const category = await categoryModel.findById(id);
+      if (!category) {
+        return next(new ErrorHandler("Category not found", 404));
       }
-      await request.deleteOne({ _id: id })
+      await category.deleteOne({ _id: id })
       await redis.del(id)
 
       return res.status(200).json({
         success: true,
-        message: "Request deleted successfully",
+        message: "Category deleted successfully",
       });
 
     } catch (error: any) {

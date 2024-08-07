@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
-
-// import { client } from "@/lib/hono";
 import { convertAmountFromMilliunits } from "@/lib/utils";
-
+import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 
 export const useGetRequests = () => {
@@ -16,20 +14,26 @@ export const useGetRequests = () => {
   const query = useQuery({
     queryKey: ["requests", { from, to, accountId }],
     queryFn: async () => {
-      // const response = await client.api.transactions.$get({
-      //   query: { from, to, accountId }
-      // });
+      const config: AxiosRequestConfig = {
+        method: 'get',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8000/api/v1/requests',
+        headers: {
+        },
+        withCredentials: true, // Set this to true
+        data: ''
+      };
 
-      // if (!response.ok) {
-      //   throw new Error("Failed to fetch transactions")
-      // }
-
-      // const { data } = await response.json();
-      
-      // return data.map((transaction) => ({
-      //   ...transaction,
-      //   amount: convertAmountFromMilliunits(transaction.amount),
-      // }));
+      try {
+        const response = await axios.request(config);
+        return response.data?.data;
+      } catch (error) {
+        if (axios.isAxiosError(error)) {
+          throw error;
+        } else {
+          throw new Error('Une erreur inconnue s\'est produite');
+        }
+      }
 
     },
   });

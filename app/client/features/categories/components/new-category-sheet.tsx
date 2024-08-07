@@ -4,7 +4,6 @@ import { useNewCategory } from "@/features/categories/hooks/use-new-category";
 import { useCreateCategory } from "@/features/categories/api/use-create-category";
 import { CategoryForm } from "@/features/categories/components/category-form";
 
-// import { insertCategoriesSchema } from "@/db/schema";
 import {
     Sheet,
     SheetContent,
@@ -16,9 +15,6 @@ import {
 
 
 /* Form validation */
-// const formSchema = insertCategoriesSchema.pick({
-//     name: true,
-// });
 const formSchema = z.object({
     name: z.string(),
 });
@@ -31,7 +27,6 @@ export function NewCategorySheet() {
     const mutation = useCreateCategory();
 
     const onSubmit = (values: FormValues) => {
-        console.log(values);
        mutation.mutate(values , {
         onSuccess: () => {
             onClose();

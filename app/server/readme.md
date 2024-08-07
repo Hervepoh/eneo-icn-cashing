@@ -17,6 +17,10 @@
 - [ ] user ldap-auth
 - [ ] user two-factor-auth 
 
+#### analytic
+- [ ] users analytics
+- [ ] internal credit advice request analytics
+
 #### Unpaid Bill Information
 - [ ] Search (one|many)unpaid bill by (Contract|Invoice|Customer_Regroup|Customer_name)
 - [x] Search unpaid bill by Contract Number
@@ -37,6 +41,7 @@
 - [ ] update status of an internal credit advice request
 - [ ] validation of an internal credit advice request
 - [x] Delete an internal credit advice request
+- [x] Generation of the ICN TO CMS integration file
 
 #### notifications
 - [x] get all notifications
@@ -44,10 +49,6 @@
 - [ ] update notifications status
 - [ ] delete notifications (cronjob)
   
-#### analytic
-- [ ] users analytics
-- [ ] internal credit advice request analytics
-
-#### application settings
-- [ ] list all settings
-- [ ] update settings
+#### Settings
+- [x] get list all settings
+- [x] update settings

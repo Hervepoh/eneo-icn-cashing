@@ -4,7 +4,7 @@ import Image from "next/image";
 import { cn } from '@/lib/utils';
 import { style } from '@/config/layout.config';
 import ThemeSwitcher from '@/components/ThemeSwitcher';
-import LanguageSwitcher from '@/components/LanguageSwitcher';
+import LanguageSwitcher from '@/components/kanguage-switcher';
 import Metadata from '@/components/metadata';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Loader2 } from "lucide-react";
 
 import { useOpenCategory } from "@/features/categories/hooks/use-open-category";
 import { CategoryForm } from "@/features/categories/components/category-form";
@@ -7,9 +8,6 @@ import { useUpdateCategory } from "@/features/categories/api/use-edit-category";
 import { useDeleteCategory } from "@/features/categories/api/use-delete-category";
 
 import { useConfirm } from "@/hooks/use-confirm";
-
-import { Loader2 } from "lucide-react";
-// import { insertCategoriesSchema } from "@/db/schema";
 import {
     Sheet,
     SheetContent,
@@ -19,11 +17,7 @@ import {
 } from "@/components/ui/sheet";
 
 
-
 /* Form validation */
-// const formSchema = insertCategoriesSchema.pick({
-//     name: true,
-// });
 const formSchema = z.object({
     name: z.string(),
 });

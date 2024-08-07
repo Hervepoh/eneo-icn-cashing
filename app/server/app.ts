@@ -11,6 +11,7 @@ import interncreditRouter from "./routes/interncredit.route";
 import notificationRouter from "./routes/notification.route";
 import requestRouter from "./routes/request.route";
 import settingRouter from "./routes/setting.route";
+import categoryRouter from "./routes/category.route";
 
 
 export const app = express();
@@ -28,12 +29,22 @@ const origin = (process.env.NODE_ORIGIN || "").split(";");
 app.use(
   cors({
     origin: origin,
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'], // Allowed headers
     credentials: true,
   })
 );
 
 // routes
-app.use("/api/v1", userRouter, notificationRouter , settingRouter, unpaidRouter , interncreditRouter , requestRouter);
+app.use("/api/v1",
+  categoryRouter,
+  interncreditRouter,
+  notificationRouter,
+  requestRouter,
+  settingRouter,
+  unpaidRouter,
+  userRouter,
+);
 
 // testing API
 app.get("/test", (req: Request, res: Response, next: NextFunction) => {

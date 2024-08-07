@@ -1,10 +1,10 @@
+import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
-
-// import { client } from "@/lib/hono";
 
 // type ResponseType = InferResponseType<typeof client.api.categories[":id"]["$delete"]>;
+
+type ResponseType = any
 
 export const useDeleteCategory = (id?: string) => {
   const queryClient = useQueryClient();
@@ -19,7 +19,18 @@ export const useDeleteCategory = (id?: string) => {
       // });
 
       // return await response.json();
-      return JSON.parse("a");
+      const  config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: `http://localhost:8000/api/v1/categories/${id}`,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // Set this to true
+        data: ""
+      };
+      const response = await axios.request(config);
+      return response.data?.data;
     },
     onSuccess: () => {
       toast.success("Category deleted.")

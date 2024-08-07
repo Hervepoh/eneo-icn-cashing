@@ -1,15 +1,12 @@
 import express from "express";
 import { authorizeRoles, isAuthentificated } from "../middleware/auth";
-import { create, deletion, get, getAll, update } from "../controllers/categories.controller";
+import { getAll, create, update } from "../controllers/setting.controller";
 
 
 const settingRouter = express.Router();
 
-settingRouter.get('/categories', getAll);
-settingRouter.post('/categories', isAuthentificated, create);
-settingRouter.get('/categories/:id', isAuthentificated, get);
-settingRouter.put('/categories/:id', isAuthentificated, update);
-settingRouter.delete('/categories/:id', isAuthentificated, deletion);
-
+settingRouter.get('/settings',isAuthentificated,getAll);
+settingRouter.post('/settings', isAuthentificated, create);
+settingRouter.put('/settings/:id', isAuthentificated, update);
 
 export default settingRouter; 

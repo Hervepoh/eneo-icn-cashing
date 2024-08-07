@@ -2,7 +2,6 @@
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-// import { insertCategoriesSchema } from "@/db/schema"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -19,8 +18,6 @@ import { Loader2, Trash } from 'lucide-react';
 
 
 // const formSchema = insertCategoriesSchema.pick({
-//     name: true,
-// });
 const formSchema = z.object({
     name: z.string(),
 });

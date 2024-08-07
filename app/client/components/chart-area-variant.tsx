@@ -10,7 +10,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 
-import CustomTooltip from "./custom-tooltip";
+import CustomTooltip from "@/components/custom-tooltip";
 
 
 type Props = {

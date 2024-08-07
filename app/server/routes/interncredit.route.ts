@@ -4,7 +4,8 @@ import {
     getICNNextCode,
     getICNDematerializeCode,
     getICNGroupes,
-    getICN
+    getICN,
+    generationOfIntegrationFile
 } from "../controllers/icn.controller";
 
 
@@ -14,6 +15,7 @@ interncreditRouter.get('/icn/next-code', isAuthentificated, getICNNextCode);
 interncreditRouter.get('/icn/next-dematerialization', isAuthentificated, getICNDematerializeCode);
 interncreditRouter.get('/icn/groupes', isAuthentificated, getICNGroupes);
 interncreditRouter.get('/icn', isAuthentificated, getICN);
+interncreditRouter.get('/icn/documents', isAuthentificated, generationOfIntegrationFile);
 
 
 export default interncreditRouter; 

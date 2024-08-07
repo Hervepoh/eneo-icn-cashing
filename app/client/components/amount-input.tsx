@@ -1,13 +1,14 @@
 import { Info, MinusCircle, PlusCircle } from 'lucide-react';
 import CurrencyInput from 'react-currency-input-field';
 
+import { cn } from '@/lib/utils';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip"
-import { cn } from '@/lib/utils';
+
 
 type Props = {
     value: string;

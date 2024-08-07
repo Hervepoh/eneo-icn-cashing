@@ -67,6 +67,6 @@ const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Sch
   { timestamps: true }
 );
 
-const requestModel: Model<IInternCreditRequest> = mongoose.model("internalCreditRequests", internCreditRequestSchema);
+const requestModel: Model<IInternCreditRequest> = mongoose.model("requests", internCreditRequestSchema);
 
 export default requestModel;

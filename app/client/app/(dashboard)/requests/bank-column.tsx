@@ -1,6 +1,6 @@
 import { TriangleAlert } from 'lucide-react';
 
-// import { useOpenCategory } from '@/features/categories/hooks/use-open-category';
+// import { useOpenBank } from '@/features/categories/hooks/use-open-bank';
 // import { useOpenTransaction } from '@/features/transactions/hooks/use-open-transaction';
 
 import { cn } from '@/lib/utils';
@@ -8,17 +8,17 @@ import { cn } from '@/lib/utils';
 
 type Props = {
     id: string
-    category: string | null;
-    categoryId: string | null;
+    bank: string | null;
+    bankId: string | null;
 }
 
-export const CategoryColumn = ({ id, category, categoryId }: Props) => {
+export const BankColumn = ({ id, bank, bankId }: Props) => {
 
-    // const { onOpen: onOpenCategory } = useOpenCategory();
+    // const { onOpen: onOpenBank } = useOpenBank();
     // const { onOpen: onOpenTransaction } = useOpenTransaction();
     const onClick = () => {
-        if (categoryId) {
-            // onOpenCategory(categoryId);
+        if (bankId) {
+            // onOpenBank(bankId);
         }else {
             // onOpenTransaction(id);
         }
@@ -29,10 +29,10 @@ export const CategoryColumn = ({ id, category, categoryId }: Props) => {
         <div
             onClick={onClick}
             className={cn('flex items-center cursor-pointer hover:underline',
-            !category && "text-rose-500 hover:no-underline"
+            !bank && "text-rose-500 hover:no-underline"
             )}>
-            { !category && <TriangleAlert className='mr-2 size-4 shrink-0' />}
-            {category || "Uncategorized"}
+            { !bank && <TriangleAlert className='mr-2 size-4 shrink-0' />}
+            {bank || "Uncategorized"}
         </div>
     )
 }

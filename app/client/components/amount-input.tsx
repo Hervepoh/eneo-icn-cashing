@@ -42,7 +42,7 @@ export const AmountInput = ({
                     <TooltipTrigger asChild>
                         <button
                             type="button"
-                            onClick={onReverseValue}
+                           // onClick={onReverseValue}
                             className={
                                 cn("bg-slate-400 hover:bg-slate-500 absolute top-1.5 left-1.5 rounded-md p-2 flex items-center justify-center transition",
                                     isIncome && "bg-emerald-500 hover:bg-emerald-600",
@@ -56,9 +56,9 @@ export const AmountInput = ({
                         </button>
 
                     </TooltipTrigger>
-                    <TooltipContent>
+                    {/* <TooltipContent>
                         Use [+] for income and [-] for expense
-                    </TooltipContent>
+                    </TooltipContent> */}
                 </Tooltip>
             </TooltipProvider>
             {/* //DOC: https://www.npmjs.com/package/react-currency-input-field */}
@@ -69,7 +69,7 @@ export const AmountInput = ({
                 placeholder={placeholder}
                 value={value}
                 decimalsLimit={2}
-                decimalScale={2}
+                decimalScale={0}
                 onValueChange={onChange}
                 disabled={disabled}
                 className="pl-10 flex h-10 w-full rounded-md border border-input 
@@ -79,10 +79,10 @@ export const AmountInput = ({
                 disabled:cursor-not-allowed disabled:opacity-50"
                    
             />
-            <p className='text-xs text-muted-foreground mt-2'>
+            {/* <p className='text-xs text-muted-foreground mt-2'>
                 { isIncome && "This will count as income" }
                 { isExpense && "This will count as an expense" }
-            </p>
+            </p> */}
         </div>
 
     );

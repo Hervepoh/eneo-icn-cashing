@@ -48,6 +48,20 @@
 - [x] get user notifications
 - [ ] update notifications status
 - [ ] delete notifications (cronjob)
+
+#### Bank
+- [x] get all banks
+- [x] get bank information 
+- [x] create a new bank 
+- [ ] update bank information 
+- [ ] delete bank
+
+#### Payment mode
+- [x] get all payment modes
+- [x] get a payment mode information 
+- [x] create a new payment mode 
+- [ ] update payment mode information 
+- [ ] delete payment mode
   
 #### Settings
 - [x] get list all settings

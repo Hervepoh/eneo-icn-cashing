@@ -46,8 +46,8 @@ export function DatePicker(
                     onSelect={onChange}
                     disabled={disabled}
                     initialFocus
-                    captionLayout="dropdown-buttons" //Also:  dropdown | buttons 
-                    fromYear={1900} 
+                    captionLayout="dropdown" //Also: dropdown-buttons |  dropdown | buttons 
+                    fromYear={2000} 
                     toYear={new Date().getFullYear()}
                     // numberOfMonths={2} //Add this line, if you want, can be 2 or more
                     className="rounded-md border"

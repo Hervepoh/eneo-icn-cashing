@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/sheet"
 import { Button } from '@/components/ui/button';
 import { CgMenuLeft } from "react-icons/cg";
-import { Logo } from '@/components/Logo';
+import { Logo } from '@/components/logo';
 import { navbarRoutes as routes } from '@/config/route.config';
 
 

@@ -3,14 +3,14 @@ import mongoose, { Document, Model, Schema } from "mongoose";
 import { IUser } from "./user.model";
 
 export interface IInternCreditRequest extends Document {
-  icn: string;
-  userId: string;
+  reference: string;
+  status: string;
   name: string;
   amount: number;
-  bank: string;
+  bank: mongoose.Schema.Types.ObjectId;
   payment_mode: string;
   payment_date: Date;
-  status: string;
+  userId: string;
   assignTo: string;
   createdBy: string;
   modifiedBy: string;
@@ -18,7 +18,7 @@ export interface IInternCreditRequest extends Document {
 
 const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Schema(
   {
-    icn: {
+    reference: {
       type: String,
       required: false,
     },
@@ -35,7 +35,8 @@ const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Sch
       required: true,
     },
     bank: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'banks', // Référence au modèle 'bank'
       required: true,
     },
     payment_date: {

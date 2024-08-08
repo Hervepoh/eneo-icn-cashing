@@ -54,6 +54,7 @@ export default function TransactionsPage(props: Props) {
     // const getTransactionsQuery = useGetTransactions();
     const getTransactionsQuery = useGetRequests();
     const transactions = getTransactionsQuery.data || [];
+    console.log("getTransactionsQuery", transactions);
 
     const isDisabled = getTransactionsQuery.isLoading // || deleteTransactionsQuery.isPending
 
@@ -101,20 +102,20 @@ export default function TransactionsPage(props: Props) {
 
 
 
-    // if (getTransactionsQuery.isLoading) {
-    //     return (
-    //         <div className='max-w-screen-2xl mx-auto w-full pb-10 -mt-24'>
-    //             <Card className='border-none drop-shadow-sm'>
-    //                 <CardHeader>
-    //                     <Skeleton className="w-48 h-8" />
-    //                 </CardHeader>
-    //                 <CardContent className='h-[500px] w-full flex items-center justify-center'>
-    //                     <Loader2 className='size-6 text-slate-300 animate-spin' />
-    //                 </CardContent>
-    //             </Card>
-    //         </div>
-    //     )
-    // }
+    if (getTransactionsQuery.isLoading) {
+        return (
+            <div className='max-w-screen-2xl mx-auto w-full pb-10 -mt-24'>
+                <Card className='border-none drop-shadow-sm'>
+                    <CardHeader>
+                        <Skeleton className="w-48 h-8" />
+                    </CardHeader>
+                    <CardContent className='h-[500px] w-full flex items-center justify-center'>
+                        <Loader2 className='size-6 text-slate-300 animate-spin' />
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
 
     if (variant === VARIANTS.IMPORT) {
         return (

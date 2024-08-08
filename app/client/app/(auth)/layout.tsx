@@ -3,8 +3,8 @@ import React from 'react'
 import Image from "next/image";
 import { cn } from '@/lib/utils';
 import { style } from '@/config/layout.config';
-import ThemeSwitcher from '@/components/ThemeSwitcher';
-import LanguageSwitcher from '@/components/kanguage-switcher';
+import ThemeSwitcher from '@/components/theme-switcher';
+import LanguageSwitcher from '@/components/language-switcher';
 import Metadata from '@/components/metadata';
 import { useSelector } from 'react-redux';
 import { useRouter } from 'next/navigation';

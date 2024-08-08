@@ -5,15 +5,17 @@ import ErrorHandler from "../utils/errorHandler";
 import settingModel from "../models/setting.model";
 
 
+const redis_allrecord_name = "allsettings";
+
 export const revalidateSettingService = async () => {
   const settings = await settingModel.find().sort({ createdAt: -1 });
-  await redis.set("allsettings", JSON.stringify(settings));
+  await redis.set(redis_allrecord_name, JSON.stringify(settings));
 }
 
 // get all setting
 export const getAllSettingService = async (res: Response, next: NextFunction) => {
   try {
-    const redis_data = await redis.get("allsettings");
+    const redis_data = await redis.get(redis_allrecord_name);
     if (redis_data) {
       const data = JSON.parse(redis_data);
       res.status(200).json({
@@ -22,7 +24,7 @@ export const getAllSettingService = async (res: Response, next: NextFunction) =>
       });
     } else {
       const data = await settingModel.find().sort({ createdAt: -1 });
-      await redis.set("allsettings", JSON.stringify(data));
+      await redis.set(redis_allrecord_name, JSON.stringify(data));
       res.status(200).json({
         success: true,
         data,

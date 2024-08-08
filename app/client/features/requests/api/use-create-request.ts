@@ -1,25 +1,31 @@
+import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
 
-// import { client } from "@/lib/hono";
-
-// type ResponseType = InferResponseType<typeof client.api.transactions.$post>;
-// type RequestType = InferRequestType<typeof client.api.transactions.$post>["json"];
+type RequestType = any
 
 export const useCreateRequest = () => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
     ResponseType,
-    Error//,
-    // RequestType
+    Error,
+    RequestType
   >({
     mutationFn: async (json) => {
-      // const response = await client.api.transactions.$post({ json });
-
-      // return await response.json();
-      return JSON.parse("a");
+      console.log(json);
+      const  config = {
+        method: 'post',
+        maxBodyLength: Infinity,
+        url: 'http://localhost:8000/api/v1/requests',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        withCredentials: true, // Set this to true
+        data: json
+      };
+      const response = await axios.request(config);
+      return response.data?.data;
     },
     onSuccess: () => {
       toast.success("Request has been created.")

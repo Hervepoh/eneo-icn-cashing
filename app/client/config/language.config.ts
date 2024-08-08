@@ -1,4 +1,4 @@
-export const Language = {
+export const language = {
      /* p= numero de page, page number
        p= numero de la phrase, phrase number
        */

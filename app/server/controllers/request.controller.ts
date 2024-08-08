@@ -10,6 +10,7 @@ import mongoose from "mongoose";
 import { redis } from "../utils/redis";
 import userModel from "../models/user.model";
 import { appConfig } from "../config/app.config";
+import bankModel from "../models/bank.model";
 
 
 //-----------------------------------------------
@@ -17,12 +18,23 @@ import { appConfig } from "../config/app.config";
 //-----------------------------------------------
 export const getAllRequests = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    console.log("getAllRequests")
     try {
-      const data = await requestModel.find().sort({ createdAt: -1 });
+      const datas = await requestModel
+        .find()
+        .populate({
+          path: 'bank',
+          select: 'name _id',
+          model: bankModel,
+        })
+        .sort({ createdAt: -1 });
+        const result = datas.map(item => ({
+          ...item["_doc"],
+          bank: item.bank ? item.bank?.name : null
+        }));
+
       return res.status(200).json({
         success: true,
-        data,
+        data: result
       });
 
     } catch (error: any) {
@@ -48,11 +60,9 @@ export const createRequest = CatchAsyncError(
       const data = {
         ...req.body,
         payment_date: parseDMY(req.body.payment_date),
-        createdBy:user.name,
-        userId:user._id,
+        createdBy: user.name,
+        userId: user._id,
       };
-
-      console.log(data);
 
       const request = await requestModel.create(data);
 
@@ -93,11 +103,11 @@ export const getRequest = CatchAsyncError(
           );
 
         // Put into Redis for caching futur purpose
-        await redis.set(requestId, JSON.stringify(request),'EX',appConfig.redis_session_expire);
+        await redis.set(requestId, JSON.stringify(request), 'EX', appConfig.redis_session_expire);
 
         return res.status(200).json({
           success: true,
-          data : request,
+          data: request,
         });
       }
 
@@ -128,7 +138,7 @@ export const updateRequest = CatchAsyncError(
       // TODO update redis courseId and allCourses
       return res.status(200).json({
         success: true,
-        data:  request,
+        data: request,
       });
 
 

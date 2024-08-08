@@ -12,10 +12,11 @@ import { Filters } from "@/components/filters";
 import { HeaderLogo } from "@/components/header-logo";
 import { Navigation } from "@/components/navigation";
 import { WelcomeMsg } from "@/components/welcome-msg";
-import ThemeSwitcher from "@/components/ThemeSwitcher";
+import ThemeSwitcher from "@/components/theme-switcher";
 import Security from "@/components/security";
 import avatar from "../public/avatar.png";
 import { useSelector } from "react-redux";
+import LocaleToggler from "./locale-toggler";
 
 
 type Props = {}
@@ -31,11 +32,12 @@ export const Header = ({ }: Props) => {
             )}>
                 <div className="max-w-screen-2xl mx-auto">
                     <div className="w-full flex items-center justify-between mb-14">
-                        <div className="flex items-center lg:gap-x-16">
+                        <div className="hidden lg:flex items-center  lg:gap-x-16">
                             <HeaderLogo />
-                            <Navigation />
                         </div>
+                        <Navigation />
                         <div className="flex items-center justify-center">
+                            <LocaleToggler />
                             <ThemeSwitcher />
                             {user ? (
                                 <Link href={"/profile"}>
@@ -57,8 +59,10 @@ export const Header = ({ }: Props) => {
                         </div>
 
                     </div>
+                    <div className="flex flex-col lg:flex-row items-center lg:justify-between">
                     <WelcomeMsg />
                     <Filters />
+                    </div>
                 </div>
             </header>
     );

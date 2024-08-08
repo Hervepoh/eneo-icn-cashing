@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/select"
 
 // import { useGetAccounts } from '@/features/accounts/api/use-get-accounts';
-// import { useGetSummary } from '@/features/summary/api/use-get-summay';
+import { useGetSummary } from '@/features/summary/api/use-get-summary';
 
 type Props = {}
 
@@ -31,7 +31,7 @@ export const AccountFilter = (props: Props) => {
   const to = params.get('to') || '';
 
   // const { data: accounts, isLoading: isLoadingAccounyts } = useGetAccounts();
-  // const { isLoading: isLoadingSummary } = useGetSummary();
+  const { isLoading: isLoadingSummary } = useGetSummary();
 
   const onChange = (newValue: string) => {
     const query = {

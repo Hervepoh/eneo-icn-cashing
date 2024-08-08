@@ -1,5 +1,5 @@
 "use client";
-import { ArrowUpDown, MoreHorizontal } from "lucide-react";
+import { ArrowUpDown, MoreHorizontal, TriangleAlert } from "lucide-react";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -82,11 +82,11 @@ export const columns: ColumnDef<ResponseType>[] = [
     },
     cell: ({ row }) => {
       const status : string = row.getValue("status");
-      console.log("status" , status);
 
       return <Badge
         variant={status == "draft" ? "destructive" : "primary"}
         className="text-md font-medium px-3.5 py-2.5">
+           { status == "draft" && <TriangleAlert className='mr-2 size-4 shrink-0' />}
         {status}
       </Badge>
     },
@@ -110,7 +110,6 @@ export const columns: ColumnDef<ResponseType>[] = [
 
   {
     accessorKey: "amount",
-    // header: "Name",
     header: ({ column }) => {
       return (
         <Button
@@ -132,6 +131,22 @@ export const columns: ColumnDef<ResponseType>[] = [
   },
 
   {
+    accessorKey: "bank",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="-ml-4"
+        >
+          Bank
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+
+  {
     accessorKey: "payment_date",
     header: ({ column }) => {
       return (
@@ -148,7 +163,7 @@ export const columns: ColumnDef<ResponseType>[] = [
     cell: ({ row }) => {
       const date = row.getValue("payment_date") as Date;
 
-      return <span>{format(date, "dd MMMM, yyyy")}</span>;
+      return <span>{format(date, "dd/MM/yyyy")}</span>;
     },
   },
 

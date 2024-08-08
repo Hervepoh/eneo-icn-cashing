@@ -5,9 +5,10 @@ import { FaPiggyBank } from "react-icons/fa";
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { formatDateRange } from "@/lib/utils";
 
-import { useGetSummary } from "@/features/summary/api/use-get-summay";
+
 import { Chart, ChartLoading } from "@/components/chart";
 import { Pie, PieLoading } from "@/components/graph";
+import { useGetSummary } from "@/features/summary/api/use-get-summary";
 
 
 export const DataCharts = () => {

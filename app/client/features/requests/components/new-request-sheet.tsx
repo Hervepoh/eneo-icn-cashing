@@ -5,11 +5,11 @@ import { useNewRequest } from "@/features/requests/hooks/use-new-request";
 // import { useCreateTransaction } from "@/features/transactions/api/use-create-transaction";
 import { RequestForm } from "@/features/requests/components/request-form";
 
-// import { useCreateAccount } from "@/features/accounts/api/use-create-account";
-// import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
+import { useCreateBank } from "@/features/banks/api/use-create-bank";
+import { useGetBanks } from "@/features/banks/api/use-get-banks";
 
-// import { useCreateCategory } from "@/features/categories/api/use-create-category";
-// import { useGetCategories } from "@/features/categories/api/use-get-categories";
+import { useCreatePayMode } from "@/features/payModes/api/use-create-payMode";
+import { useGetPayModes } from "@/features/payModes/api/use-get-payModes";
 
 // import { insertTransactionsSchema } from "@/db/schema";
 import {
@@ -19,6 +19,8 @@ import {
     SheetHeader,
     SheetTitle,
 } from "@/components/ui/sheet";
+import { useCreateRequest } from "../api/use-create-request";
+import { formatDate } from "date-fns";
 
 
 
@@ -38,54 +40,51 @@ type FormValues = z.input<typeof formSchema>;
 export function NewRequestSheet() {
     const { isOpen, onClose } = useNewRequest();
 
-    // const mutation = useCreateTransaction();
+    const mutation = useCreateRequest();
 
-    // const categoryQuery = useGetCategories();
-    // const categoryMutation = useCreateCategory();
-    // const onCreateCategory = (name: string) => categoryMutation.mutate({ name });
-    // const categoryOptions = (categoryQuery.data ?? []).map(
-    //     (category) => ({
-    //         label: category.name,
-    //         value: category.id
-    //     })
-    // );
+    const payModeQuery = useGetPayModes();
+    const payModeMutation = useCreatePayMode();
+    const onCreatePayMode = (name: string) => payModeMutation.mutate({ name });
+    const payModeOptions = (payModeQuery.data ?? []).map(
+        (payMode: { name: any; _id: any; }) => ({
+            label: payMode.name,
+            value: payMode._id
+        })
+    );
 
-    // const accountQuery = useGetAccounts();
-    // const accountMutation = useCreateAccount();
-    // const onCreateAccount = (name: string) => accountMutation.mutate({ name });
-    // const accountOptions = (accountQuery.data ?? []).map(
-    //     (account) => ({
-    //         label: account.name,
-    //         value: account.id
-    //     })
-    // );
+    const bankQuery = useGetBanks();
+    const bankMutation = useCreateBank();
+    const onCreateBank = (name: string) => bankMutation.mutate({ name });
+    const bankOptions = (bankQuery.data ?? []).map(
+        (bank: { name: any; _id: any; }) => ({
+            label: bank.name,
+            value: bank._id
+        })
+    );
 
-    // const isPending =
-    //     mutation.isPending ||
-    //     categoryMutation.isPending ||
-    //     accountMutation.isPending
+    const isPending =
+        mutation.isPending ||
+        payModeMutation.isPending ||
+        bankMutation.isPending
 
-    // const isLoading =
-    //     accountQuery.isLoading ||
-    //     categoryQuery.isLoading
+    const isLoading =
+        bankQuery.isLoading ||
+        payModeQuery.isLoading
 
-    // const onSubmit = (values: FormValues) => {
-    //     mutation.mutate(values, {
-    //         onSuccess: () => {
-    //             onClose();
-    //         },
-    //     });
-    // }
-    const onSubmit = () => "" ;
-    const onCreateCategory = () => "" ;
-    const onCreateAccount = () => "" ;
-    const accountOptions: { label: string; value: string; }[] = [];
-    const categoryOptions: { label: string; value: string; }[] = [];
-    const isLoading = false;
-    const isPending = false;
+    const onSubmit = (values: FormValues) => {
+        const datas = { ...values , payment_date: formatDate(values.payment_date, "dd/MM/yyyy") };
+
+        mutation.mutate(datas, {
+            onSuccess: () => {
+                onClose();
+            },
+        });
+    }
+
+
     return (
         <Sheet open={isOpen} onOpenChange={onClose}>
-            <SheetContent className="space-y-4" side="right_special">
+            <SheetContent className=" sm:w-[540px] space-y-4" side="right_special">
                 <SheetHeader>
                     <SheetTitle>New ACI application</SheetTitle>
                     <SheetDescription>
@@ -103,10 +102,10 @@ export function NewRequestSheet() {
                             <RequestForm
                                 onSubmit={onSubmit}
                                 disabled={isPending}
-                                categoryOptions={categoryOptions}
-                                onCreateCategory={onCreateCategory}
-                                accountOptions={accountOptions}
-                                onCreateAccount={onCreateAccount}
+                                payModeOptions={payModeOptions}
+                                onCreatePayMode={onCreatePayMode}
+                                bankOptions={bankOptions}
+                                onCreateBank={onCreateBank}
                             />
                         )
                 }

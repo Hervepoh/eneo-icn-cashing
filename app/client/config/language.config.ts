@@ -11,15 +11,15 @@ export const language = {
         fr : "Demandes",
     },
     aci_management:{
-        en: "ACI Management",
+        en: "ICN Management",
         fr: "Gestion ACI",
     },
     aci_unpaid:{
-        en: "ACI Unpaid",
+        en: "ICN Unpaid",
         fr: "Impayés ACI",
             },
     aci_journal:{
-        en: "ACI Journal",
+        en: "ICN Journal",
         fr: "Journal ACI",
             },
     settings:{

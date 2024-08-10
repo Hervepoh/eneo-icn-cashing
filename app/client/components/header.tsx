@@ -1,22 +1,15 @@
 import React from "react"
-import Link from "next/link";
-import Image from "next/image";
-import { Loader2 } from "lucide-react";
-import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
 
 import { cn } from "@/lib/utils";
-import { useLoadUserQuery } from "@/lib/redux/features/api/apiSlice";
+import { useSelector } from "react-redux";
 import { style } from "@/config/layout.config";
-
 import { Filters } from "@/components/filters";
 import { HeaderLogo } from "@/components/header-logo";
 import { Navigation } from "@/components/navigation";
 import { WelcomeMsg } from "@/components/welcome-msg";
+import { UserNav } from "@/components/user-nav";
 import ThemeSwitcher from "@/components/theme-switcher";
-import Security from "@/components/security";
-
-import { useSelector } from "react-redux";
-import LocaleSwitcher from "./locale-switcher";
+import LocaleSwitcher from "@/components/locale-switcher";
 
 
 type Props = {}
@@ -42,7 +35,7 @@ export const Header = ({ }: Props) => {
                     <div className="flex items-center justify-center">
                         <LocaleSwitcher />
                         <ThemeSwitcher />
-                        
+                        <UserNav user={user} />
                     </div>
                 </div>
                 <div className="flex flex-col lg:flex-row items-center lg:justify-between">

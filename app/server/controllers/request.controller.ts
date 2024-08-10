@@ -11,6 +11,7 @@ import { redis } from "../utils/redis";
 import userModel from "../models/user.model";
 import { appConfig } from "../config/app.config";
 import bankModel from "../models/bank.model";
+import payModeModel from "../models/payMode.model";
 
 
 //-----------------------------------------------
@@ -26,10 +27,16 @@ export const getAllRequests = CatchAsyncError(
           select: 'name _id',
           model: bankModel,
         })
+        .populate({
+          path: 'payment_mode',
+          select: 'name _id',
+          model: payModeModel,
+        })
         .sort({ createdAt: -1 });
         const result = datas.map(item => ({
           ...item["_doc"],
-          bank: item.bank ? item.bank?.name : null
+          bank: item.bank ? item.bank?.name : null,
+          payment_mode: item.payment_mode ? item.payment_mode?.name : null,
         }));
 
       return res.status(200).json({

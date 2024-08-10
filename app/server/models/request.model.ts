@@ -8,7 +8,7 @@ export interface IInternCreditRequest extends Document {
   name: string;
   amount: number;
   bank: mongoose.Schema.Types.ObjectId;
-  payment_mode: string;
+  payment_mode: mongoose.Schema.Types.ObjectId;
   payment_date: Date;
   userId: string;
   assignTo: string;
@@ -44,7 +44,8 @@ const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Sch
       required: true,
     },
     payment_mode: {
-      type: String,
+      type:  mongoose.Schema.Types.ObjectId,
+      ref: 'payment_modes', // Référence au modèle 'payModeModel'
       required: true,
     },
     status: {

@@ -16,6 +16,6 @@ const schema: Schema<IPayMode> = new mongoose.Schema(
   { timestamps: true }
 );
 
-const payModeModel: Model<IPayMode> = mongoose.model("payment_mode", schema);
+const payModeModel: Model<IPayMode> = mongoose.model("payment_modes", schema);
 
 export default payModeModel;

@@ -1,8 +1,9 @@
 require("dotenv").config();
 import mongoose, { Document, Model, Schema } from "mongoose";
-import { IUser } from "./user.model";
+import userModel, { IUser } from "./user.model";
+import ErrorHandler from "../utils/errorHandler";
 
-export interface IInternCreditRequest extends Document {
+export interface ISchemaModel extends Document {
   reference: string;
   status: string;
   name: string;
@@ -19,7 +20,7 @@ export interface IInternCreditRequest extends Document {
   deletedAt: Date;
 }
 
-const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Schema(
+const RequestSchema: Schema<ISchemaModel> = new mongoose.Schema(
   {
     reference: {
       type: String,
@@ -85,6 +86,7 @@ const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Sch
   { timestamps: true }
 );
 
-const requestModel: Model<IInternCreditRequest> = mongoose.model("requests", internCreditRequestSchema);
+const requestModel: Model<ISchemaModel> = mongoose.model("requests", RequestSchema);
 
 export default requestModel;
+

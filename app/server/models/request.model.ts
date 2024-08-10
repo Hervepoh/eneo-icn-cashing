@@ -14,6 +14,9 @@ export interface IInternCreditRequest extends Document {
   assignTo: string;
   createdBy: string;
   modifiedBy: string;
+  deleted: boolean;
+  deletedBy: string;
+  deletedAt: Date;
 }
 
 const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Schema(
@@ -63,6 +66,19 @@ const internCreditRequestSchema: Schema<IInternCreditRequest> = new mongoose.Sch
     },
     modifiedBy: {
       type: String,
+      required: false,
+    },
+    deleted: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    deletedBy: {
+      type: String,
+      required: false,
+    },
+    deletedAt: {
+      type: Date,
       required: false,
     },
   },

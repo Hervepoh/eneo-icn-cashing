@@ -1,14 +1,15 @@
 "use client"
 import React from 'react'
-import Image from "next/image";
-import { cn } from '@/lib/utils';
-import { style } from '@/config/layout.config';
-import ThemeSwitcher from '@/components/theme-switcher';
-import LanguageSwitcher from '@/components/language-switcher';
-import Metadata from '@/components/metadata';
-import { useSelector } from 'react-redux';
-import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import Image from "next/image";
+import { useRouter } from 'next/navigation';
+import { useSelector } from 'react-redux';
+import { cn } from '@/lib/utils';
+
+import { style } from '@/config/layout.config';
+import Metadata from '@/components/metadata';
+import ThemeSwitcher from '@/components/theme-switcher';
+import LocaleSwitcher from '@/components/locale-switcher';
 
 type Props = {
     children: React.ReactNode;
@@ -46,7 +47,7 @@ export default function AuthLayout({ children }: Props) {
                     <ThemeSwitcher />
                 </div>
                 <div className='absolute flex right-5 bottom-5'>
-                    <LanguageSwitcher />
+                    <LocaleSwitcher />
                 </div>
             </div>
         </>

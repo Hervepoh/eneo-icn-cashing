@@ -21,7 +21,7 @@ const locales = [
   },
 ];
 
-export default function LocaleToggler() {
+export default function LocaleSwitcher() {
   // const changeLocale = useChangeLocale({ preserveSearchParams: true });
   // const currentLocale = useCurrentLocale();
   const changeLocale = (value: string) => "";

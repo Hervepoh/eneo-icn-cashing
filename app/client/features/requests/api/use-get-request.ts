@@ -1,6 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
 
-// import { client } from "@/lib/hono";
 import { convertAmountFromMilliunits } from "@/lib/utils";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
 

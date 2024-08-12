@@ -1,24 +1,20 @@
 import { z } from "zod";
 
+import { useGetBanks } from "@/features/banks/api/use-get-banks";
+import { useCreateBank } from "@/features/banks/api/use-create-bank";
+
+import { useGetPayModes } from "@/features/payModes/api/use-get-payModes";
+import { useCreatePayMode } from "@/features/payModes/api/use-create-payMode";
+
 import { useOpenRequest } from "@/features/requests/hooks/use-open-request";
-import { useGetRequest } from "@/features/requests/api/use-get-request";
 import { RequestForm } from "@/features/requests/components/request-form";
-// import { useOpenRequest } from "@/features/requests/hooks/use-open-request";
-// import { RequestForm } from "@/features/requests/components/request-form";
-// import { useGetRequest } from "@/features/requests/api/use-get-request";
-// import { useEditRequest } from "@/features/requests/api/use-edit-request";
-// import { useDeleteRequest } from "@/features/requests/api/use-delete-request";
-
-// import { useCreateAccount } from "@/features/accounts/api/use-create-account";
-// import { useGetAccounts } from "@/features/accounts/api/use-get-accounts";
-
-import { useCreateCategory } from "@/features/categories/api/use-create-category";
-import { useGetCategories } from "@/features/categories/api/use-get-categories";
+import { useGetRequest } from "@/features/requests/api/use-get-request";
+import { useEditRequest } from "@/features/requests/api/use-edit-request";
+import { useDeleteRequest } from "@/features/requests/api/use-delete-request";
 
 import { useConfirm } from "@/hooks/use-confirm";
 
 import { Loader2 } from "lucide-react";
-
 import {
     Sheet,
     SheetContent,
@@ -28,20 +24,16 @@ import {
 } from "@/components/ui/sheet";
 
 
-
-/* Form validation */
-
+// Form validation 
 const formSchema = z.object({
     name: z.string(),
     payment_date: z.coerce.date(),
     payment_mode: z.string(),
     bank: z.string(),
     amount: z.string(),
-    description: z.string().nullable().optional(),
-    //evidence : z.instanceof(FileList).optional(),
+    //description: z.string().nullable().optional(),
 });
 type FormValues = z.input<typeof formSchema>;
-/* Form validation */
 
 
 export function EditRequestSheet() {
@@ -52,86 +44,82 @@ export function EditRequestSheet() {
     });
 
     const transactionQuery = useGetRequest(id);
-    // const editMutation = useEditRequest(id);
-    // const deleteMutation = useDeleteRequest(id);
+    const editMutation = useEditRequest(id);
+    const deleteMutation = useDeleteRequest(id);
 
 
-    // const categoryQuery = useGetCategories();
-    // const categoryMutation = useCreateCategory();
-    // const onCreateCategory = (name: string) => categoryMutation.mutate({ name });
-    // const categoryOptions = (categoryQuery.data ?? []).map(
-    //     (category) => ({
-    //         label: category.name,
-    //         value: category.id
-    //     })
-    // );
+    const payModeQuery = useGetPayModes();
+    const payModeMutation = useCreatePayMode();
+    const onCreatePayMode = (name: string) => payModeMutation.mutate({ name });
+    const payModeOptions = (payModeQuery.data ?? []).map(
+        (payMode: { name: any; _id: any; }) => ({
+            label: payMode.name,
+            value: payMode._id
+        })
+    );
 
-    // const accountQuery = useGetAccounts();
-    // const accountMutation = useCreateAccount();
-    // const onCreateAccount = (name: string) => accountMutation.mutate({ name });
-    // const accountOptions = (accountQuery.data ?? []).map(
-    //     (account) => ({
-    //         label: account.name,
-    //         value: account.id
-    //     })
-    // );
+    const bankQuery = useGetBanks();
+    const bankMutation = useCreateBank();
+    const onCreateBank = (name: string) => bankMutation.mutate({ name });
+    const bankOptions = (bankQuery.data ?? []).map(
+        (bank: { name: any; _id: any; }) => ({
+            label: bank.name,
+            value: bank._id
+        })
+    );
 
+    const isPending =
+         editMutation.isPending ||
+         deleteMutation.isPending ||
+         payModeMutation.isPending ||
+         bankMutation.isPending 
 
-
-    // const isPending =
-    //     editMutation.isPending ||
-    //     deleteMutation.isPending ||
-    //     categoryMutation.isPending ||
-    //     accountMutation.isPending 
-
-    // const isLoading =
-    //     transactionQuery.isLoading ||
-    //     accountQuery.isLoading ||
-    //     categoryQuery.isLoading;
+    const isLoading =
+        transactionQuery.isLoading ||
+        bankQuery.isLoading ||
+        payModeQuery.isLoading
 
     const defaultValues = transactionQuery.data
         ? {
-            date: transactionQuery.data.date
-                ? new Date(transactionQuery.data.date)
-                : new Date(),
+            name: transactionQuery.data.name,
             amount: transactionQuery.data.amount.toString(),
             bank: transactionQuery.data.bank,
+            payment_date: transactionQuery.data.payment_date
+                ? new Date(transactionQuery.data.payment_date)
+                : new Date(),
+            
+            payment_mode: transactionQuery.data.payment_mode,
             // accountId: transactionQuery.data.accountId,
             // categoryId: transactionQuery.data.categoryId,
-            // payee: transactionQuery.data.payee,
             // notes: transactionQuery.data.notes,
         }
         : {
-            date: new Date(),
-            amount:"",
+            name: "",
+            amount: "",
+            bank: "",
+            payment_date: new Date(),
+            payment_mode: "",
             // accountId: "",
             // categoryId: "",
-            // payee:"",
             // notes:""
         };
 
     const onSubmit = (values: FormValues) => {
-        // editMutation.mutate(values, {
-        //     onSuccess: () => {
-        //         onClose();
-        //     },
-        // });
+        editMutation.mutate(values, {
+            onSuccess: () => {
+                onClose();
+            },
+        });
     }
     const onDelete = async () => {
         const ok = await confirm();
-        // deleteMutation.mutate(undefined, {
-        //     onSuccess: () => {
-        //         onClose();
-        //     },
-        // });
+        deleteMutation.mutate(undefined, {
+            onSuccess: () => {
+                onClose();
+            },
+        });
     }
 
-    const isLoading = false; 
-    const isPending = false;
-    const categoryOptions: never[] = [];
-    const onCreateCategory = () => {}
-    const accountOptions: never[] = [];
-    const onCreateAccount = () => {}
     return (
         <>
             <ConfirmationDialog />
@@ -154,10 +142,10 @@ export function EditRequestSheet() {
                                 onSubmit={onSubmit}
                                 onDelete={onDelete}
                                 disabled={isPending}
-                                categoryOptions={categoryOptions}
-                                onCreateCategory={onCreateCategory}
-                                accountOptions={accountOptions}
-                                onCreateAccount={onCreateAccount}
+                                bankOptions={bankOptions}
+                                onCreateBank={onCreateBank}
+                                payModeOptions={payModeOptions}
+                                onCreatePayMode={onCreatePayMode}
 
                             />
                         )

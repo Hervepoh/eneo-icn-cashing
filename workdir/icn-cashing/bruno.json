@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "icn-cashing",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

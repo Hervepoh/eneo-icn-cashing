@@ -4,7 +4,7 @@ import React from 'react'
 // import { useOpenTransaction } from '@/features/transactions/hooks/use-open-transaction';
 // import { useDeleteTransaction } from '@/features/transactions/api/use-delete-transaction';
 
-import { Edit, MoreHorizontal, Trash, Trash2, User } from 'lucide-react';
+import { Edit, MoreHorizontal, Send, Trash, Trash2, User } from 'lucide-react';
 import { useConfirm } from '@/hooks/use-confirm';
 import {
     DropdownMenu,
@@ -17,6 +17,10 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button';
+import { useOpenRequest } from '@/features/requests/hooks/use-open-request';
+import { PiMarkerCircleLight, PiSquareHalfBottomThin } from 'react-icons/pi';
+import { useDeleteRequest } from '@/features/requests/api/use-delete-request';
+import { useRouter } from 'next/navigation';
 
 
 
@@ -26,24 +30,53 @@ type Props = {
 }
 
 export const Actions =  ({ id }: Props) => {
-    // const { onOpen, onClose } = useOpenTransaction();
+     
+    const { onOpen, onClose } = useOpenRequest();
     const [ConfirmationDialog, confirm] = useConfirm({
         title: "Are you sure?",
         message: "You are about to delete this transaction",
     });
 
-    // const deleteMutation = useDeleteTransaction(id);
-    // const isPending = deleteMutation.isPending
-    const isPending = false// TODO remove this line
-    const onOpen = () => ""// TODO remove this line
+    const deleteMutation = useDeleteRequest(id);
+    const isPending = deleteMutation.isPending
+
+    const router = useRouter();
+    const handleSellTask = async () => {
+       router.push(`/requests/${id}`)
+    }
+
+    const handleValidation = async () => {
+        // const ok = await confirm();
+        // if (ok) {
+        //     // deleteMutation.mutate(undefined, {
+        //     //     onSuccess: () => {
+        //     //         onClose();
+        //     //     },
+        //     // });
+        // }
+
+    }
+
+    const handleSubmit = async () => {
+        // const ok = await confirm();
+        // if (ok) {
+        //     // deleteMutation.mutate(undefined, {
+        //     //     onSuccess: () => {
+        //     //         onClose();
+        //     //     },
+        //     // });
+        // }
+
+    }
+    
     const handleDelete = async () => {
         const ok = await confirm();
         if (ok) {
-            // deleteMutation.mutate(undefined, {
-            //     onSuccess: () => {
-            //         onClose();
-            //     },
-            // });
+            deleteMutation.mutate(undefined, {
+                onSuccess: () => {
+                    onClose();
+                },
+            });
         }
 
     }
@@ -58,6 +91,27 @@ export const Actions =  ({ id }: Props) => {
                     </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>
+                <DropdownMenuItem
+                        disabled={isPending}
+                        onClick={handleSellTask}
+                    >
+                        <PiMarkerCircleLight className="mr-2 size-4" />
+                        <span>Completed Commercial Task</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        disabled={isPending}
+                        onClick={handleValidation}
+                    >
+                        <PiMarkerCircleLight className="mr-2 size-4" />
+                        <span>Validation</span>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                        disabled={isPending}
+                        onClick={handleSubmit}
+                    >
+                        <Send className="mr-2 size-4" />
+                        <span>Submit</span>
+                    </DropdownMenuItem>
                     <DropdownMenuItem
                         disabled={isPending}
                         onClick={() => onOpen(id)}

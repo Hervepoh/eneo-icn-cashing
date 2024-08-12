@@ -48,7 +48,7 @@ export function UserNav({user} : Props) {
               <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>
-              <Link href={"/profile"}>Settings  </Link>
+              <Link href={"/profile"}>Settings</Link>
               <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
             </DropdownMenuItem>
             <DropdownMenuItem>New Team</DropdownMenuItem>

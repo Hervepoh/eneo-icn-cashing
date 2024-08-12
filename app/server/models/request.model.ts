@@ -1,7 +1,5 @@
 require("dotenv").config();
 import mongoose, { Document, Model, Schema } from "mongoose";
-import userModel, { IUser } from "./user.model";
-import ErrorHandler from "../utils/errorHandler";
 
 export interface ISchemaModel extends Document {
   reference: string;
@@ -11,7 +9,7 @@ export interface ISchemaModel extends Document {
   bank: mongoose.Schema.Types.ObjectId;
   payment_mode: mongoose.Schema.Types.ObjectId;
   payment_date: Date;
-  userId: string;
+  userId: mongoose.Schema.Types.ObjectId;
   assignTo: string;
   createdBy: string;
   modifiedBy: string;
@@ -20,14 +18,15 @@ export interface ISchemaModel extends Document {
   deletedAt: Date;
 }
 
-const RequestSchema: Schema<ISchemaModel> = new mongoose.Schema(
+const recordSchema: Schema<ISchemaModel> = new mongoose.Schema(
   {
     reference: {
       type: String,
       required: false,
     },
     userId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users', // Référence au modèle 'userModel'
       required: true,
     },
     name: {
@@ -40,7 +39,7 @@ const RequestSchema: Schema<ISchemaModel> = new mongoose.Schema(
     },
     bank: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'banks', // Référence au modèle 'bank'
+      ref: 'banks', // Référence au modèle 'bankModel'
       required: true,
     },
     payment_date: {
@@ -86,7 +85,13 @@ const RequestSchema: Schema<ISchemaModel> = new mongoose.Schema(
   { timestamps: true }
 );
 
-const requestModel: Model<ISchemaModel> = mongoose.model("requests", RequestSchema);
+// recordSchema.pre('findByIdAndUpdate', async function (next) {
+//   // do stuff
+  
+//   next();
+// });
+
+const requestModel: Model<ISchemaModel> = mongoose.model("requests", recordSchema);
 
 export default requestModel;
 

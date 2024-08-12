@@ -13,7 +13,6 @@ export const useCreateRequest = () => {
     RequestType
   >({
     mutationFn: async (json) => {
-      console.log(json);
       const  config = {
         method: 'post',
         maxBodyLength: Infinity,

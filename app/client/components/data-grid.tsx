@@ -14,7 +14,6 @@ export const DataGrid = () => {
   const params = useSearchParams();
   const from = params.get("from") || undefined;
   const to = params.get("to") || undefined;
-  console.log("from", from, "to", to);
 
   const dateRangeLabel = formatDateRange({ from, to });
 
@@ -30,19 +29,11 @@ export const DataGrid = () => {
     )
   }
 
-  const getdata = (status: string,objArr: {_id:string , count: number}[]) =>{
-    if (objArr) {
-      const matchObj = objArr.find(obj => obj._id === status)
-       return matchObj ? matchObj.count : 0;
-    }
-    
-  }
-  console.log("requestCountByStatus",data?.requestCountByStatus)
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
       <DataCard
         title="Initiated"
-        value={getdata("initiated",data?.requestCountByStatus)}
+        value={data?.transactions.initiated || 0}
         percentageChange={data?.remainingChange}
         icon={FaPiggyBank}
         variant="default"
@@ -51,7 +42,7 @@ export const DataGrid = () => {
 
       <DataCard
         title="Pending validation"
-        value={data?.remainingAmount}
+        value={data?.transactions.pending || 0}
         percentageChange={data?.remainingChange}
         icon={MdPendingActions}
         variant="danger"
@@ -60,7 +51,7 @@ export const DataGrid = () => {
 
       <DataCard
         title="Processing"
-        value={data?.expensesAmount}
+        value={data?.transactions.processing || 0}
         percentageChange={data?.expensesChange}
         icon={FaArrowTrendDown}
         variant="danger"
@@ -69,7 +60,7 @@ export const DataGrid = () => {
 
       <DataCard
         title="Treated"
-        value={data?.incomeAmount}
+        value={data?.transactions.treated || 0}
         percentageChange={data?.incomeChange}
         icon={FaArrowTrendUp}
         variant="success"

@@ -12,5 +12,16 @@ export const appConfig = {
 
     redis_session_expire: process.env.REDIS_SESSION_EXPIRE || 604800, // by default 7day = 604800 seconde
 
-    support_mail: process.env.SUPPORT_MAIL || "herve.ngando@eneo.cm"
+    support_mail: process.env.SUPPORT_MAIL || "herve.ngando@eneo.cm",
+
+    status : [
+        'deleted', 
+        "draft", 
+        "initiated", 
+        "rejected | validated" , 
+        "pending commercial input",
+        "pending finance validation",
+        "processing",
+        "treated"  
+    ]
 }

@@ -66,3 +66,7 @@
 #### Settings
 - [x] get list all settings
 - [x] update settings
+
+#### Seccurity
+- [ ] get IP address/and Hostname of the user machine
+- [ ] historic table for tracking ressources changes

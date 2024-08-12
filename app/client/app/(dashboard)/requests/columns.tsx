@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { Actions } from "./actions";
+import { status } from "@/config/status.config";
+import { ActionsValidations } from "./actions-validation";
 // import { AccountColumn } from "./account-column";
 // import { CategoryColumn } from "./category-column";
 
@@ -81,12 +83,12 @@ export const columns: ColumnDef<ResponseType>[] = [
       );
     },
     cell: ({ row }) => {
-      const status : string = row.getValue("status");
+      const status: string = row.getValue("status");
 
       return <Badge
         variant={status == "draft" ? "destructive" : "primary"}
         className="text-md font-medium px-3.5 py-2.5">
-           { status == "draft" && <TriangleAlert className='mr-2 size-4 shrink-0' />}
+        {status == "draft" && <TriangleAlert className='mr-2 size-4 shrink-0' />}
         {status}
       </Badge>
     },
@@ -190,7 +192,9 @@ export const columns: ColumnDef<ResponseType>[] = [
 
   {
     id: "actions",
-    cell: ({ row }) => <Actions id={row.original._id} />,
+    cell: ({ row }) => row.original.status === status[0] && <Actions id={row.original._id} />
+       ||
+        row.original.status === status[1] && <ActionsValidations id={row.original._id} />,
     enableSorting: false,
   },
 ];

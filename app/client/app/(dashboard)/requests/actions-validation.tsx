@@ -29,21 +29,15 @@ type Props = {
     id: string;
 }
 
-export const Actions = ({ id }: Props) => {
+export const ActionsValidations = ({ id }: Props) => {
     const { onOpen, onClose } = useOpenRequest();
     const [ConfirmationDialog, confirm] = useConfirm({
         title: "Are you sure?",
         message: "You are about to delete this transaction",
-    });
+    });    
 
     const editMutation = useEditRequest(id);
-    const deleteMutation = useDeleteRequest(id);
-    const isPending = deleteMutation.isPending
-
-    const router = useRouter();
-    const handleSellTask = async () => {
-        router.push(`/requests/${id}`)
-    }
+    const isPending = editMutation.isPending
 
     const handleValidation = async () => {
         // const ok = await confirm();
@@ -54,30 +48,8 @@ export const Actions = ({ id }: Props) => {
         //     //     },
         //     // });
         // }
-
     }
 
-    const handleSubmit = async () => {
-        editMutation.mutate({ status: status[1] }, {
-            onSuccess: () => {
-                onClose();
-                //window.location.reload();
-            },
-        });
-
-    }
-
-    const handleDelete = async () => {
-        const ok = await confirm();
-        if (ok) {
-            deleteMutation.mutate(undefined, {
-                onSuccess: () => {
-                    onClose();
-                },
-            });
-        }
-
-    }
 
     return (
         <>
@@ -90,29 +62,12 @@ export const Actions = ({ id }: Props) => {
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align='end'>
                     <DropdownMenuItem
-                        disabled={isPending}
-                        onClick={handleSubmit}
-                    >
-                        <Send className="mr-2 size-4" />
-                        <span>Submit</span>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                        disabled={isPending}
-                        onClick={() => onOpen(id)}
-                    >
-                        <Edit className="mr-2 size-4" />
-                        <span>Edit</span>
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                        disabled={isPending}
-                        onClick={handleDelete}
-                    >
-                        <Trash className="mr-2 size-4" />
-                        <span>Delete</span>
-                    </DropdownMenuItem>
-
+                            disabled={isPending}
+                            onClick={handleValidation}
+                        >
+                            <PiMarkerCircleLight className="mr-2 size-4" />
+                            <span>Validation</span>
+                        </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 

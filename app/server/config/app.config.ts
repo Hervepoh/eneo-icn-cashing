@@ -16,12 +16,13 @@ export const appConfig = {
 
     status : [
         'deleted', 
-        "draft", 
-        "initiated", 
-        "rejected | validated" , 
-        "pending commercial input",
-        "pending finance validation",
+        "draft",
+        "initiated",
+        "validated",
+        "rejected" , 
+        "pending_commercial_input",
+        "pending_finance_validation",
         "processing",
-        "treated"  
+        "treated"   
     ]
 }

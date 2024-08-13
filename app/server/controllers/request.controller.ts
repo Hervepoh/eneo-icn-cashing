@@ -206,9 +206,28 @@ export const update = CatchAsyncError(
         modifiedBy: user._id,
       };
       if (req.body.payment_date) {
+        //TODO
+        console.log("TODO fix issue in edit request feature")
         data = {
           ...data,
           payment_date: parseDMY(req.body.payment_date),
+        };
+      }
+      // For validation
+      if (req.body.status === appConfig.status[3]) {
+        data = {
+          ...data,
+          validator: user._id,
+          validetedAt: new Date()
+        };
+      }
+       // For Reject
+      if (req.body.status === appConfig.status[4]) {
+        data = {
+          ...data,
+          validator: user._id,
+          validetedAt: new Date(),
+          refusal: true,
         };
       }
       

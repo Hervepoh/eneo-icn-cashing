@@ -34,7 +34,8 @@ export const Actions = ({ id }: Props) => {
     const isPending = editMutation.isPending || deleteMutation.isPending
 
     const handleSubmit = async () => {
-        editMutation.mutate({ status: status[1] }, {
+        // Initiate a new transaction in the validation process
+        editMutation.mutate({ status: status[2] }, {
             onSuccess: () => {
                 onClose();
                 //window.location.reload();

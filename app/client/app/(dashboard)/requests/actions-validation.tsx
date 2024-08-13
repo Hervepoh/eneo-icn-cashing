@@ -1,29 +1,14 @@
 "use client"
-import React, { useEffect, useState } from 'react'
 
-// import { useOpenTransaction } from '@/features/transactions/hooks/use-open-transaction';
-// import { useDeleteTransaction } from '@/features/transactions/api/use-delete-transaction';
+import React from 'react'
+import { Loader2 } from 'lucide-react';
+import { PiMarkerCircleLight } from 'react-icons/pi';
 
-import { Edit, MoreHorizontal, Send, Trash, Trash2, User } from 'lucide-react';
-import { useConfirm } from '@/hooks/use-confirm';
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuGroup,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from '@/components/ui/button';
-import { useOpenRequest } from '@/features/requests/hooks/use-open-request';
-import { PiMarkerCircleLight, PiSquareHalfBottomThin } from 'react-icons/pi';
-import { useDeleteRequest } from '@/features/requests/api/use-delete-request';
-import { useRouter } from 'next/navigation';
-import { useEditRequest } from '@/features/requests/api/use-edit-request';
-import { status } from '@/config/status.config';
 import { useValidate } from '@/hooks/use-validate';
+import { useEditRequest } from '@/features/requests/api/use-edit-request';
+import { toast } from 'sonner';
+import { status } from '@/config/status.config';
 
 
 type Props = {
@@ -31,22 +16,34 @@ type Props = {
 }
 
 export const ActionsValidations = ({ id }: Props) => {
+
     const [ConfirmationDialog, confirm] = useValidate({
-        title: "Are you sure?",
-        message: "You are about to validate this transaction",
+        id,
+        title: "Are you sure ?",
+        message: "You are about to validate this transaction , Are you sure you want to perform this action?",
     });
 
     const editMutation = useEditRequest(id);
     const isPending = editMutation.isPending
 
     const handleValidation = async () => {
-        const ok = await confirm();
-        if (ok) {
-        //     // editMutation.mutate(undefined, {
-        //     //     onSuccess: () => {
-        //     //         onClose();
-        //     //     },
-        //     // });
+        try {
+            const confirmed = await confirm();
+            if (confirmed) {
+                console.log('good you confirm');
+                editMutation.mutate({ status: status[3] }, {
+                    onSuccess: () => {
+                        toast.success("Ok, transaction going to next step")
+                    },
+                });
+
+            } else {
+                console.log('you canceled');
+                // Cancel the action
+            }
+        } catch (error) {
+            console.log(error); // "bad you reject"
+            // Handle the rejection
         }
     }
 
@@ -55,11 +52,11 @@ export const ActionsValidations = ({ id }: Props) => {
         <>
             <ConfirmationDialog />
             <Button
-                variant={"success"}
+                variant={"blue"}
                 onClick={handleValidation}
                 disabled={isPending}
             >
-                 <PiMarkerCircleLight className="mr-2 size-4" /> Validatation
+                {isPending ? <Loader2 /> : <PiMarkerCircleLight className="mr-2 size-4" />}  Validatation
             </Button>
         </>
     )

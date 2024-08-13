@@ -1,5 +1,5 @@
 "use client";
-import { ArrowUpDown, TriangleAlert } from "lucide-react";
+import { ArrowUpDown, ClipboardCheck, TriangleAlert } from "lucide-react";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -11,8 +11,10 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 
 import { Actions } from "./actions";
-import { status } from "@/config/status.config";
+import { status, statusStyles } from "@/config/status.config";
 import { ActionsValidations } from "./actions-validation";
+import { ActionsInvoicesAdd } from "./actions-invoiceAdd";
+import { LuCopyCheck } from "react-icons/lu";
 // import { AccountColumn } from "./account-column";
 // import { CategoryColumn } from "./category-column";
 
@@ -83,13 +85,21 @@ export const columns: ColumnDef<ResponseType>[] = [
       );
     },
     cell: ({ row }) => {
-      const status: string = row.getValue("status");
+      const rowStatus: string = row.getValue("status");
+
+      const statusIcons: { [key: string]: React.ReactNode } = {
+        "draft": <TriangleAlert className="mr-2 size-4 shrink-0" />,
+        "initiated": <LuCopyCheck className="mr-2 size-4 shrink-0" />,
+        "validated": <ClipboardCheck className="mr-2 size-4 shrink-0" />,
+        "pending_commercial_input": <TriangleAlert className="mr-2 size-4 shrink-0" />,
+        "pending_finance_validation": <TriangleAlert className="mr-2 size-4 shrink-0" />,
+      };
 
       return <Badge
-        variant={status == "draft" ? "destructive" : "primary"}
-        className="text-md font-medium px-3.5 py-2.5">
-        {status == "draft" && <TriangleAlert className='mr-2 size-4 shrink-0' />}
-        {status}
+        variant={statusStyles[rowStatus] || "primary"}
+        className="text-md font-bold px-3.5 py-2.5">
+        {statusIcons[rowStatus]}
+        {rowStatus.toUpperCase()}
       </Badge>
     },
   },
@@ -192,8 +202,10 @@ export const columns: ColumnDef<ResponseType>[] = [
 
   {
     id: "actions",
-    cell: ({ row }) => row.original.status === status[0] && <Actions id={row.original._id} />
-       || row.original.status === status[1] && <ActionsValidations id={row.original._id} />,
+    cell: ({ row }) => row.original.status === status[1] && <Actions id={row.original._id} />
+      || row.original.status === status[2] && <ActionsValidations id={row.original._id} />
+      || row.original.status === status[3] && <ActionsInvoicesAdd id={row.original._id} />
+      || row.original.status === status[4] && (<Button variant={"destructive"} disabled={true}>Rejected</Button>),
     enableSorting: false,
   },
 ];

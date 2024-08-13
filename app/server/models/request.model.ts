@@ -10,6 +10,10 @@ export interface ISchemaModel extends Document {
   payment_mode: mongoose.Schema.Types.ObjectId;
   payment_date: Date;
   userId: mongoose.Schema.Types.ObjectId;
+  validator: mongoose.Schema.Types.ObjectId;
+  validetedAt: Date;
+  refusal: boolean;
+  reason_for_refusal: string;
   assignTo: string;
   createdBy: string;
   modifiedBy: string;
@@ -57,6 +61,24 @@ const recordSchema: Schema<ISchemaModel> = new mongoose.Schema(
       default: "draft",
     },
     assignTo: {
+      type: String,
+      required: false,
+    },
+    validator: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'users', // Référence au modèle 'userModel'
+      required: false,
+    },
+    validetedAt: {
+      type: Date,
+      required: false,
+    },
+    refusal: {
+      type: Boolean,
+      required: false,
+      default: false,
+    },
+    reason_for_refusal: {
       type: String,
       required: false,
     },

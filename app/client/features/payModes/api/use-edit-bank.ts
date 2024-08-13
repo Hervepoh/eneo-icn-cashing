@@ -1,19 +1,16 @@
+import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
 
-// import { client } from "@/lib/hono";
-
-// type ResponseType = InferResponseType<typeof client.api.categories[":id"]["$patch"]>;
-// type RequestType = InferRequestType<typeof client.api.categories[":id"]["$patch"]>["json"];
+type RequestType = any
 
 export const useUpdateBank = (id?: string) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
     ResponseType,
-    Error//,
-    // RequestType
+    Error,
+    RequestType
   >({
     mutationFn: async (json) => {
       const  config = {

@@ -69,7 +69,7 @@ export const ImportCard = ({
             return newSelectedColumns;
         })
     }
-    console.log(selectedColumns);
+    //console.log(selectedColumns);
     const progress = Object.values(selectedColumns).filter(Boolean).length;
 
     const handleContinue = () => {

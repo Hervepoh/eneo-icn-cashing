@@ -23,6 +23,7 @@ import { useDeleteRequest } from '@/features/requests/api/use-delete-request';
 import { useRouter } from 'next/navigation';
 import { useEditRequest } from '@/features/requests/api/use-edit-request';
 import { status } from '@/config/status.config';
+import { useValidate } from '@/hooks/use-validate';
 
 
 type Props = {
@@ -30,47 +31,36 @@ type Props = {
 }
 
 export const ActionsValidations = ({ id }: Props) => {
-    const { onOpen, onClose } = useOpenRequest();
-    const [ConfirmationDialog, confirm] = useConfirm({
+    const [ConfirmationDialog, confirm] = useValidate({
         title: "Are you sure?",
-        message: "You are about to delete this transaction",
-    });    
+        message: "You are about to validate this transaction",
+    });
 
     const editMutation = useEditRequest(id);
     const isPending = editMutation.isPending
 
     const handleValidation = async () => {
-        // const ok = await confirm();
-        // if (ok) {
-        //     // deleteMutation.mutate(undefined, {
+        const ok = await confirm();
+        if (ok) {
+        //     // editMutation.mutate(undefined, {
         //     //     onSuccess: () => {
         //     //         onClose();
         //     //     },
         //     // });
-        // }
+        }
     }
 
 
     return (
         <>
             <ConfirmationDialog />
-            <DropdownMenu>
-                <DropdownMenuTrigger>
-                    <Button variant="ghost" className='size-8 p-0'>
-                        <MoreHorizontal className='size-4' />
-                    </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align='end'>
-                    <DropdownMenuItem
-                            disabled={isPending}
-                            onClick={handleValidation}
-                        >
-                            <PiMarkerCircleLight className="mr-2 size-4" />
-                            <span>Validation</span>
-                        </DropdownMenuItem>
-                </DropdownMenuContent>
-            </DropdownMenu>
-
+            <Button
+                variant={"success"}
+                onClick={handleValidation}
+                disabled={isPending}
+            >
+                 <PiMarkerCircleLight className="mr-2 size-4" /> Validatation
+            </Button>
         </>
     )
 }

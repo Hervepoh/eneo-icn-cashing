@@ -41,7 +41,7 @@ export function EditCategorySheet() {
     const isLoading = categoryQuery.isLoading;
 
     const defaultValues = categoryQuery.data
-        ? { name: categoryQuery.data.name }
+        ? { name: categoryQuery.data?.name }
         : { name: "" };
 
     const onSubmit = (values: FormValues) => {

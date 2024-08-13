@@ -56,6 +56,7 @@ type Props = {
     payModeOptions: { label: string; value: string }[];
     onCreateBank: (name: string) => void;
     onCreatePayMode: (name: string) => void;
+    editable?: boolean;
 }
 
 export const RequestForm = (
@@ -68,7 +69,8 @@ export const RequestForm = (
         bankOptions,
         payModeOptions,
         onCreateBank,
-        onCreatePayMode
+        onCreatePayMode,
+        editable = true
     }: Props) => {
 
     const form = useForm<FormValues>({
@@ -195,7 +197,7 @@ export const RequestForm = (
                     )}
                 />
 
-    
+
                 <FormField
                     control={form.control}
                     name="description"
@@ -215,16 +217,20 @@ export const RequestForm = (
                         </FormItem>
                     )}
                 />
-
-                <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={disabled}
-                >
-                    {disabled ? (<><Loader2 className='animate-spin size-4 mr-2' /> Loading</>) : id ? "Save changes" : "Create transaction"}
-                </Button>
                 {
-                    !!id && (<Button
+                    editable && (
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={disabled}
+                        >
+                            {disabled ? (<><Loader2 className='animate-spin size-4 mr-2' /> Loading</>) : id ? "Save changes" : "Create transaction"}
+                        </Button>
+                    )
+                }
+
+                {
+                    !!id && editable && (<Button
                         type="button"
                         className="w-full"
                         variant="outline"

@@ -7,18 +7,21 @@ import { MdPendingActions } from "react-icons/md";
 import { formatDateRange } from "@/lib/utils";
 import { useGetSummary } from "@/features/summary/api/use-get-summary";
 import { DataCard, DataCardLoading } from "@/components/data-card";
+import { Suspense } from "react";
 
 
 
-export const DataGrid = () => {
-  const params = useSearchParams();
-  const from = params.get("from") || undefined;
-  const to = params.get("to") || undefined;
+export const DataGrid= () => {
 
-  const dateRangeLabel = formatDateRange({ from, to });
-
-  const { data, isLoading } = useGetSummary();
-
+  // const { data, isLoading } = useGetSummary();
+  const isLoading = true;
+  const data = {
+    transactions: {initiated:0 , pending:0 , processing:0 , treated:0},
+    incomeChange:0,
+    expensesChange:0,
+    remainingChange: 0,
+    dateRangeLabel: "",
+  };
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
@@ -37,7 +40,7 @@ export const DataGrid = () => {
         percentageChange={data?.remainingChange}
         icon={FaPiggyBank}
         variant="default"
-        dateRange={dateRangeLabel}
+        dateRange={data?.dateRangeLabel}
       />
 
       <DataCard
@@ -46,7 +49,7 @@ export const DataGrid = () => {
         percentageChange={data?.remainingChange}
         icon={MdPendingActions}
         variant="danger"
-        dateRange={dateRangeLabel}
+        dateRange={data?.dateRangeLabel}
       />
 
       <DataCard
@@ -55,7 +58,7 @@ export const DataGrid = () => {
         percentageChange={data?.expensesChange}
         icon={FaArrowTrendDown}
         variant="danger"
-        dateRange={dateRangeLabel}
+        dateRange={data?.dateRangeLabel}
       />
 
       <DataCard
@@ -64,10 +67,12 @@ export const DataGrid = () => {
         percentageChange={data?.incomeChange}
         icon={FaArrowTrendUp}
         variant="success"
-        dateRange={dateRangeLabel}
+        dateRange={data?.dateRangeLabel}
       />
 
 
     </div>
   )
 }
+
+ 

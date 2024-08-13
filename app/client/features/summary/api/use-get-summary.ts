@@ -1,13 +1,15 @@
+"use client"
+
 import React from 'react'
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
-import { convertAmountFromMilliunits } from "@/lib/utils";
+import { convertAmountFromMilliunits, formatDateRange } from "@/lib/utils";
 import { formatDate, subDays } from 'date-fns';
-import moment from "moment";
 
 
 export const useGetSummary = () => {
+
   const params = useSearchParams();
 
   const fromParam = params.get('from') || "";
@@ -19,6 +21,7 @@ export const useGetSummary = () => {
 
   const from = fromParam ? formatDate(fromParam, 'dd/MM/yyyy') : defaultFrom;
   const to = toParam ? formatDate(toParam, 'dd/MM/yyyy') : defaultTo;
+  const dateRangeLabel = formatDateRange({ from, to });
 
   const query = useQuery({
     queryKey: ["summary", { from, to, accountId }],
@@ -27,7 +30,7 @@ export const useGetSummary = () => {
         "from": "01/08/2024",
         "to": "09/08/2024"
       });
-      console.log(data);
+
       const config: AxiosRequestConfig = {
         method: 'get',
         maxBodyLength: Infinity,
@@ -44,7 +47,7 @@ export const useGetSummary = () => {
 
       try {
         const response = await axios.request(config);
-        return response.data?.data;
+        return {...response.data?.data , dateRangeLabel};
       } catch (error) {
         if (axios.isAxiosError(error)) {
           throw error;

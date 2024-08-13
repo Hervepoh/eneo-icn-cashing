@@ -2,7 +2,6 @@ import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-// type ResponseType = InferResponseType<typeof client.api.categories[":id"]["$delete"]>;
 
 type ResponseType = any
 
@@ -14,11 +13,6 @@ export const useDeleteCategory = (id?: string) => {
     Error
   >({
     mutationFn: async () => {
-      // const response = await client.api.categories[":id"]["$delete"]({
-      //   param: { id }
-      // });
-
-      // return await response.json();
       const  config = {
         method: 'post',
         maxBodyLength: Infinity,

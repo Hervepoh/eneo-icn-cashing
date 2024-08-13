@@ -1,28 +1,25 @@
+import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
 
-// import { client } from "@/lib/hono";
-
-// type ResponseType = InferResponseType<typeof client.api.categories[":id"]["$patch"]>;
-// type RequestType = InferRequestType<typeof client.api.categories[":id"]["$patch"]>["json"];
+type RequestType = any;
 
 export const useUpdateCategory = (id?: string) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
     ResponseType,
-    Error//,
-    // RequestType
+    Error,
+    RequestType
   >({
     mutationFn: async (json) => {
-      // const response = await client.api.categories[":id"]["$patch"]({
-      //   param: { id },
-      //   json
-      // });
+      const response = await axios.put(
+        `http://localhost:8000/api/v1/requests/${id}`,
+        json, 
+        { withCredentials: true, }
+      );
+      return response.data;
 
-      // return await response.json();
-      return JSON.parse("a");
     },
     onSuccess: () => {
       toast.success("Category updated.")

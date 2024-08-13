@@ -64,7 +64,7 @@ export default function TransactionsPage(props: Props) {
     // const [AccountDialog, confirm] = useSelectAccount();
 
     const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
-        console.log(results)
+        // console.log(results)
         setImportResults(results);
         setVariant(VARIANTS.IMPORT);
     };

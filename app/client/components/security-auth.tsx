@@ -1,8 +1,10 @@
 "use client"
-import { redirect, useRouter } from "next/navigation";
+
 import React from "react";
 import { useSelector } from "react-redux";
-import { UserAuth } from "./Security";
+import { redirect, useRouter } from "next/navigation";
+
+import { UserAuth } from "@/components/security";
 
 interface Props {
     children: React.ReactNode;
@@ -11,7 +13,7 @@ interface Props {
 
 export default function IsAuthenticated({ children }: Props) {
     const isAuthenticated = UserAuth();
-    console.log("isAuthenticated",isAuthenticated);
+   // console.log("isAuthenticated",isAuthenticated);
     const router = useRouter();
     if (isAuthenticated) {
         redirect("/")

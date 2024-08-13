@@ -1,10 +1,10 @@
 "use server";
 
-import { signOut } from "@/lib/auth/authConfig";
+// import { signOut } from "@/lib/auth/authConfig";
 
 export const handleSignOut = async () => {
   try {
-    await signOut();
+    // await signOut();
   } catch (error) {
     throw error;
   }

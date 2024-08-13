@@ -1,5 +1,5 @@
 "use client";
-import { ArrowUpDown, MoreHorizontal, TriangleAlert } from "lucide-react";
+import { ArrowUpDown, TriangleAlert } from "lucide-react";
 
 import { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
@@ -193,8 +193,7 @@ export const columns: ColumnDef<ResponseType>[] = [
   {
     id: "actions",
     cell: ({ row }) => row.original.status === status[0] && <Actions id={row.original._id} />
-       ||
-        row.original.status === status[1] && <ActionsValidations id={row.original._id} />,
+       || row.original.status === status[1] && <ActionsValidations id={row.original._id} />,
     enableSorting: false,
   },
 ];

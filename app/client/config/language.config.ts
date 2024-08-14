@@ -7,8 +7,8 @@ export const language = {
         fr : "Tableau de bord",
     },
     demand: {
-        en : "Demand",
-        fr : "Demandes",
+        en : "Transactions",
+        fr : "Transactions",
     },
     aci_management:{
         en: "ICN Management",

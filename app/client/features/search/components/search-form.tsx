@@ -37,7 +37,7 @@ type Props = {
 }
 
 export const SearchForm = ({ key,label,placeholder }: Props) => {
-    const { mutate, isPending, isError } = useGetUnpaid(key);
+    const { mutate, isPending, isError ,...data} = useGetUnpaid(key);
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -45,8 +45,16 @@ export const SearchForm = ({ key,label,placeholder }: Props) => {
     });
 
     const handleSubmit = (values: FormValues) => {
-        const amount = values.value
-
+        const value = values.value
+        const from = values.from
+        const to = values.to
+        console.log("ok search input");
+        // mutate({ value , from , to }, {
+        //     onSuccess: () => {
+        //         // onClose();
+        //         //window.location.reload();
+        //     },
+        // });
     }
 
     const disabled = isPending;

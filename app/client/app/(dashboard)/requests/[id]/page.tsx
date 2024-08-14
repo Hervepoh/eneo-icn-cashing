@@ -60,9 +60,11 @@ const tags = Array.from({ length: 50 }).map(
 )
 
 
+
+
 export default function TransactionsDetails() {
     const params = useParams<{ id: string }>();
-    const { isLoading, isError, data, error } =  useGetRequest(params.id)
+    const { isLoading, isError, data, error } = useGetRequest(params.id)
 
 
     const [invoiceNumber, setInvoiceNumber] = useState('');
@@ -191,7 +193,7 @@ export default function TransactionsDetails() {
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                {[1,2,3,5,6,9,10,11].map((invoice,i) => (
+                                                {[1, 2, 3, 5, 6, 9, 10, 11].map((invoice, i) => (
                                                     <TableRow key={i++}>
                                                         <TableCell className="font-medium">
                                                             <Checkbox key={i} value={i} />
@@ -220,41 +222,41 @@ export default function TransactionsDetails() {
                                     <ResizableHandle />
                                     <ResizablePanel defaultSize={75}>
                                         <div className="flex h-full items-center justify-center p-6">
-                                        <Table>
-                                            <TableCaption>A list of your recent invoices.</TableCaption>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead className=""></TableHead>
-                                                    <TableHead>regroup</TableHead>
-                                                    <TableHead>contract</TableHead>
-                                                    <TableHead className="">invoice</TableHead>
-                                                    <TableHead className="">Name</TableHead>
-                                                    <TableHead className="">Date</TableHead>
-                                                    <TableHead className="">Amount</TableHead>
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                {[1,2,3,5,6,9,10,11].map((invoice,i) => (
-                                                    <TableRow key={i++}>
-                                                        <TableCell className="font-medium">
-                                                            <Checkbox key={i} value={i} />
-                                                        </TableCell>
-                                                        <TableCell className="font-medium"></TableCell>
-                                                        <TableCell className="font-medium">200050122</TableCell>
-                                                        <TableCell className="font-medium">200072655</TableCell>
-                                                        <TableCell>DONGMO SABINE</TableCell>
-                                                        <TableCell>25/06/2010</TableCell>
-                                                        <TableCell>797</TableCell>
+                                            <Table>
+                                                <TableCaption>A list of your recent invoices.</TableCaption>
+                                                <TableHeader>
+                                                    <TableRow>
+                                                        <TableHead className=""></TableHead>
+                                                        <TableHead>regroup</TableHead>
+                                                        <TableHead>contract</TableHead>
+                                                        <TableHead className="">invoice</TableHead>
+                                                        <TableHead className="">Name</TableHead>
+                                                        <TableHead className="">Date</TableHead>
+                                                        <TableHead className="">Amount</TableHead>
                                                     </TableRow>
-                                                ))}
-                                            </TableBody>
-                                            <TableFooter>
-                                                <TableRow>
-                                                    <TableCell colSpan={4}>Total</TableCell>
-                                                    <TableCell className="text-right">$2,500.00</TableCell>
-                                                </TableRow>
-                                            </TableFooter>
-                                        </Table>
+                                                </TableHeader>
+                                                <TableBody>
+                                                    {[1, 2, 3, 5, 6, 9, 10, 11].map((invoice, i) => (
+                                                        <TableRow key={i++}>
+                                                            <TableCell className="font-medium">
+                                                                <Checkbox key={i} value={i} />
+                                                            </TableCell>
+                                                            <TableCell className="font-medium"></TableCell>
+                                                            <TableCell className="font-medium">200050122</TableCell>
+                                                            <TableCell className="font-medium">200072655</TableCell>
+                                                            <TableCell>DONGMO SABINE</TableCell>
+                                                            <TableCell>25/06/2010</TableCell>
+                                                            <TableCell>797</TableCell>
+                                                        </TableRow>
+                                                    ))}
+                                                </TableBody>
+                                                <TableFooter>
+                                                    <TableRow>
+                                                        <TableCell colSpan={4}>Total</TableCell>
+                                                        <TableCell className="text-right">$2,500.00</TableCell>
+                                                    </TableRow>
+                                                </TableFooter>
+                                            </Table>
                                         </div>
                                     </ResizablePanel>
                                 </ResizablePanelGroup>

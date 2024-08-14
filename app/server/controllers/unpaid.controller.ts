@@ -104,11 +104,11 @@ export const getUnpaidBillsByContractNumber = CatchAsyncError(
 //---------------------------------------------------------
 export const getUnpaidBillsByInvoiceNumber = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-
+    
     let connection;
     try {
       // Get Invoice Number from the request body
-      const { value: invoice_number } = req.body;
+      const { value: invoice_number } = req.query;
 
       // Fetch data from the database
       connection = await getConnection();

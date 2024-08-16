@@ -136,30 +136,42 @@ export const read = CatchAsyncError(
       }
 
       //check if the provided id is in the cache
-      const isCachedExist = await redis.get(requestId);
-      if (isCachedExist) {
-        console.log("read cache");
-        const data = JSON.parse(isCachedExist);
-        return res.status(200).json({
-          success: true,
-          data,
-        });
-      } else {
-        const data = await requestModel.findById(requestId).select("-_id -__v");
+      // const isCachedExist = await redis.get(requestId);
+      // if (isCachedExist) {
+      //   const data = JSON.parse(isCachedExist);
+      //   return res.status(200).json({
+      //     success: true,
+      //     data,
+      //   });
+      // } else {
+        const data = await requestModel
+        .findById(requestId)
+        .select("-_id -__v")
+        .populate({
+          path: "bank",
+          select: "name _id",
+          model: bankModel,
+        })
+        .populate({
+          path: "payment_mode",
+          select: "name _id",
+          model: payModeModel,
+        })
+        ;
 
         // Put into Redis for caching futur purpose
-        await redis.set(
-          requestId,
-          JSON.stringify(data),
-          "EX",
-          appConfig.redis_session_expire
-        );
+        // await redis.set(
+        //   requestId,
+        //   JSON.stringify(data),
+        //   "EX",
+        //   appConfig.redis_session_expire
+        // );
 
         return res.status(200).json({
           success: true,
           data,
         });
-      }
+      //}
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
     }
@@ -237,13 +249,13 @@ export const update = CatchAsyncError(
         { new: true }
       );
 
-      // Put into Redis for caching futur purpose
-      await redis.set(
-        requestId,
-        JSON.stringify(result),
-        "EX",
-        appConfig.redis_session_expire
-      );
+      // // Put into Redis for caching futur purpose
+      // await redis.set(
+      //   requestId,
+      //   JSON.stringify(result),
+      //   "EX",
+      //   appConfig.redis_session_expire
+      // );
 
       return res.status(200).json({
         success: true,

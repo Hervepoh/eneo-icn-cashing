@@ -9,6 +9,7 @@ import { useValidate } from '@/hooks/use-validate';
 import { useEditRequest } from '@/features/requests/api/use-edit-request';
 import { toast } from 'sonner';
 import { status } from '@/config/status.config';
+import { useValidateRequest } from '@/features/requests/hooks/use-validate-request';
 
 
 type Props = {
@@ -16,8 +17,8 @@ type Props = {
 }
 
 export const ActionsValidations = ({ id }: Props) => {
-
-    const [ConfirmationDialog, confirm] = useValidate({
+    const request = useValidateRequest();
+    const [ValidationDialog, valid] = useValidate({
         id,
         title: "Are you sure ?",
         message: "You are about to validate this transaction , Are you sure you want to perform this action?",
@@ -28,7 +29,8 @@ export const ActionsValidations = ({ id }: Props) => {
 
     const handleValidation = async () => {
         try {
-            const confirmed = await confirm();
+            request.onOpen();
+            const confirmed = await valid();
             if (confirmed) {
                 console.log('good you confirm');
                 editMutation.mutate({ status: status[3] }, {
@@ -50,7 +52,7 @@ export const ActionsValidations = ({ id }: Props) => {
 
     return (
         <>
-            <ConfirmationDialog />
+            <ValidationDialog />
             <Button
                 variant={"blue"}
                 onClick={handleValidation}

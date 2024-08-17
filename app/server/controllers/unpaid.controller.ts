@@ -195,15 +195,26 @@ export const getUnpaidBillsByCustomerName = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      const { value, from: FromDate, to: ToDate } = req.body;
-      console.log(value)
+      const { value, from: FromDate, to: ToDate } = req.query;
+
       // TODO :  Define the contraint due to params
       if (isEmpty(value) || isEmpty(FromDate) || isEmpty(ToDate)) {
         return next(new ErrorHandler("Invalid parameters", 400));
       }
-      // Fetch data from the database
-      const result = await executeQuery(sqlQuery.unpaid_bills_by_customer_name, [value, FromDate, ToDate]);
 
+      if (!FromDate || !ToDate) {
+        return next(new ErrorHandler("Invalid parameters", 400));
+      }
+
+      // Fetch data from the database
+      const result = await executeQuery(
+        sqlQuery.unpaid_bills_by_customer_name,
+        [
+          value,
+          format(FromDate.toString(), "dd/MM/yyyy"),
+          format(ToDate.toString(), "dd/MM/yyyy")
+        ]
+      );
       return res.status(200).json({
         success: true,
         bills: result.rows

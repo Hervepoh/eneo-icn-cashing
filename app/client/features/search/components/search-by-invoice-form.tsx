@@ -4,6 +4,8 @@ import { Loader2 } from 'lucide-react';
 import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { startTransition, useState } from 'react';
+import axios, { AxiosRequestConfig } from 'axios';
 
 import {
     Form,
@@ -15,21 +17,13 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { DatePicker } from '@/components/date-picker';
-import { useGetByInvoiceQuery } from '@/lib/redux/features/unpaids/unpaidsApi';
-import { startTransition, useState } from 'react';
-import { useQuery } from '@tanstack/react-query';
-import axios, { AxiosRequestConfig } from 'axios';
 
 
 const formSchema = z.object({
     value: z.string(),
 });
 
-const apiSchema: any = {}  // TODO remove this line
-
 type FormValues = z.input<typeof formSchema>;
-type ApiFormValues = z.input<typeof apiSchema>;
 
 type Props = {
     label: string
@@ -68,7 +62,7 @@ export const SearchByInvoiceForm = ({
             };
             try {
                 const response = await axios.request(config);
-                setInvoices(response.data.bills);
+                setInvoices(response.data.bills ?? []);
             } catch (error) {
                 setError("something went wrong");
                 setIsLoading(false);
@@ -101,7 +95,7 @@ export const SearchByInvoiceForm = ({
                             <FormControl>
                                 <Input
                                     disabled={disabled}
-                                    placeholder="value"
+                                    placeholder={placeholder}
                                     {...field}
                                 />
                             </FormControl>

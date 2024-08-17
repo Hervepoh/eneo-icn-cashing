@@ -6,6 +6,7 @@ import { sqlQuery } from "../config/request";
 import { isEmpty } from "../utils/formatter";
 import ErrorHandler from "../utils/errorHandler";
 import { executeQuery, getConnection, releaseConnection } from "../utils/db.oracle";
+import { format } from "date-fns";
 
 
 //---------------------------------------------------------
@@ -65,49 +66,16 @@ export const getUnpaidBills = CatchAsyncError(
 
 );
 
-//---------------------------------------------------------
-//              get all Unpaid Bills By Contract Number 
-//---------------------------------------------------------
-export const getUnpaidBillsByContractNumber = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-
-    try {
-      // Get Invoice Number from the request body
-      const { value: contract_number, from: FromDate, to: ToDate } = req.body;
-      // check user information 
-      // TODO :  Define the contraint due to the period 
-      if (isEmpty(contract_number) || isEmpty(FromDate) || isEmpty(ToDate)) {
-        return next(new ErrorHandler("Invalid parameters", 400));
-      }
-      // Fetch data from the database
-      const result = await executeQuery(sqlQuery.unpaid_bills_by_contract_number, [contract_number, FromDate, ToDate]);
-
-      // send the response
-      return res.status(200).json({
-        success: true,
-        bills: result.rows
-      });
-
-    } catch (error: any) {
-      // Catch the error and return and error response
-      console.error('Internal error:', error);
-      return next(new ErrorHandler(error.message, 500));
-      //res.status(500).json({ error: 'Erreur interne du serveur' });
-    }
-  }
-
-);
-
 
 //---------------------------------------------------------
 //              get all Unpaid Bills By Invoice Number 
 //---------------------------------------------------------
 export const getUnpaidBillsByInvoiceNumber = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
-    
+
     let connection;
     try {
-      // Get Invoice Number from the request body
+      // Get Invoice Number from the query params 
       const { value: invoice_number } = req.query;
 
       // Fetch data from the database
@@ -136,19 +104,78 @@ export const getUnpaidBillsByInvoiceNumber = CatchAsyncError(
 
 
 //---------------------------------------------------------
+//              get all Unpaid Bills By Contract Number 
+//---------------------------------------------------------
+export const getUnpaidBillsByContractNumber = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+
+    try {
+      // Get date param from query parameters
+      const { value: contract_number, from: FromDate, to: ToDate } = req.query;
+
+      // TODO :  Define the contraint due to the period 
+      if (isEmpty(contract_number) || isEmpty(FromDate) || isEmpty(ToDate)) {
+        return next(new ErrorHandler("Invalid parameters", 400));
+      }
+      if (!FromDate || !ToDate) {
+        return next(new ErrorHandler("Invalid parameters", 400));
+      }
+
+      // Fetch data from the database
+      const result = await executeQuery(
+        sqlQuery.unpaid_bills_by_contract_number,
+        [
+          contract_number,
+          format(FromDate.toString(), "dd/MM/yyyy"),
+          format(ToDate.toString(), "dd/MM/yyyy")
+        ]
+      );
+
+      // send the response
+      return res.status(200).json({
+        success: true,
+        bills: result.rows
+      });
+
+    } catch (error: any) {
+      // Catch the error and return and error response
+      console.error('Internal error:', error);
+      return next(new ErrorHandler(error.message, 500));
+      //res.status(500).json({ error: 'Erreur interne du serveur' });
+    }
+  }
+
+);
+
+
+
+
+
+//---------------------------------------------------------
 //              get all Unpaid Bills By CustomerRegroup Number 
 //---------------------------------------------------------
 export const getUnpaidBillsByCustomerRegroupNumber = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
 
     try {
-      const { value, from: FromDate, to: ToDate } = req.body;
+      const { value, from: FromDate, to: ToDate } = req.query;
       // TODO :  Define the contraint due to the period 
       if (isEmpty(value) || isEmpty(FromDate) || isEmpty(ToDate)) {
         return next(new ErrorHandler("Invalid parameters", 400));
       }
+      if (!FromDate || !ToDate) {
+        return next(new ErrorHandler("Invalid parameters", 400));
+      }
+
       // Fetch data from the database
-      const result = await executeQuery(sqlQuery.unpaid_bills_by_customer_regroup_number, [value, FromDate, ToDate]);
+      const result = await executeQuery(
+        sqlQuery.unpaid_bills_by_customer_regroup_number,
+        [
+          value,
+          format(FromDate.toString(), "dd/MM/yyyy"),
+          format(ToDate.toString(), "dd/MM/yyyy")
+        ]
+      );
 
       return res.status(200).json({
         success: true,

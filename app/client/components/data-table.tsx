@@ -1,6 +1,8 @@
 "use client"
 
 import * as React from "react"
+import { Trash } from "lucide-react"
+
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -9,6 +11,8 @@ import {
     VisibilityState,
     flexRender,
     getCoreRowModel,
+    getFacetedRowModel,
+    getFacetedUniqueValues,
     getFilteredRowModel,
     getPaginationRowModel,
     getSortedRowModel,
@@ -23,17 +27,12 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table"
-
-import {
-    DropdownMenu,
-    DropdownMenuCheckboxItem,
-    DropdownMenuContent,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Trash } from "lucide-react"
+import { DataTableToolbar } from "@/components/data-table-toolbar"
+import { DataTablePagination } from "@/components/data-table-pagination"
+
 import { useConfirm } from "@/hooks/use-confirm"
+
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[]
@@ -64,65 +63,32 @@ export function DataTable<TData, TValue>({
     const table = useReactTable({
         data,
         columns,
-        getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
-        onSortingChange: setSorting,
-        getSortedRowModel: getSortedRowModel(),
-        onColumnFiltersChange: setColumnFilters,
-        getFilteredRowModel: getFilteredRowModel(),
-        onColumnVisibilityChange: setColumnVisibility,
-        onRowSelectionChange: setRowSelection,
         state: {
-            sorting,
-            columnFilters,
-            columnVisibility,
-            rowSelection,
+          sorting,
+          columnVisibility,
+          rowSelection,
+          columnFilters,
         },
-    })
+        enableRowSelection: true,
+        onRowSelectionChange: setRowSelection,
+        onSortingChange: setSorting,
+        onColumnFiltersChange: setColumnFilters,
+        onColumnVisibilityChange: setColumnVisibility,
+        getCoreRowModel: getCoreRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+        getSortedRowModel: getSortedRowModel(),
+        getFacetedRowModel: getFacetedRowModel(),
+        getFacetedUniqueValues: getFacetedUniqueValues(),
+      })
 
     return (
         <div>
             <ConfirmationDialog />
             <div className="flex items-center py-4">
                 <div className="flex items-center gap-x-3">
-                    <Input
-                        placeholder={`Filter ${filterKey}...`}
-                        value={(table.getColumn(filterKey)?.getFilterValue() as string) ?? ""}
-                        onChange={(event) =>
-                            table.getColumn(filterKey)?.setFilterValue(event.target.value)
-                        }
-                        className="max-w-sm"
-                    />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="ml-auto">
-                                Columns
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {table
-                                .getAllColumns()
-                                .filter(
-                                    (column) => column.getCanHide()
-                                )
-                                .map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(!!value)
-                                            }
-                                        >
-                                            {column.id}
-                                        </DropdownMenuCheckboxItem>
-                                    )
-                                })}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                    <DataTableToolbar table={table} filterKey={filterKey} />
                 </div>
-
                 {
                     table.getFilteredSelectedRowModel().rows.length > 0 && (
                         <Button
@@ -146,7 +112,6 @@ export function DataTable<TData, TValue>({
                         </Button>
                     )
                 }
-
             </div>
             <div className="rounded-md border">
                 <Table>
@@ -192,30 +157,7 @@ export function DataTable<TData, TValue>({
                     </TableBody>
                 </Table>
             </div>
-            <div className="flex items-center justify-end space-x-2 py-4">
-                <div className="flex-1 text-sm text-muted-foreground">
-                    {table.getFilteredSelectedRowModel().rows.length} of{" "}
-                    {table.getFilteredRowModel().rows.length} row(s) selected.
-                </div>
-
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                >
-                    Previous
-                </Button>
-                <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                >
-                    Next
-                </Button>
-            </div>
-
+            <DataTablePagination table={table} />
         </div>
     )
 }

@@ -10,6 +10,7 @@ import bankRouter from "./routes/bank.route";
 import payModeRouter from "./routes/payMode.route";
 import unpaidRouter from "./routes/unpaid.route";
 import requestRouter from "./routes/request.route";
+import requestDetailRouter from "./routes/requestDetail.route";
 import settingRouter from "./routes/setting.route";
 import categoryRouter from "./routes/category.route";
 import interncreditRouter from "./routes/interncredit.route";
@@ -46,6 +47,7 @@ app.use("/api/v1",
   interncreditRouter,
   notificationRouter,
   requestRouter,
+  requestDetailRouter,
   settingRouter,
   unpaidRouter,
   userRouter,

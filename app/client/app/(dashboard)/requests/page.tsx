@@ -8,6 +8,7 @@ import { useNewRequest } from '@/features/requests/hooks/use-new-request';
 // import { useGetTransactions } from '@/features/transactions/api/use-get-transactions';
 // import { useBulkCreateTransactions } from '@/features/transactions/api/use-bulk-create-transactions';
 // import { useBulkDeleteTransactions } from '@/features/transactions/api/use-bulk-delete-transactions';
+import { useBulkCreateRequests } from '@/features/requests/api/use-bulk-create-requests';
 
 // import { useSelectAccount } from '@/features/accounts/hooks/use-select-account';
 
@@ -33,6 +34,7 @@ import { useGetRequests } from '@/features/requests/api/use-get-requests';
 
 
 
+
 enum VARIANTS {
     LIST = "LIST",
     IMPORT = "IMPORT",
@@ -49,7 +51,7 @@ type Props = {}
 export default function TransactionsPage(props: Props) {
     
     const newRequest = useNewRequest()
-    // const createTransactionsQuery = useBulkCreateTransactions();
+    const createTransactionsQuery = useBulkCreateRequests();
     // const deleteTransactionsQuery = useBulkDeleteTransactions();
     const getTransactionsQuery = useGetRequests();
     const transactions = getTransactionsQuery.data || [];
@@ -74,7 +76,7 @@ export default function TransactionsPage(props: Props) {
     };
 
     const onSubmitImport = async (
-        // values: typeof transactionsSchema.$inferInsert[],
+       //  values
     ) => {
         const accountId = await confirm();
 

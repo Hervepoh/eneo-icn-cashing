@@ -1,8 +1,8 @@
 "use client"
-import { useRef, useState } from "react";
+import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { Loader2, SearchCheckIcon, SearchCode, SearchIcon, SearchSlash, SearchX } from "lucide-react";
-import { BiSearch } from "react-icons/bi";
+import { BadgeCheck, Check, CircleCheckBig, ListCheck, ListTodo, Loader2, Save, SearchCheckIcon, SearchCode, SearchIcon, SearchSlash, SearchX, ShoppingBag, VenetianMask } from "lucide-react";
+import { BiPlusCircle, BiSearch } from "react-icons/bi";
 
 import {
     Card,
@@ -47,6 +47,12 @@ import { SearchByContractForm } from "@/features/search/components/search-by-con
 import { SearchByRegroupForm } from "@/features/search/components/search-by-regroup-form";
 import { SearchByCodeCliForm } from "@/features/search/components/search-by-codecli-from";
 import { columns } from "./_components/columns";
+import { SearchByFileForm } from "@/features/search/components/search-by-file-form";
+import { Input } from "@/components/ui/input";
+import { useGetRequestDetails } from "@/features/requests/api/use-get-request-details";
+import { Button } from "@/components/ui/button";
+import { useBulkRequestDetails } from "@/features/requests/api/use-bulk-create-request-details";
+import { useBulkSaveRequestDetails } from "@/features/requests/api/use-bulk-save-request-details";
 
 interface Invoice {
     id: string;
@@ -57,30 +63,116 @@ interface Invoice {
 
 export default function TransactionsDetails() {
     const params = useParams<{ id: string }>();
-    const { isLoading, isError, data, error } = useGetRequest(params.id)
-    const [searchError, setSearchError] = useState("")
+
+    const {
+        isLoading,
+        isError,
+        data,
+        error
+    } = useGetRequest(params.id)
+
+    const {
+        isLoading: details_isLoading,
+        isError: details_isError,
+        data: details_data,
+        error: details_error
+    } = useGetRequestDetails(params.id)
+
+    const AddDeltailsTransactionsQuery = useBulkRequestDetails(params.id);
+    const SaveDeltailsTransactionsQuery = useBulkSaveRequestDetails(params.id);
+
+    const disable = AddDeltailsTransactionsQuery.isPending
+        || SaveDeltailsTransactionsQuery.isPending
+        || details_isLoading
+
+    const [view, setView] = useState<"search" | "upload">("search");
+    const [viewRecap, setViewRecap] = useState<boolean>(false);
     const [isFirstView, setIsFirstView] = useState(true);
 
+    const [invoices, setInvoices] = useState([]);
+
+
+    const [searchError, setSearchError] = useState("")
     const [searchIsLoading, setSearchIsLoading] = useState(false)
 
     const [invoiceNumber, setInvoiceNumber] = useState('');
-
     const [selectedInvoices, setSelectedInvoices] = useState<Invoice[]>([]);
-    //const [invoices, setInvoices] = useState<Invoice[]>([]);
-    const [invoices, setInvoices] = useState([]);
 
-    const handleSelect = (invoice: Invoice) => {
-        if (selectedInvoices.some((i) => i.id === invoice.id)) {
-            setSelectedInvoices(selectedInvoices.filter((i) => i.id !== invoice.id));
-        } else {
-            setSelectedInvoices([...selectedInvoices, invoice]);
+
+
+    const [finalData, setfinalData] = useState<any[]>([]);
+    const [total, setTotal] = useState<number>(0);
+    const [totalToPaid, setTotalToPaid] = useState<number>(0);
+
+    useEffect(() => {
+        if (details_data) {
+
+            setfinalData(details_data);
+            recalculateSelectedInvoices(details_data);
+            setViewRecap(true);
         }
+    }, [details_data])
+
+
+    const handleInputChange = (index: number, newValue: number) => {
+        if (newValue) {
+            const newData = [...finalData];
+            // server update
+            newData[index].amountTopaid = newValue;
+            setfinalData(newData);
+            recalculateSelectedInvoices(newData);
+        }
+    }
+
+    const handleCheckboxChange = (index: number) => {
+        const newData = [...finalData];
+        newData[index].selected = !newData[index].selected;
+        setfinalData(newData);
+        recalculateSelectedInvoices(newData);
     };
 
-    const totalAmount = selectedInvoices.reduce(
-        (total, invoice) => total + invoice.amount,
-        0
-    );
+    const handleSaveChange = () => {
+        const newData = [...finalData];
+        // Preparing updates datas
+        const updates = newData.map((row) => ({
+            updateOne: {
+                filter: { _id: row._id }, // utiliser l'ID de la ligne
+                update: {
+                    selected: row.selected,
+                    amountTopaid: row.amountTopaid
+                },
+            },
+        }));
+        SaveDeltailsTransactionsQuery.mutate(updates);
+    };
+
+    const handleQualityControl = () => {
+        const newData = [...finalData];
+        // Identifiez les lignes en double
+        const rowsMap = newData.reduce((acc, row) => {
+            const key = `${row.contract}-${row.invoice}`;
+            if (acc[key]) {
+                acc[key].isDuplicate = true;
+            } else {
+                acc[key] = { ...row, isDuplicate: false };
+            }
+            return acc;
+        }, {});
+
+        // Récupérez les données finales
+        const uniqueFinalData = Object.values(rowsMap);
+        console.log("uniqueFinalData: ", uniqueFinalData)
+    };
+
+    const recalculateSelectedInvoices = (data: any[]) => {
+        const selectedRows = data.filter((row) => row.selected);
+        console.log(selectedRows);
+        const newTotal = selectedRows.reduce((acc, cur) => acc + cur.amountUnpaid, 0);
+        const newTotalToPaid = selectedRows.reduce((acc, cur) => acc + cur.amountTopaid, 0);
+        setTotal(newTotal);
+        setTotalToPaid(newTotalToPaid);
+    }
+
 
     // Search criteria action
     const [selectedOption, setSelectedOption] = useState('');
@@ -92,40 +184,63 @@ export default function TransactionsDetails() {
             selectRef.current.click(); // Ferme le menu déroulant
         }
     };
-    console.log("invoices",invoices)
+
+
 
     return (
         <div className='max-w-screen-2xl mx-auto w-full pb-10 -mt-24'>
             <div className="grid grid-cols-1 lg:grid-cols-4 md:gap-8 pb-2 mb-8">
                 <Card className='border-none drop-shadow-sm '>
                     <CardHeader className='gap-y-2 flex-row lg:items-center justify-between'>
-                        <div>
-                            <CardTitle className='text-2xl line-clamp-1'>Search ...</CardTitle>
-                            <CardDescription>Unpaid bill</CardDescription>
-                        </div>
-                        <div className='flex flex-col lg:flex-row items-center gap-x-2 gap-y-2'>
-                            <BiSearch size={48} className="sm:w-15" />
-                        </div>
+                        {
+                            details_isLoading ?
+                                <>
+                                    <div>
+                                        <Skeleton className="w-32 h-6 mb-2" />
+                                        <Skeleton className="w-40 h-5" />
+                                    </div>
+                                    <div className='flex flex-col lg:flex-row items-center gap-x-2 gap-y-2'>
+                                        <Skeleton className="w-10 h-10" />
+                                    </div>
+                                </>
+                                :
+                                <>
+                                    <div>
+                                        <CardTitle className='text-2xl line-clamp-1'>{view === "upload" ? "Add" : "Search"}  ...</CardTitle>
+                                        <CardDescription>Unpaid bill</CardDescription>
+                                    </div>
+                                    <div className='flex flex-col lg:flex-row items-center gap-x-2 gap-y-2'>
+                                        {view === "upload" ?
+                                            <BiPlusCircle size={48} className="sm:w-15" onClick={() => setView("search")} />
+                                            : <BiSearch size={48} className="sm:w-15" onClick={() => { setView("upload"); setViewRecap(true); }} />}
+                                    </div>
+                                </>
+                        }
+
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-2">
-                            <div ref={selectRef} className={cn("space-y-2", "mb-5")}>
-                                <Label>Criteria</Label>
-                                <Select value={selectedOption} onValueChange={handleOptionChange}>
-                                    <SelectTrigger className="" >
-                                        <SelectValue placeholder="Select a criteria" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="regroup">Regroupment code</SelectItem>
-                                        <SelectItem value="codecli">Client code</SelectItem>
-                                        <SelectItem value="contract">Contract number</SelectItem>
-                                        <SelectItem value="invoice">Bill number</SelectItem>
-                                    </SelectContent>
-                                </Select>
-                            </div>
                             {
-                                selectedOption === 'regroup'
-                                &&
+                                !details_isLoading &&
+                                view === "search" &&
+                                <div ref={selectRef} className={cn("space-y-2", "mb-5")}>
+                                    <Label>Criteria</Label>
+                                    <Select value={selectedOption} onValueChange={handleOptionChange}>
+                                        <SelectTrigger className="" >
+                                            <SelectValue placeholder="Select a criteria" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="regroup">Regroupment code</SelectItem>
+                                            <SelectItem value="customer">Customer</SelectItem>
+                                            <SelectItem value="contract">Contract number</SelectItem>
+                                            <SelectItem value="invoice">Bill number</SelectItem>
+                                        </SelectContent>
+                                    </Select>
+                                </div>}
+
+                            {
+                                view === "search" &&
+                                selectedOption === 'regroup' &&
                                 <SearchByRegroupForm
                                     key="regroup"
                                     label="Regroup number"
@@ -134,24 +249,26 @@ export default function TransactionsDetails() {
                                     setIsFirstView={setIsFirstView}
                                     setError={setSearchError}
                                     setIsPending={setSearchIsLoading}
+                                    setViewRecap={setViewRecap}
                                 />
                             }
                             {
-                                selectedOption === 'codecli'
-                                &&
+                                view === "search" &&
+                                selectedOption === 'customer' &&
                                 <SearchByCodeCliForm
-                                    key="codecli"
-                                    label="client number"
+                                    key="customer"
+                                    label="customer name"
                                     placeholder="value"
                                     setInvoices={setInvoices}
                                     setIsFirstView={setIsFirstView}
                                     setError={setSearchError}
                                     setIsPending={setSearchIsLoading}
+                                    setViewRecap={setViewRecap}
                                 />
                             }
                             {
-                                selectedOption === 'contract'
-                                &&
+                                view === "search" &&
+                                selectedOption === 'contract' &&
                                 <SearchByContractForm
                                     key="contract"
                                     label="Contract number"
@@ -160,14 +277,29 @@ export default function TransactionsDetails() {
                                     setIsFirstView={setIsFirstView}
                                     setError={setSearchError}
                                     setIsPending={setSearchIsLoading}
+                                    setViewRecap={setViewRecap}
                                 />
                             }
                             {
-                                selectedOption === 'invoice'
-                                &&
+                                view === "search" &&
+                                selectedOption === 'invoice' &&
                                 <SearchByInvoiceForm
                                     key="invoice"
                                     label="Bill number"
+                                    placeholder="value"
+                                    setInvoices={setInvoices}
+                                    setIsFirstView={setIsFirstView}
+                                    setError={setSearchError}
+                                    setIsPending={setSearchIsLoading}
+                                    setViewRecap={setViewRecap}
+                                />
+                            }
+                            {
+                                view === "upload"
+                                &&
+                                <SearchByFileForm
+                                    key="file"
+                                    label="Template file"
                                     placeholder="value"
                                     setInvoices={setInvoices}
                                     setIsFirstView={setIsFirstView}
@@ -189,7 +321,7 @@ export default function TransactionsDetails() {
                             {
                                 isLoading ?
                                     (<Skeleton className="w-[500px] h-[20px] rounded-full" />) :
-                                    (<CardDescription className="line-clamp-1 flex gap-3">
+                                    (<CardDescription className="lg:line-clamp-1 lg:flex gap-3">
                                         <div>Customer : <span className="font-bold text-md">{data?.name ?? ""}</span></div>
                                         <div>Amount  :  xfa  <span className="font-bold text-md">{data?.amount}</span></div>
                                         <div>Date  :   <span className="font-bold text-md">{data?.amount}</span></div>
@@ -201,116 +333,149 @@ export default function TransactionsDetails() {
 
                     </CardHeader>
                     <CardContent>
-                        <ResizablePanelGroup
-                            direction="horizontal"
-                            className="rounded-lg border"
-                        >
-                            <ResizablePanel defaultSize={100}>
-                                <ScrollArea className="flex h-[700px] items-center justify-center p-6 rounded-md">
-                                    {
-                                        searchIsLoading ? <LoadingCard /> :
-                                            isFirstView ? <DefaultCard /> :
-                                                <DataTable
-                                                    columns={columns}
-                                                    data={invoices}
-                                                    filterKey={"3"}
-                                                    onSubmit={(row: any[]) => {
-                                                        const ids = row.map((r: any) => r.original.invoice);
-                                                        // deleteTransactionsQuery.mutate({ ids });
-                                                    }}
-                                                    disabled={false}
-                                                />
-                                    }
-                                    {
+                        {
+                            details_isLoading ?
+                                <>
+                                    <div className="flex h-full items-center justify-between p-6">
+                                        <Skeleton className="w-[500px] h-[20px] rounded-full" />
+                                    </div>
+                                    <div className="flex h-full items-start justify-center p-6">
+                                        <Skeleton className="w-full h-[500px]" />
+                                    </div>
+                                </>
+                                :
+                                viewRecap ?
+                                    <>
+                                        <div className="lg:flex text-center h-full items-center justify-between p-3">
+                                            <div className="hidden lg:flex gap-2 items-center">
+                                                <ShoppingBag className="mr-4" />
+                                            </div>
+
+                                            <div className="my-2">
+                                                <span className="font-semibold text-xl">Panier : {` `}
+                                                    {totalToPaid} {totalToPaid !== parseFloat(data?.amount) ? "<>" : "=="}  {data?.amount}</span>
+                                            </div>
+
+                                            <div className="flex gap-2 flex-col-reverse">
+                                                <Button
+                                                    onClick={() => handleQualityControl()}
+                                                    size="sm"
+                                                    className='w-full lg:w-auto'>
+                                                    <ListTodo className='size-4 mr-2' />
+                                                    Quality control
+                                                </Button>
+
+                                                <Button
+                                                    disabled={true}
+                                                    onClick={() => ""}
+                                                    size="sm"
+                                                    className='w-full lg:w-auto'>
+                                                    <CircleCheckBig className='size-4 mr-2' />
+                                                    Submit
+                                                </Button>
+                                            </div>
 
 
-                                        //     !!invoices.length && (
-                                        // <div className="p-3">
-                                        //     <h4 className="mb-4 text-sm font-medium leading-none">Tags</h4>
-                                        //     <Table>
-                                        //         <TableHeader>
-                                        //             <TableRow>
-                                        //                 <TableHead className=""></TableHead>
-                                        //                 <TableHead>regroup</TableHead>
-                                        //                 <TableHead>contract</TableHead>
-                                        //                 <TableHead className="">invoice</TableHead>
-                                        //                 <TableHead className="">Name</TableHead>
-                                        //                 <TableHead className="">Date</TableHead>
-                                        //                 <TableHead className="">Amount</TableHead>
-                                        //             </TableRow>
-                                        //         </TableHeader>
-                                        //         <TableBody>
-                                        //             {invoices.map((invoice, i) => (
-                                        //                 <TableRow key={i++}>
-                                        //                     <TableCell className="font-medium">
-                                        //                         <Checkbox key={i} value={i} />
-                                        //                     </TableCell>
-                                        //                     <TableCell className="font-medium">{invoice[0]}</TableCell>
-                                        //                     <TableCell className="font-medium">{invoice[1]}</TableCell>
-                                        //                     <TableCell className="font-medium">{invoice[2]}</TableCell>
-                                        //                     <TableCell className="font-medium">{invoice[3]}</TableCell>
-                                        //                     <TableCell className="font-medium">{invoice[4]}</TableCell>
-                                        //                     <TableCell className="font-medium">{invoice[5]}</TableCell>
-                                        //                 </TableRow>
-                                        //             ))}
-                                        //         </TableBody>
-                                        //     </Table>
-                                        // </div>
-                                        // )
-                                    }
-                                </ScrollArea>
-                            </ResizablePanel>
-                            <ResizableHandle />
-                            <ResizablePanel defaultSize={0}>
-                                <ResizablePanelGroup direction="vertical">
-                                    <ResizablePanel defaultSize={25}>
-                                        <div className="flex h-full items-center justify-center p-6">
-                                            <span className="font-semibold">Two</span>
                                         </div>
-                                    </ResizablePanel>
-                                    <ResizableHandle />
-                                    <ResizablePanel defaultSize={75}>
-                                        <div className="flex h-full items-center justify-center p-6">
+
+                                        <div className="flex flex-col h-full items-start justify-center p-6">
                                             <Table>
                                                 <TableCaption>A list of your recent invoices.</TableCaption>
                                                 <TableHeader>
                                                     <TableRow>
                                                         <TableHead className=""></TableHead>
-                                                        <TableHead>regroup</TableHead>
                                                         <TableHead>contract</TableHead>
                                                         <TableHead className="">invoice</TableHead>
                                                         <TableHead className="">Name</TableHead>
-                                                        <TableHead className="">Date</TableHead>
-                                                        <TableHead className="">Amount</TableHead>
+                                                        <TableHead className="">Due Amount</TableHead>
+                                                        <TableHead className="">Amount to Paid</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
-                                                    {[1, 2, 3, 5, 6, 9, 10, 11].map((invoice, i) => (
-                                                        <TableRow key={i++}>
+                                                    {finalData.map((row: any, i: any) => (
+                                                        <TableRow
+                                                            key={i}
+                                                            style={{ backgroundColor: row.selected ? '#f0f0f0' : 'transparent' }}
+                                                        >
                                                             <TableCell className="font-medium">
-                                                                <Checkbox key={i} value={i} />
+                                                                <input
+                                                                    type="checkbox"
+                                                                    checked={row.selected}
+                                                                    onChange={() => handleCheckboxChange(i)}
+                                                                />
+
                                                             </TableCell>
-                                                            <TableCell className="font-medium"></TableCell>
-                                                            <TableCell className="font-medium">200050122</TableCell>
-                                                            <TableCell className="font-medium">200072655</TableCell>
-                                                            <TableCell>DONGMO SABINE</TableCell>
-                                                            <TableCell>25/06/2010</TableCell>
-                                                            <TableCell>797</TableCell>
+                                                            <TableCell className="font-medium">{row.contract}</TableCell>
+                                                            <TableCell className="font-medium">{row.invoice}</TableCell>
+                                                            <TableCell className="font-medium">{row.name}</TableCell>
+                                                            <TableCell>{row.amountUnpaid}</TableCell>
+                                                            <TableCell>
+                                                                <Input
+                                                                    type="number"
+                                                                    value={row.amountTopaid}
+                                                                    onChange={e => handleInputChange(i, parseFloat(e.target.value))}
+                                                                    min={0}
+                                                                    className="w-[130px]" />
+                                                            </TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>
                                                 <TableFooter>
                                                     <TableRow>
                                                         <TableCell colSpan={4}>Total</TableCell>
-                                                        <TableCell className="text-right">$2,500.00</TableCell>
+                                                        <TableCell className="text-left">{total.toFixed(0)}</TableCell>
+                                                        <TableCell className="text-left">{totalToPaid.toFixed(0)}</TableCell>
                                                     </TableRow>
                                                 </TableFooter>
                                             </Table>
+
+                                            <Button
+                                                onClick={() => handleSaveChange()}
+                                                size="sm"
+                                                className='w-full mt-10 lg:w-auto'>
+                                                <Save className='size-4 mr-2' />
+                                                Save changes
+                                            </Button>
                                         </div>
-                                    </ResizablePanel>
-                                </ResizablePanelGroup>
-                            </ResizablePanel>
-                        </ResizablePanelGroup>
+                                    </>
+                                    :
+                                    <ScrollArea className="flex h-[800px] items-center justify-center p-6 rounded-md">
+                                        {
+                                            searchIsLoading ? (<Card className='border-none drop-shadow-sm'>
+                                                <CardHeader>
+                                                    <Skeleton className="w-48 h-8" />
+                                                </CardHeader>
+                                                <CardContent className='h-[500px] w-full flex items-center justify-center'>
+                                                    <Loader2 className='size-6 text-slate-300 animate-spin' /> Searching...
+                                                </CardContent>
+                                            </Card>) :
+                                                isFirstView ? (<Card className='border-none drop-shadow-sm'>
+                                                    <CardContent className='h-[500px] w-full flex flex-col items-center text-xl text-bold justify-center'>
+                                                        <div className="text-2xl"><BiSearch size={52} className="sm:w-15" /></div>
+                                                        <div>Just Search what you want</div>
+                                                    </CardContent>
+                                                </Card>) :
+                                                    <DataTable
+                                                        columns={columns}
+                                                        data={invoices}
+                                                        filterKey={"3"}
+                                                        onSubmit={(row: any[]) => {
+                                                            const data = row.map((r: any) =>
+                                                            ({
+                                                                contract: r.original[1].toString(),
+                                                                invoice: r.original[2].toString(),
+                                                                name: r.original[3].toString(),
+                                                                amountUnpaid: r.original[5]
+                                                            }));
+
+                                                            AddDeltailsTransactionsQuery.mutate(data);
+                                                        }}
+                                                        disabled={disable}
+                                                    />
+                                        }
+                                    </ScrollArea>
+                        }
+
                     </CardContent>
                 </Card>
             </div>
@@ -319,26 +484,4 @@ export default function TransactionsDetails() {
 }
 
 
-export const LoadingCard = () => {
-    return (
-        <Card className='border-none drop-shadow-sm'>
-            <CardHeader>
-                <Skeleton className="w-48 h-8" />
-            </CardHeader>
-            <CardContent className='h-[500px] w-full flex items-center justify-center'>
-                <Loader2 className='size-6 text-slate-300 animate-spin' /> Searching...
-            </CardContent>
-        </Card>
-    )
-}
 
-export const DefaultCard = () => {
-    return (
-        <Card className='border-none drop-shadow-sm'>
-            <CardContent className='h-[500px] w-full flex flex-col items-center text-xl text-bold justify-center'>
-                <div className="text-2xl"><BiSearch size={52} className="sm:w-15" /></div>
-                <div>Just Search what you want</div>
-            </CardContent>
-        </Card>
-    )
-}

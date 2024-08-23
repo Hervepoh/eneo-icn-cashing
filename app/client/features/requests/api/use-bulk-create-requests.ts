@@ -1,25 +1,22 @@
+import axios from "axios";
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
 
-// import { client } from "@/lib/hono";
-
-// type ResponseType = InferResponseType<typeof client.api.transactions["bulk-create"]["$post"]>;
-// type RequestType = InferRequestType<typeof client.api.transactions["bulk-create"]["$post"]>["json"];
+type RequestType = any;
 
 export const useBulkCreateRequests = () => {
     const queryClient = useQueryClient();
   
     const mutation = useMutation<
       ResponseType,
-      Error
-      //, RequestType
+      Error, 
+      RequestType
     >({
       mutationFn: async (json) => {
-        // const response = await client.api.transactions["bulk-create"]["$post"]({ json });
-       
-        // return await response.json();
-        return JSON.parse("a");
+        const response = await axios.post(`http://localhost:8000/api/v1/request-bulk`, json, {
+          withCredentials: true,
+        });
+        return response.data;
       },
       onSuccess: () => {
         toast.success("Requests created successfully")

@@ -16,6 +16,13 @@ export const formatDate = (value : string)=>{
    return(formattedDate);
 }
 
+// Function to get the date in the format "MMYY"
+export const getCurrentMonthYear = (value : string) => {
+  const currentDate = new Date(value);
+  const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+  const year = String(currentDate.getFullYear()).slice(2);
+  return `${month}${year}`;
+};
 
 export const parseDMY = (s:string) : Date => {
   let [d, m, y] = s.split(/\D/);

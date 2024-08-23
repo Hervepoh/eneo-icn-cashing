@@ -1,16 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import axios, { AxiosRequestConfig } from "axios";
+import axios, { AxiosRequestConfig  } from "axios";
 
-export const useGetUnpaidByInvoice = (value?: string) => {
+export const useGetRequestDetails = (id?: string) => {
   const query = useQuery({
-    enabled: !!value,   // Fetch only if we have the id
-    queryKey: ["unpaid", { value }],
+    enabled: !!id,   // Fetch only if we have the id
+    queryKey: ["request-details", { id }],
     queryFn: async () => {
       const config: AxiosRequestConfig = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: `http://localhost:8000/api/v1/search-unpaid?by=invoice&value=${value}`,
-        headers: {},
+        url: `http://localhost:8000/api/v1/request-details/${id}`,
+        headers: {
+        },
         withCredentials: true, // Set this to true
         data: ''
       };
@@ -25,6 +26,7 @@ export const useGetUnpaidByInvoice = (value?: string) => {
           throw new Error('Une erreur inconnue s\'est produite');
         }
       }
+
     },
   });
 

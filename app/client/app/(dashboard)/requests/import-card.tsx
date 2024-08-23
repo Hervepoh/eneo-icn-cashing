@@ -21,9 +21,11 @@ const dateFormat = "yyyy-MM-dd"; //"yyyy-MM-dd HH:mm:ss";
 const outputFormat = "yyyy-MM-dd";
 
 const requredOptions = [
+    "name",
     "amount",
-    "date",
-    "payee",
+    "payment_date",
+    "payment_mode",
+    "bank",
 ];
 
 interface SelectedColumnsState {
@@ -108,8 +110,9 @@ export const ImportCard = ({
         const formatedData = arrayOfData.map((item) => ({
             ...item,
             amount: convertAmountToMilliunits(parseFloat(item.amount)),
-            date: format(parse(item.date, dateFormat, new Date()), outputFormat)
+           // date: format(parse(item.date, dateFormat, new Date()), outputFormat)
         }));
+        console.log("import-card-data", formatedData)
 
         onSubmit(formatedData);
     }

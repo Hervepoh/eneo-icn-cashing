@@ -60,7 +60,7 @@ export function DataTable<TData, TValue>({
 
     const [ConfirmationDialog, confirm] = useConfirm({
         title: "Are you sure?",
-        message: "You are about to perform a bulk delete",
+        message: "You are about to add this item inside your ICN application",
     });
 
     const table = useReactTable({
@@ -103,34 +103,7 @@ export function DataTable<TData, TValue>({
                         }
                         className="max-w-sm"
                     />
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant="outline" className="ml-auto">
-                                Columns
-                            </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                            {table
-                                .getAllColumns()
-                                .filter(
-                                    (column) => column.getCanHide()
-                                )
-                                .map((column) => {
-                                    return (
-                                        <DropdownMenuCheckboxItem
-                                            key={column.id}
-                                            className="capitalize"
-                                            checked={column.getIsVisible()}
-                                            onCheckedChange={(value) =>
-                                                column.toggleVisibility(!!value)
-                                            }
-                                        >
-                                            {column.id}
-                                        </DropdownMenuCheckboxItem>
-                                    )
-                                })}
-                        </DropdownMenuContent>
-                    </DropdownMenu>
+                 
                 </div>
 
                 {

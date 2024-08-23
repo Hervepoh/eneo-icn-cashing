@@ -10,11 +10,11 @@ userRouter.post('/activation', activateUser);
 
 userRouter.post('/login', loginUser);
 
-userRouter.post('/logout', isAuthentificated, authorizeRoles("user", "admin"), logoutUser);
+userRouter.post('/logout', isAuthentificated, logoutUser);
 
 userRouter.get('/user/refresh', updateAccessToken);
 
-userRouter.get('/user/me', isAuthentificated, getUserInfo);
+userRouter.get('/user/me', isAuthentificated,authorizeRoles("user", "admin"), getUserInfo);
 
 userRouter.put('/user/update', isAuthentificated, updateUserInfo);
 

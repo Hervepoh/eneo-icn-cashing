@@ -5,12 +5,13 @@ import { NextFunction, Request, Response } from "express";
 import { CatchAsyncError } from "../middleware/catchAsyncErrors";
 import { appConfig } from "../config/app.config";
 import { redis } from "../utils/redis";
-import { parseDMY } from "../utils/formatter";
+import { getCurrentMonthYear, parseDMY } from "../utils/formatter";
 import ErrorHandler from "../utils/errorHandler";
 import userModel from "../models/user.model";
 import bankModel from "../models/bank.model";
 import payModeModel from "../models/payMode.model";
 import requestModel from "../models/request.model";
+import referenceModel from "../models/reference.model";
 
 /*
  * readAll, is an asynchronous function
@@ -144,7 +145,7 @@ export const read = CatchAsyncError(
       //     data,
       //   });
       // } else {
-        const data = await requestModel
+      const data = await requestModel
         .findById(requestId)
         .select("-_id -__v")
         .populate({
@@ -159,18 +160,18 @@ export const read = CatchAsyncError(
         })
         ;
 
-        // Put into Redis for caching futur purpose
-        // await redis.set(
-        //   requestId,
-        //   JSON.stringify(data),
-        //   "EX",
-        //   appConfig.redis_session_expire
-        // );
+      // Put into Redis for caching futur purpose
+      // await redis.set(
+      //   requestId,
+      //   JSON.stringify(data),
+      //   "EX",
+      //   appConfig.redis_session_expire
+      // );
 
-        return res.status(200).json({
-          success: true,
-          data,
-        });
+      return res.status(200).json({
+        success: true,
+        data,
+      });
       //}
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -225,6 +226,22 @@ export const update = CatchAsyncError(
           payment_date: parseDMY(req.body.payment_date),
         };
       }
+      // For pubish the request
+      if (req.body.status === appConfig.status[2]) {
+
+        const request = await requestModel
+          .findById(requestId)
+          .select("reference payment_date");
+
+        if (!request?.reference && request?.payment_date) {
+          console.log("generate reference")
+          data = {
+            ...data,
+            reference: await genereteICNRef(request.payment_date)
+          };
+        }
+
+      }
       // For validation
       if (req.body.status === appConfig.status[3]) {
         data = {
@@ -233,7 +250,7 @@ export const update = CatchAsyncError(
           validetedAt: new Date()
         };
       }
-       // For Reject
+      // For Reject
       if (req.body.status === appConfig.status[4]) {
         data = {
           ...data,
@@ -242,7 +259,7 @@ export const update = CatchAsyncError(
           refusal: true,
         };
       }
-      
+
       const result = await requestModel.findByIdAndUpdate(
         requestId,
         { $set: data },
@@ -370,3 +387,32 @@ export const bulkSolftDelete = CatchAsyncError(
     }
   }
 );
+
+
+async function genereteICNRef(date: Date) {
+  try {
+    // Récupération de la dernière référence
+    const lastReference = await referenceModel.findOne({}, {}, { sort: { '_id': -1 } });
+
+    let newReference;
+
+    if (lastReference) {
+      // Extraction du numéro de séquence à partir de la dernière référence
+      const lastSequenceNumber = parseInt(lastReference.reference.slice(4));
+      newReference = `${getCurrentMonthYear(date.toDateString())}${String(lastSequenceNumber + 1).padStart(6, '0')}`;
+    } else {
+      // Première référence
+      newReference = `${getCurrentMonthYear(date.toDateString())}000001`;
+    }
+
+    // Création d'un nouveau document dans la collection des références
+    await referenceModel.create({ reference: newReference });
+    
+    return newReference;
+
+  } catch (error) {
+     throw  new Error("An error occurred while genereting ICNRef");
+  }
+
+
+}

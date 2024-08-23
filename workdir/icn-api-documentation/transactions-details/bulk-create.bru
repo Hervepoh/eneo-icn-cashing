@@ -1,0 +1,28 @@
+meta {
+  name: bulk-create
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{BASE_URL}}/api/v1/request-details-bulk/66bfde7d0a43088896c04cce
+  body: json
+  auth: none
+}
+
+body:json {
+  [
+     { 
+      "contract":"200072655",
+      "invoice":"200072655",
+      "name":"name",
+      "amountUnpaid":"2510"
+     },
+        { 
+      "contract":"200072654",
+      "invoice":"200072654",
+      "name":"name",
+      "amountUnpaid":"2510"
+     } 
+  ]
+}

@@ -27,6 +27,7 @@ const recordSchema: Schema<ISchemaModel> = new mongoose.Schema(
     reference: {
       type: String,
       required: false,
+      unique: true,
     },
     userId: {
       type: mongoose.Schema.Types.ObjectId,

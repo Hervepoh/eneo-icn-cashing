@@ -16,7 +16,6 @@ import {
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { DatePicker } from '@/components/date-picker';
-import { useGetUnpaid } from '../api/use-search-unpaid';
 
 
 const formSchema = z.object({
@@ -37,7 +36,7 @@ type Props = {
 }
 
 export const SearchForm = ({ key,label,placeholder }: Props) => {
-    const { mutate, isPending, isError ,...data} = useGetUnpaid(key);
+    //const { mutate, isPending, isError ,...data} = useGetUnpaid(key);
 
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -57,7 +56,7 @@ export const SearchForm = ({ key,label,placeholder }: Props) => {
         // });
     }
 
-    const disabled = isPending;
+    const disabled = false  //isPending;
     return (
         <Form {...form}>
             <form

@@ -37,6 +37,7 @@ type Props = {
     setInvoices: (value: any) => void;
     setError: (value: string) => void;
     setIsPending: (value: boolean) => void;
+    setViewRecap: (value: boolean) => void;
 }
 
 export const SearchByContractForm = ({
@@ -45,7 +46,11 @@ export const SearchByContractForm = ({
     placeholder,
     setIsFirstView,
     setInvoices,
-    setError, setIsPending }: Props) => {
+    setError, 
+    setIsPending , 
+    setViewRecap 
+}: Props) => {
+
     const [isLoading, setIsLoading] = useState(false);
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
@@ -83,6 +88,8 @@ export const SearchByContractForm = ({
             setIsLoading(false);
             setIsPending(false);
         });
+
+        setViewRecap(false);
     }
 
     const disabled = isLoading;

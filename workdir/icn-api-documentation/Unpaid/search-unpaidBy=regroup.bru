@@ -1,0 +1,18 @@
+meta {
+  name: search-unpaidBy=regroup
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{BASE_URL}}/api/v1/search-unpaid?by=regroup&value=216016_MINEPIA&from=2010-01-01&to=2024-12-31
+  body: none
+  auth: none
+}
+
+params:query {
+  by: regroup
+  value: 216016_MINEPIA
+  from: 2010-01-01
+  to: 2024-12-31
+}

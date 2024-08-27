@@ -1,15 +1,18 @@
 import { useQuery } from "@tanstack/react-query";
-import { useSearchParams } from "next/navigation";
+// import { useSearchParams } from "next/navigation";
 import { convertAmountFromMilliunits } from "@/lib/utils";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 
 export const useGetRequests = () => {
-  const params = useSearchParams();
+  // const params = useSearchParams();
 
-  const from = params.get('from') || "";
-  const to = params.get('to') || "";
-  const accountId = params.get('accountId') || "";
+  // const from = params.get('from') || "";
+  // const to = params.get('to') || "";
+  // const accountId = params.get('accountId') || "";
+  const from = undefined;
+  const to = undefined;
+  const accountId = undefined;
 
   const query = useQuery({
     queryKey: ["requests", { from, to, accountId }],

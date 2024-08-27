@@ -29,3 +29,8 @@ export const RegisterSchema = z.object({
   }),
   confirmPassword: z.string(),
 }).refine((data) => data.password === data.confirmPassword,{message:"Confirm Password does not match",path:["confirmPassword"]});
+
+
+export const RejectSchema = z.object({
+  reason_for_refusal: z.string().min(1, { message: "Reason is required" }),
+});

@@ -86,6 +86,19 @@ export function fillMissingDays(activeDays: {
   return transactionsByDay;
 }
 
+
+const formatDate = (date: string | number | Date)=>{
+  date = new Date(date);
+  const month = date.getMonth() + 1; // Add 1 because month values are zero-based
+  const day = date.getDate();
+  const year = date.getFullYear();
+  const formattedDate = `${day}/${month}/${year}`;
+
+ return(formattedDate);
+}
+
+
+
 type Period = {
   to: string | Date | undefined;
   from: string | Date | undefined;

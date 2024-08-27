@@ -90,9 +90,9 @@ export const DataCard = ({
                         start={0}
                         end={value}
                         decimal=","
-                        decimals={2}
+                        decimals={0}
                         decimalPlaces={2}
-                        formattingFn={formatCurrency}
+                        //formattingFn={formatCurrency}
                     />
                 </h1>
                 <p className={cn("text-muted-foreground text-sm line-clamp-1",

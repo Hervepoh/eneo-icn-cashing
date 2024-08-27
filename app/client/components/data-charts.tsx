@@ -1,19 +1,18 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { FaPiggyBank } from "react-icons/fa";
-import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
-import { formatDateRange } from "@/lib/utils";
-
-import { useGetSummary } from "@/features/summary/api/use-get-summay";
 import { Chart, ChartLoading } from "@/components/chart";
 import { Pie, PieLoading } from "@/components/graph";
+import { useGetSummary } from "@/features/summary/api/use-get-summary";
 
 
 export const DataCharts = () => {
 
-  const { data, isLoading } = useGetSummary();
-
+  // const { data, isLoading } = useGetSummary();
+  const isLoading = true;
+  const data = {
+    days: [],
+    categories: [],
+  };
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">

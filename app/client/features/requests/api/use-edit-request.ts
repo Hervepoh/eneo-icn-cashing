@@ -1,28 +1,22 @@
+import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
 
-// import { client } from "@/lib/hono";
+type RequestType = any
 
-// type ResponseType = InferResponseType<typeof client.api.transactions[":id"]["$patch"]>;
-// type RequestType = InferRequestType<typeof client.api.transactions[":id"]["$patch"]>["json"];
-
-export const useEditTransaction = (id?: string) => {
+export const useEditRequest = (id?: string) => {
   const queryClient = useQueryClient();
 
   const mutation = useMutation<
     ResponseType,
-    Error//,
-    // RequestType
+    Error,
+    RequestType
   >({
-    mutationFn: async (json) => {
-      // const response = await client.api.transactions[":id"]["$patch"]({
-      //   param: { id },
-      //   json
-      // });
-
-      // return await response.json();
-      return JSON.parse("a");
+    mutationFn: async (payload) => {
+      const response = await axios.put(`http://localhost:8000/api/v1/requests/${id}`, payload, {
+        withCredentials: true,
+      });
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Request updated.")

@@ -9,6 +9,8 @@
 // import { clearStaleTokens } from "./clearStaleTokensServerAction";
 // import { URI_LOGIN } from "@/config/route.config";
 
+// TODO : 
+export const auth = () => "";
 // export const { handlers, signIn, signOut, auth } = NextAuth({
 //   trustHost: true,
 //   adapter: PostgresAdapter(pool),

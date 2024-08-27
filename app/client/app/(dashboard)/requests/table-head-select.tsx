@@ -15,9 +15,11 @@ type Props = {
 }
 
 const options = [
+    "name",
     "amount",
-    "payee",
-    "date",
+    "payment_date",
+    "payment_mode",
+    "bank",
 ]
 
 export const TableHeadSelect = ({

@@ -5,8 +5,6 @@ import { z } from "zod"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 
-// import { insertTransactionsSchema } from "@/db/schema"
-
 import {
     Form,
     FormControl,
@@ -30,9 +28,8 @@ import { convertAmountToMilliunits } from '@/lib/utils';
 const formSchema = z.object({
     name: z.string(),
     payment_date: z.coerce.date(),
-    accountId: z.string(),
-    categoryId: z.string().nullable().optional(),
-    payee: z.string(),
+    payment_mode: z.string(),
+    bank: z.string(),
     amount: z.string(),
     description: z.string().nullable().optional(),
     //evidence : z.instanceof(FileList).optional(),
@@ -55,10 +52,11 @@ type Props = {
     onSubmit: (value: ApiFormValues) => void;
     onDelete?: () => void;
     disabled?: boolean;
-    accountOptions: { label: string; value: string }[];
-    categoryOptions: { label: string; value: string }[];
-    onCreateAccount: (name: string) => void;
-    onCreateCategory: (name: string) => void;
+    bankOptions: { label: string; value: string }[];
+    payModeOptions: { label: string; value: string }[];
+    onCreateBank: (name: string) => void;
+    onCreatePayMode: (name: string) => void;
+    editable?: boolean;
 }
 
 export const RequestForm = (
@@ -68,10 +66,11 @@ export const RequestForm = (
         onSubmit,
         onDelete,
         disabled,
-        accountOptions,
-        categoryOptions,
-        onCreateAccount,
-        onCreateCategory
+        bankOptions,
+        payModeOptions,
+        onCreateBank,
+        onCreatePayMode,
+        editable = true
     }: Props) => {
 
     const form = useForm<FormValues>({
@@ -110,7 +109,7 @@ export const RequestForm = (
                             <FormControl>
                                 <Input
                                     disabled={disabled}
-                                    placeholder="..."
+                                    placeholder="Fullname"
                                     {...field}
                                 />
                             </FormControl>
@@ -158,15 +157,15 @@ export const RequestForm = (
 
                 <FormField
                     control={form.control}
-                    name="categoryId"
+                    name="payment_mode"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Payment mode</FormLabel>
                             <FormControl>
                                 <Select
-                                    placeholder='Select a category'
-                                    options={categoryOptions}
-                                    onCreate={onCreateCategory}
+                                    placeholder='Select a payment mode'
+                                    options={payModeOptions}
+                                    onCreate={onCreatePayMode}
                                     value={field.value}
                                     onChange={field.onChange}
                                     disabled={disabled}
@@ -179,15 +178,15 @@ export const RequestForm = (
 
                 <FormField
                     control={form.control}
-                    name="accountId"
+                    name="bank"
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Bank</FormLabel>
                             <FormControl>
                                 <Select
-                                    placeholder='Select an account'
-                                    options={accountOptions}
-                                    onCreate={onCreateAccount}
+                                    placeholder='Select a bank'
+                                    options={bankOptions}
+                                    onCreate={onCreateBank}
                                     value={field.value}
                                     onChange={field.onChange}
                                     disabled={disabled}
@@ -198,7 +197,7 @@ export const RequestForm = (
                     )}
                 />
 
-    
+
                 <FormField
                     control={form.control}
                     name="description"
@@ -218,16 +217,20 @@ export const RequestForm = (
                         </FormItem>
                     )}
                 />
-
-                <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={disabled}
-                >
-                    {disabled ? (<><Loader2 className='animate-spin size-4 mr-2' /> Loading</>) : id ? "Save changes" : "Create transaction"}
-                </Button>
                 {
-                    !!id && (<Button
+                    editable && (
+                        <Button
+                            type="submit"
+                            className="w-full"
+                            disabled={disabled}
+                        >
+                            {disabled ? (<><Loader2 className='animate-spin size-4 mr-2' /> Loading</>) : id ? "Save changes" : "Create transaction"}
+                        </Button>
+                    )
+                }
+
+                {
+                    !!id && editable && (<Button
                         type="button"
                         className="w-full"
                         variant="outline"

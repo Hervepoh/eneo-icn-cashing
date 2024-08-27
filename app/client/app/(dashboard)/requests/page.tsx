@@ -8,6 +8,7 @@ import { useNewRequest } from '@/features/requests/hooks/use-new-request';
 // import { useGetTransactions } from '@/features/transactions/api/use-get-transactions';
 // import { useBulkCreateTransactions } from '@/features/transactions/api/use-bulk-create-transactions';
 // import { useBulkDeleteTransactions } from '@/features/transactions/api/use-bulk-delete-transactions';
+import { useBulkCreateRequests } from '@/features/requests/api/use-bulk-create-requests';
 
 // import { useSelectAccount } from '@/features/accounts/hooks/use-select-account';
 
@@ -33,6 +34,7 @@ import { useGetRequests } from '@/features/requests/api/use-get-requests';
 
 
 
+
 enum VARIANTS {
     LIST = "LIST",
     IMPORT = "IMPORT",
@@ -49,9 +51,8 @@ type Props = {}
 export default function TransactionsPage(props: Props) {
     
     const newRequest = useNewRequest()
-    // const createTransactionsQuery = useBulkCreateTransactions();
+    const createTransactionsQuery = useBulkCreateRequests();
     // const deleteTransactionsQuery = useBulkDeleteTransactions();
-    // const getTransactionsQuery = useGetTransactions();
     const getTransactionsQuery = useGetRequests();
     const transactions = getTransactionsQuery.data || [];
 
@@ -65,7 +66,7 @@ export default function TransactionsPage(props: Props) {
     // const [AccountDialog, confirm] = useSelectAccount();
 
     const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
-        console.log(results)
+        // console.log(results)
         setImportResults(results);
         setVariant(VARIANTS.IMPORT);
     };
@@ -75,7 +76,7 @@ export default function TransactionsPage(props: Props) {
     };
 
     const onSubmitImport = async (
-        // values: typeof transactionsSchema.$inferInsert[],
+       //  values
     ) => {
         const accountId = await confirm();
 
@@ -101,20 +102,20 @@ export default function TransactionsPage(props: Props) {
 
 
 
-    // if (getTransactionsQuery.isLoading) {
-    //     return (
-    //         <div className='max-w-screen-2xl mx-auto w-full pb-10 -mt-24'>
-    //             <Card className='border-none drop-shadow-sm'>
-    //                 <CardHeader>
-    //                     <Skeleton className="w-48 h-8" />
-    //                 </CardHeader>
-    //                 <CardContent className='h-[500px] w-full flex items-center justify-center'>
-    //                     <Loader2 className='size-6 text-slate-300 animate-spin' />
-    //                 </CardContent>
-    //             </Card>
-    //         </div>
-    //     )
-    // }
+    if (getTransactionsQuery.isLoading) {
+        return (
+            <div className='max-w-screen-2xl mx-auto w-full pb-10 -mt-24'>
+                <Card className='border-none drop-shadow-sm'>
+                    <CardHeader>
+                        <Skeleton className="w-48 h-8" />
+                    </CardHeader>
+                    <CardContent className='h-[500px] w-full flex items-center justify-center'>
+                        <Loader2 className='size-6 text-slate-300 animate-spin' />
+                    </CardContent>
+                </Card>
+            </div>
+        )
+    }
 
     if (variant === VARIANTS.IMPORT) {
         return (
@@ -133,7 +134,7 @@ export default function TransactionsPage(props: Props) {
         <div className='max-w-screen-2xl mx-auto w-full pb-10 -mt-24'>
             <Card className='border-none drop-shadow-sm'>
                 <CardHeader className='gap-y-2 lg:flex-row lg:items-center lg:justify-between'>
-                    <CardTitle className='text-xl line-clamp-1'>Requests History</CardTitle>
+                    <CardTitle className='text-xl line-clamp-1'>Transactions History</CardTitle>
                     <div className='flex flex-col lg:flex-row items-center gap-x-2 gap-y-2'>
                         <Button 
                             onClick={newRequest.onOpen} 

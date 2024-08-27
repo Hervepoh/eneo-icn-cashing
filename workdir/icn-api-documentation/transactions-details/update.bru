@@ -1,0 +1,17 @@
+meta {
+  name: update
+  type: http
+  seq: 3
+}
+
+put {
+  url: {{BASE_URL}}/api/v1/request-details/66b74eb00bd3785f064045cf
+  body: json
+  auth: none
+}
+
+body:json {
+  {
+    "deleted": true
+  }
+}

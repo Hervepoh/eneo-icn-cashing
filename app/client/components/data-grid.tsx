@@ -3,58 +3,76 @@
 import { useSearchParams } from "next/navigation";
 import { FaPiggyBank } from "react-icons/fa";
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
+import { MdPendingActions } from "react-icons/md";
 import { formatDateRange } from "@/lib/utils";
-import { useGetSummary } from "@/features/summary/api/use-get-summay";
+import { useGetSummary } from "@/features/summary/api/use-get-summary";
 import { DataCard, DataCardLoading } from "@/components/data-card";
+import { Suspense } from "react";
 
 
-export const DataGrid = () => {
-  const params = useSearchParams();
-  const from = params.get("from") || undefined;
-  const to = params.get("to") || undefined;
 
-  const dateRangeLabel = formatDateRange({ from, to });
+export const DataGrid= () => {
 
-  const { data, isLoading } = useGetSummary();
-
+  // const { data, isLoading } = useGetSummary();
+  const isLoading = true;
+  const data = {
+    transactions: {initiated:0 , pending:0 , processing:0 , treated:0},
+    incomeChange:0,
+    expensesChange:0,
+    remainingChange: 0,
+    dateRangeLabel: "",
+  };
   if (isLoading) {
     return (
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
         {
-          [1, 2, 3].map((i) => <DataCardLoading key={i} />)
+          [1, 2, 3 , 4].map((i) => <DataCardLoading key={i} />)
         }
       </div >
     )
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 pb-2 mb-8">
+    <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
       <DataCard
-        title="Remaining"
-        value={data?.remainingAmount}
+        title="Initiated"
+        value={data?.transactions.initiated || 0}
         percentageChange={data?.remainingChange}
         icon={FaPiggyBank}
         variant="default"
-        dateRange={dateRangeLabel}
+        dateRange={data?.dateRangeLabel}
       />
 
       <DataCard
-        title="Income"
-        value={data?.incomeAmount}
-        percentageChange={data?.incomeChange}
-        icon={FaArrowTrendUp}
-        variant="success"
-        dateRange={dateRangeLabel}
+        title="Pending validation"
+        value={data?.transactions.pending || 0}
+        percentageChange={data?.remainingChange}
+        icon={MdPendingActions}
+        variant="danger"
+        dateRange={data?.dateRangeLabel}
       />
 
       <DataCard
-        title="Expenses"
-        value={data?.expensesAmount}
+        title="Processing"
+        value={data?.transactions.processing || 0}
         percentageChange={data?.expensesChange}
         icon={FaArrowTrendDown}
         variant="danger"
-        dateRange={dateRangeLabel}
+        dateRange={data?.dateRangeLabel}
       />
+
+      <DataCard
+        title="Treated"
+        value={data?.transactions.treated || 0}
+        percentageChange={data?.incomeChange}
+        icon={FaArrowTrendUp}
+        variant="success"
+        dateRange={data?.dateRangeLabel}
+      />
+
+
     </div>
   )
 }
+
+ 

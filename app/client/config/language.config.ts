@@ -1,4 +1,4 @@
-export const Language = {
+export const language = {
      /* p= numero de page, page number
        p= numero de la phrase, phrase number
        */
@@ -7,19 +7,19 @@ export const Language = {
         fr : "Tableau de bord",
     },
     demand: {
-        en : "Demand",
-        fr : "Demandes",
+        en : "Transactions",
+        fr : "Transactions",
     },
     aci_management:{
-        en: "ACI Management",
+        en: "ICN Management",
         fr: "Gestion ACI",
     },
     aci_unpaid:{
-        en: "ACI Unpaid",
+        en: "ICN Unpaid",
         fr: "Impayés ACI",
             },
     aci_journal:{
-        en: "ACI Journal",
+        en: "ICN Journal",
         fr: "Journal ACI",
             },
     settings:{

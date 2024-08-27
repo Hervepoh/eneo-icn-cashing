@@ -1,10 +1,6 @@
+import axios from 'axios';
 import { toast } from "sonner"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-// import { InferRequestType, InferResponseType } from "hono";
-
-// import { client } from "@/lib/hono";
-
-// type ResponseType = InferResponseType<typeof client.api.transactions[":id"]["$delete"]>;
 
 export const useDeleteRequest = (id?: string) => {
   const queryClient = useQueryClient();
@@ -14,12 +10,10 @@ export const useDeleteRequest = (id?: string) => {
     Error
   >({
     mutationFn: async () => {
-      // const response = await client.api.transactions[":id"]["$delete"]({
-      //   param: { id }
-      // });
-
-      // return await response.json();
-      return JSON.parse("a");
+      const response = await axios.delete(`http://localhost:8000/api/v1/requests/${id}`, {
+        withCredentials: true,
+      });
+      return response.data;
     },
     onSuccess: () => {
       toast.success("Requests deleted.")

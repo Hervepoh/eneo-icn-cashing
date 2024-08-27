@@ -1,4 +1,4 @@
-import { Language } from "./language.config";
+import { language } from "./language.config";
 
 /**
  * An Array of routes that are available  in the navigation bar 
@@ -7,27 +7,23 @@ import { Language } from "./language.config";
 export const navbarRoutes: {href:string,label:string}[] = [
     {
         href: "/",
-        label: Language.overview["fr"]
+        label: language.overview["fr"]
     },
     {
         href: "/requests",
-        label: Language.demand["fr"]
-    },
-    {
-        href: "/accounts",
-        label: "Gestion ACI",
+        label: language.demand["fr"]
     },
     {
         href: "/categories",
-        label: "Impayés ACI",
+        label: language.aci_unpaid["fr"]
     },
     {
         href: "/categories",
-        label: "Journal ACI",
+        label: language.aci_journal["fr"],
     },
     {
         href: "/settings",
-        label: "Settings",
+        label: language.settings["fr"],
     },
 ];
 

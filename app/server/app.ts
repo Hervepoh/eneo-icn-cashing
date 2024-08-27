@@ -6,12 +6,16 @@ import cookieParser from "cookie-parser";
 import { ErrorMiddleware } from "./middleware/error";
 
 import userRouter from "./routes/user.route";
+import bankRouter from "./routes/bank.route";
+import payModeRouter from "./routes/payMode.route";
 import unpaidRouter from "./routes/unpaid.route";
-import interncreditRouter from "./routes/interncredit.route";
-import notificationRouter from "./routes/notification.route";
 import requestRouter from "./routes/request.route";
+import requestDetailRouter from "./routes/requestDetail.route";
 import settingRouter from "./routes/setting.route";
 import categoryRouter from "./routes/category.route";
+import interncreditRouter from "./routes/interncredit.route";
+import notificationRouter from "./routes/notification.route";
+import summaryRouter from "./routes/summary.route";
 
 
 export const app = express();
@@ -37,13 +41,17 @@ app.use(
 
 // routes
 app.use("/api/v1",
+  bankRouter,
+  payModeRouter,
   categoryRouter,
   interncreditRouter,
   notificationRouter,
   requestRouter,
+  requestDetailRouter,
   settingRouter,
   unpaidRouter,
   userRouter,
+  summaryRouter
 );
 
 // testing API

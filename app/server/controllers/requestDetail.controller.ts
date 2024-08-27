@@ -141,6 +141,32 @@ export const bulkUpdate = CatchAsyncError(
   }
 );
 
+
+export const fulldelete = CatchAsyncError(
+  async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { id } = req.params;
+      // check if the provided courseId is valid
+      if (!mongoose.Types.ObjectId.isValid(id)) {
+        return next(new ErrorHandler("Invalid request id", 400));
+      }
+      const requestDetail = await requestDetailModel.findById(id);
+      if (!requestDetail) {
+        return next(new ErrorHandler("Request not found", 404));
+      }
+      await requestDetailModel.deleteOne({ _id: id });
+
+      return res.status(200).json({
+        success: true,
+        message: "RequestDetail deleted successfully",
+      });
+    } catch (error: any) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  }
+);
+
+
 /*
  * create is an asynchronous function that creates a record in the database.
  * It first retrieves the user information from the database, and then creates records with the provided data,
@@ -165,14 +191,9 @@ export const create = CatchAsyncError(
 
       //TODO: check if the user is the assignee of the record
 
-      const data = {
-        ...req.body,
-        payment_date: parseDMY(req.body.payment_date),
-        createdBy: user._id,
-        userId: user._id,
-      };
+      const data = { ...req.body }
 
-      const request = await requestModel.create(data);
+      const request = await requestDetailModel.create(data);
 
       res.status(201).json({
         success: true,
@@ -306,34 +327,6 @@ export const softDelete = CatchAsyncError(
   }
 );
 
-/*
- * fulldelete, is an asynchronous function
- * that delete a specific record in the database
- */
-export const fulldelete = CatchAsyncError(
-  async (req: Request, res: Response, next: NextFunction) => {
-    try {
-      const { id } = req.params;
-      // check if the provided courseId is valid
-      if (!mongoose.Types.ObjectId.isValid(id)) {
-        return next(new ErrorHandler("Invalid request id", 400));
-      }
-      const request = await requestModel.findById(id);
-      if (!request) {
-        return next(new ErrorHandler("Request not found", 404));
-      }
-      await request.deleteOne({ _id: id });
-      await redis.del(id);
-
-      return res.status(200).json({
-        success: true,
-        message: "Request deleted successfully",
-      });
-    } catch (error: any) {
-      return next(new ErrorHandler(error.message, 500));
-    }
-  }
-);
 
 //---------------------------------------------------------
 //            SOFT BULK DELETE REQUEST

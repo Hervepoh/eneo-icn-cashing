@@ -1,7 +1,7 @@
 "use client"
 import { SetStateAction, useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { BadgeCheck, Check, CircleCheckBig, ListCheck, ListTodo, Loader2, Save, SearchCheckIcon, SearchCode, SearchIcon, SearchSlash, SearchX, ShoppingBag, VenetianMask } from "lucide-react";
+import { BadgeCheck, Check, CircleCheckBig, Info, ListCheck, ListTodo, Loader2, Save, SearchCheckIcon, SearchCode, SearchIcon, SearchSlash, SearchX, ShoppingBag, Trash, VenetianMask } from "lucide-react";
 import { BiPlusCircle, BiSearch } from "react-icons/bi";
 
 import {
@@ -53,6 +53,7 @@ import { useGetRequestDetails } from "@/features/requests/api/use-get-request-de
 import { Button } from "@/components/ui/button";
 import { useBulkRequestDetails } from "@/features/requests/api/use-bulk-create-request-details";
 import { useBulkSaveRequestDetails } from "@/features/requests/api/use-bulk-save-request-details";
+import { InfoCard } from "@/components/info-card";
 
 interface Invoice {
     id: string;
@@ -106,13 +107,16 @@ export default function TransactionsDetails() {
 
     useEffect(() => {
         if (details_data) {
-
             setfinalData(details_data);
             recalculateSelectedInvoices(details_data);
             setViewRecap(true);
         }
     }, [details_data])
 
+    const handleDelete = (id: string) => {
+        //SaveDeltailsTransactionsQuery.mutate(id);
+        console.log("handleDelete",id)
+    }
 
     const handleInputChange = (index: number, newValue: number) => {
         if (newValue) {
@@ -147,26 +151,19 @@ export default function TransactionsDetails() {
     };
 
     const handleQualityControl = () => {
-        const newData = [...finalData];
-        // Identifiez les lignes en double
-        const rowsMap = newData.reduce((acc, row) => {
+        // Build finalData and give every element an attribut isDuplicate
+        const newData = finalData.map(row => {
             const key = `${row.contract}-${row.invoice}`;
-            if (acc[key]) {
-                acc[key].isDuplicate = true;
-            } else {
-                acc[key] = { ...row, isDuplicate: false };
-            }
-            return acc;
-        }, {});
-
-        // Récupérez les données finales
-        const uniqueFinalData = Object.values(rowsMap);
-        console.log("uniqueFinalData: ", uniqueFinalData)
+            const isDuplicate = finalData.filter(r => `${r.contract}-${r.invoice}` === key).length > 1;
+            return { ...row, isDuplicate };
+        });
+        setfinalData(newData);
     };
 
+    
     const recalculateSelectedInvoices = (data: any[]) => {
+        // Get all selected invoices
         const selectedRows = data.filter((row) => row.selected);
-        console.log(selectedRows);
         const newTotal = selectedRows.reduce((acc, cur) => acc + cur.amountUnpaid, 0);
         const newTotalToPaid = selectedRows.reduce((acc, cur) => acc + cur.amountTopaid, 0);
         setTotal(newTotal);
@@ -381,24 +378,28 @@ export default function TransactionsDetails() {
                                         <div className="flex flex-col h-full items-start justify-center p-6">
                                             <Table>
                                                 <TableCaption>A list of your recent invoices.</TableCaption>
-                                                <TableHeader>
+                                                <TableHeader className="bg-gray-200 text-white">
                                                     <TableRow>
-                                                        <TableHead className=""></TableHead>
-                                                        <TableHead>contract</TableHead>
-                                                        <TableHead className="">invoice</TableHead>
-                                                        <TableHead className="">Name</TableHead>
-                                                        <TableHead className="">Due Amount</TableHead>
-                                                        <TableHead className="">Amount to Paid</TableHead>
+                                                        <TableHead></TableHead>
+                                                        <TableHead className="font-bold">Contract</TableHead>
+                                                        <TableHead className="font-bold">Invoice</TableHead>
+                                                        <TableHead className="font-bold">Name</TableHead>
+                                                        <TableHead className="font-bold">Due Amount</TableHead>
+                                                        <TableHead className="font-bold">Amount to Paid</TableHead>
+                                                        <TableHead></TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
                                                     {finalData.map((row: any, i: any) => (
                                                         <TableRow
                                                             key={i}
-                                                            style={{ backgroundColor: row.selected ? '#f0f0f0' : 'transparent' }}
+                                                            style={{
+                                                                backgroundColor: row?.isDuplicate ? '#f559' : row.selected ? '#f1f1f1' : 'transparent',
+                                                                color: row.isDuplicate ? 'white' : 'inherit'
+                                                            }}
                                                         >
                                                             <TableCell className="font-medium">
-                                                                <input
+                                                                <Input
                                                                     type="checkbox"
                                                                     checked={row.selected}
                                                                     onChange={() => handleCheckboxChange(i)}
@@ -415,7 +416,20 @@ export default function TransactionsDetails() {
                                                                     value={row.amountTopaid}
                                                                     onChange={e => handleInputChange(i, parseFloat(e.target.value))}
                                                                     min={0}
-                                                                    className="w-[130px]" />
+                                                                    className="w-[130px]"
+                                                                    style={{ color: row.isDuplicate ? 'red' : 'inherit' }}
+                                                                />
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <div className="flex items-center justify-center gap-x-1">
+                                                                    <Button
+                                                                        onClick={() => handleDelete(row._id)}
+                                                                        size="sm"
+                                                                        variant="ghost">
+                                                                        <Trash className='size-5' />
+                                                                    </Button>
+                                                                    {row.isDuplicate && <InfoCard />}
+                                                                </div>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -424,7 +438,7 @@ export default function TransactionsDetails() {
                                                     <TableRow>
                                                         <TableCell colSpan={4}>Total</TableCell>
                                                         <TableCell className="text-left">{total.toFixed(0)}</TableCell>
-                                                        <TableCell className="text-left">{totalToPaid.toFixed(0)}</TableCell>
+                                                        <TableCell colSpan={2} className="text-left">{totalToPaid.toFixed(0)}</TableCell>
                                                     </TableRow>
                                                 </TableFooter>
                                             </Table>
@@ -482,6 +496,5 @@ export default function TransactionsDetails() {
         </div>
     )
 }
-
 
 

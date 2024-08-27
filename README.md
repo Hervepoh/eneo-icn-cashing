@@ -49,4 +49,4 @@ To run this project, you will need to add the following environment variables to
 - [@eugenekoule](https://github.com/Eugene2016)
 - [@hervepoh](https://github.com/Hervepoh)
 - [@Jacques Armand Nyog](https://github.com/Maccabee1989)
-
+- [@samuel](https://github.com/samuel1544)

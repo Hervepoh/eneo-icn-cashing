@@ -1,7 +1,7 @@
 "use client"
-import { SetStateAction, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { BadgeCheck, Check, CircleCheckBig, Info, ListCheck, ListTodo, Loader2, Save, SearchCheckIcon, SearchCode, SearchIcon, SearchSlash, SearchX, ShoppingBag, Trash, VenetianMask } from "lucide-react";
+import { CircleCheckBig, ListTodo, Loader2, Save,  ShoppingBag, Trash } from "lucide-react";
 import { BiPlusCircle, BiSearch } from "react-icons/bi";
 
 import {
@@ -54,6 +54,7 @@ import { Button } from "@/components/ui/button";
 import { useBulkRequestDetails } from "@/features/requests/api/use-bulk-create-request-details";
 import { useBulkSaveRequestDetails } from "@/features/requests/api/use-bulk-save-request-details";
 import { InfoCard } from "@/components/info-card";
+import { useDeleteRequestDetails } from "@/features/requests/api/use-delete-request-details";
 
 interface Invoice {
     id: string;
@@ -81,10 +82,14 @@ export default function TransactionsDetails() {
 
     const AddDeltailsTransactionsQuery = useBulkRequestDetails(params.id);
     const SaveDeltailsTransactionsQuery = useBulkSaveRequestDetails(params.id);
-
+    const DeleteDeltailTransactionsQuery =useDeleteRequestDetails(params.id);
+      
     const disable = AddDeltailsTransactionsQuery.isPending
         || SaveDeltailsTransactionsQuery.isPending
+        || DeleteDeltailTransactionsQuery.isPending 
         || details_isLoading
+
+   const [disableSubmit, setDisableSubmit] = useState(true);
 
     const [view, setView] = useState<"search" | "upload">("search");
     const [viewRecap, setViewRecap] = useState<boolean>(false);
@@ -99,8 +104,6 @@ export default function TransactionsDetails() {
     const [invoiceNumber, setInvoiceNumber] = useState('');
     const [selectedInvoices, setSelectedInvoices] = useState<Invoice[]>([]);
 
-
-
     const [finalData, setfinalData] = useState<any[]>([]);
     const [total, setTotal] = useState<number>(0);
     const [totalToPaid, setTotalToPaid] = useState<number>(0);
@@ -114,8 +117,13 @@ export default function TransactionsDetails() {
     }, [details_data])
 
     const handleDelete = (id: string) => {
-        //SaveDeltailsTransactionsQuery.mutate(id);
-        console.log("handleDelete",id)
+        const newData = [...finalData];
+        setfinalData(newData.filter(r => r._id != id));
+        DeleteDeltailTransactionsQuery.mutate(id, {
+            onSuccess: () => {
+               console.log("success handleDelete")
+            },
+        });
     }
 
     const handleInputChange = (index: number, newValue: number) => {
@@ -158,6 +166,13 @@ export default function TransactionsDetails() {
             return { ...row, isDuplicate };
         });
         setfinalData(newData);
+        const selectedRows = newData.filter((row) => row.selected);
+        const newTotalToPaid = selectedRows.reduce((acc, cur) => acc + cur.amountTopaid, 0);
+       
+        if (data?.amount === newTotalToPaid && !newData.some((row) => row.isDuplicate)) {
+            setDisableSubmit(false);
+        }
+
     };
 
     
@@ -363,7 +378,8 @@ export default function TransactionsDetails() {
                                                 </Button>
 
                                                 <Button
-                                                    disabled={true}
+                                                    disabled={disableSubmit}
+                                                    variant={ disableSubmit ? "default": "success" }
                                                     onClick={() => ""}
                                                     size="sm"
                                                     className='w-full lg:w-auto'>
@@ -423,12 +439,16 @@ export default function TransactionsDetails() {
                                                             <TableCell>
                                                                 <div className="flex items-center justify-center gap-x-1">
                                                                     <Button
+                                                                        disabled={disable}
                                                                         onClick={() => handleDelete(row._id)}
                                                                         size="sm"
                                                                         variant="ghost">
                                                                         <Trash className='size-5' />
                                                                     </Button>
-                                                                    {row.isDuplicate && <InfoCard />}
+                                                                    {row.isDuplicate && <InfoCard content={ 
+                                                                        row.isDuplicate
+                                                                         ? `Key contract-invoice : ${row.contract}-${row.invoice} is duplicate`
+                                                                         : `Data inconsistency` } />}
                                                                 </div>
                                                             </TableCell>
                                                         </TableRow>
@@ -444,6 +464,7 @@ export default function TransactionsDetails() {
                                             </Table>
 
                                             <Button
+                                                disabled={disable}
                                                 onClick={() => handleSaveChange()}
                                                 size="sm"
                                                 className='w-full mt-10 lg:w-auto'>

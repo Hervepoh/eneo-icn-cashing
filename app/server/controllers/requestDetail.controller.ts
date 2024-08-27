@@ -145,7 +145,7 @@ export const bulkUpdate = CatchAsyncError(
 export const fulldelete = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { id } = req.params;
+      const { id } = req.body;
       // check if the provided courseId is valid
       if (!mongoose.Types.ObjectId.isValid(id)) {
         return next(new ErrorHandler("Invalid request id", 400));

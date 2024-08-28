@@ -7,9 +7,9 @@ import { useGetSummary } from "@/features/summary/api/use-get-summary";
 
 export const DataCharts = () => {
 
-  // const { data, isLoading } = useGetSummary();
-  const isLoading = true;
-  const data = {
+   const { data, isLoading } = useGetSummary();
+  // const isLoading = true;
+   const datas = {
     days: [
       { date: '2024-08-01', income: 1500, expenses: 800 },
       { date: '2024-08-02', income: 1700, expenses: 600 },
@@ -24,27 +24,29 @@ export const DataCharts = () => {
       { name: 'Dépenses', value: 5550 }, // Somme totale des dépenses
     ],
   };
-  const totalIncome = data.days.reduce((acc, day) => acc + day.income, 0);
-  const totalExpenses = data.days.reduce((acc, day) => acc + day.expenses, 0);
+  const totalIncome = datas.days.reduce((acc, day) => acc + day.income, 0);
+  const totalExpenses = datas.days.reduce((acc, day) => acc + day.expenses, 0);
 
   data.categories = [
     { name: 'Revenus', value: totalIncome },
     { name: 'Dépenses', value: totalExpenses },
   ];
-  // if (isLoading) {
-  //   return (
-  //     <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
-  //       <div className="col-span-1 lg:col-span-3 xl:col-span-4">
-  //         <ChartLoading />
-  //       </div>
-  //       <div className="col-span-1 lg:col-span-3 xl:col-span-2">
-  //         <PieLoading />
-  //       </div>
-  //     </div>
-  //   )
-  // }
+
+  if (isLoading) {
+    return (
+      <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
+        <div className="col-span-1 lg:col-span-3 xl:col-span-4">
+          <ChartLoading />
+        </div>
+        <div className="col-span-1 lg:col-span-3 xl:col-span-2">
+          <PieLoading />
+        </div>
+      </div>
+    )
+  }
 
   return (
+    //Send the days data recieved from the summary Endpoint
     <div className="grid grid-cols-1 lg:grid-cols-6 gap-8">
       <div className="col-span-1 lg:col-span-3 xl:col-span-4">
         <Chart
@@ -53,7 +55,7 @@ export const DataCharts = () => {
       </div>
       <div className="col-span-1 lg:col-span-3 xl:col-span-2">
         <Pie
-          data={data?.categories}
+          data={datas?.categories}
         />
       </div>
     </div>

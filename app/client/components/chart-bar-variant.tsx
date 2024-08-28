@@ -17,8 +17,8 @@ import CustomTooltip from "./custom-tooltip";
 type Props = {
   data: {
     date: string;
-    income: number;
-    expenses: number;
+    count: number;
+    // expenses: number;
   }[];
 }
 
@@ -48,7 +48,7 @@ export const BarVariant = ({ data }: Props) => {
         />
         <Tooltip content={<CustomTooltip />} />
         <Bar
-          dataKey="income"
+          dataKey="count"
           fill="#3d82f6"
           className="drop-shadow-sm"
         />

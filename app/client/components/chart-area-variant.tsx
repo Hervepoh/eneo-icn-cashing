@@ -19,8 +19,8 @@ import CustomTooltip from "@/components/custom-tooltip";
 type Props = {
   data: {
     date: string;
-    income: number;
-    expenses: number;
+    count: number;
+    // expenses: number;
   }[];
 }
 
@@ -50,7 +50,7 @@ export const AreaVariant = ({ data }: Props) => {
         /><YAxis
         axisLine={false}
         tickLine={false}
-        dataKey="income"
+        dataKey="count"
         // tickFormatter={(value) => format(value, "dd MMM")}
         style={{ fontSize: "12px" }}
         tickMargin={16}
@@ -58,8 +58,8 @@ export const AreaVariant = ({ data }: Props) => {
         <Tooltip content={<CustomTooltip />} />
         <Area
         type="monotone"
-        dataKey="income"
-        stackId="income"
+        dataKey="count"
+        stackId="count"
         strokeWidth={2}
         stroke="#3d82f6"
         fill="url(#income)"

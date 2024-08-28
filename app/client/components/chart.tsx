@@ -28,8 +28,8 @@ import { ComposedVariant } from '@/components/chart-line-variant';
 type Props = {
     data?: {
         date: string;
-        income: number;
-        expenses: number;
+        count: number;
+        // expenses: number;
     }[];
 }
 

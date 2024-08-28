@@ -23,18 +23,18 @@ const CustomTooltip = ({ active, payload }: any) => {
                     <div className='flex items-center gap-x-2'>
                         <div className='size-1.5 bg-blue-500 rounded-full' />
                         <p className='text-sm text-muted-foreground'>
-                            Income
+                            Number
                         </p>
                     </div>
                     <p className='text-sm text-right font-medium'>
-                        {formatCurrency(income)}
+                        {income}
                     </p>
                 </div>
                 <div className='flex items-center justify-between gap-x-4'>
                     <div className='flex items-center gap-x-2'>
                         <div className='size-1.5 bg-rose-500 rounded-full' />
                         <p className='text-sm text-muted-foreground'>
-                            Expenses
+                            Amount
                         </p>
                     </div>
                     <p className='text-sm text-right font-medium'>

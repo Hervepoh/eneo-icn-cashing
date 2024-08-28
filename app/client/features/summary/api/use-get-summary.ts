@@ -39,7 +39,6 @@ export const useGetSummary = () => {
 
   const query = useQuery({
     queryKey: ["summary", { from, to }],
-    queryKey: ["summary", { from, to }],
     queryFn: async () => {
       const config: AxiosRequestConfig = {
         method: 'get',

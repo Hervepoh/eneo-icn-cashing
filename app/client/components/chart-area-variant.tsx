@@ -19,13 +19,14 @@ import CustomTooltip from "@/components/custom-tooltip";
 type Props = {
   data: {
     date: string;
-    count: number;
-    // expenses: number;
+    number: number;
+    amount: number;
   }[];
 }
 
 
 export const AreaVariant = ({ data }: Props) => {
+
   return (
     <ResponsiveContainer width="100%" height={350}>
       <AreaChart data={data}>
@@ -47,37 +48,38 @@ export const AreaVariant = ({ data }: Props) => {
           tickFormatter={(value) => format(value, "dd MMM")}
           style={{ fontSize: "12px" }}
           tickMargin={16}
-        /><YAxis
-        axisLine={false}
-        tickLine={false}
-        dataKey="count"
-        // tickFormatter={(value) => format(value, "dd MMM")}
-        style={{ fontSize: "12px" }}
-        tickMargin={16}
-      />
+        />
+        <YAxis
+          axisLine={false}
+          tickLine={false}
+          dataKey="number"
+          // tickFormatter={(value) => format(value, "dd MMM")}
+          style={{ fontSize: "12px" }}
+          tickMargin={16}
+        />
         <Tooltip content={<CustomTooltip />} />
         <Area
-        type="monotone"
-        dataKey="count"
-        stackId="count"
-        strokeWidth={2}
-        stroke="#3d82f6"
-        fill="url(#income)"
-        className="drop-shadow-sm"
+          type="monotone"
+          dataKey="number"
+          stackId="number"
+          strokeWidth={2}
+          stroke="#3d82f6"
+          fill="url(#income)"
+          className="drop-shadow-sm"
         />
         <Area
-        type="monotone"
-        dataKey="expenses"
-        stackId="expenses"
-        strokeWidth={2}
-        stroke="#f43f5e"
-        fill="url(#expenses)"
-        className="drop-shadow-sm"
+          type="monotone"
+          dataKey="amount"
+          stackId="amount"
+          strokeWidth={2}
+          stroke="#f43f5e"
+          fill="url(#expenses)"
+          className="drop-shadow-sm"
         />
-        <Legend verticalAlign="bottom" wrapperStyle={{bottom:-15}}/>
-          
+        <Legend verticalAlign="bottom" wrapperStyle={{ bottom: -15 }} />
+
       </AreaChart>
-      
+
     </ResponsiveContainer>
   )
 };

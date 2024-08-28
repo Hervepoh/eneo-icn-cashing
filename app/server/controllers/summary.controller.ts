@@ -109,8 +109,6 @@ async function fetchSummaryData(from: Date, to: Date) {
   });
 
 
-
-
   // Récupération des 10 principaux demandeurs de requêtes par statut
   const topRequestersByStatus = await requestModel.aggregate([
     { $match: { createdAt: { $gte: from, $lte: to } } },
@@ -122,9 +120,10 @@ async function fetchSummaryData(from: Date, to: Date) {
 
   const activeDays = await requestModel.aggregate([
     { $match: { createdAt: { $gte: from, $lte: to } } },
-    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", }, }, count: { $sum: 1 }, }, },
+    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", }, }, count: { $sum: 1 },  totalAmount: { $sum: '$amount' }  }, },
     { $sort: { _id: 1, }, },
   ]);
+
 
   const days = fillMissingDays(activeDays, from, to);
   return {
@@ -207,10 +206,10 @@ function calculatePercentageChange(
 
 
 function fillMissingDays(
-  activeDays: { _id: string; count: number }[],
+  activeDays: { _id: string; count: number ,totalAmount: number }[],
   startDate: Date,
   endDate: Date
-): { date: Date; count: number }[] {
+): { date: Date; number: number }[] {
   if (activeDays.length === 0) return [];
   const allDays = eachDayOfInterval({
     start: startDate,
@@ -222,12 +221,14 @@ function fillMissingDays(
     if (found) {
       return {
         date: day,
-        count: found.count,
+        number: found.count,
+        amount: found.totalAmount,
       };
     } else {
       return {
         date: day,
-        count: 0,
+        number: 0,
+        amount: 0
       };
     }
   });

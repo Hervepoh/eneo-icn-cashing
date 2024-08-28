@@ -19,8 +19,8 @@ import CustomTooltip from "./custom-tooltip";
 type Props = {
   data: {
     date: string;
-    count: number;
-    // expenses: number;
+    number: number;
+    amount: number;
   }[];
 }
 
@@ -43,7 +43,7 @@ export const LineVariant = ({ data }: Props) => {
         <Tooltip content={<CustomTooltip />} />
         <Line
           dot={true}
-          dataKey="count"
+          dataKey="number"
           stroke="#3d82f6"
           strokeWidth={2}
           className="drop-shadow-sm"
@@ -52,7 +52,7 @@ export const LineVariant = ({ data }: Props) => {
         />
         <Line
           dot={true}
-          dataKey="expenses"
+          dataKey="amount"
           stroke="#f43f5e"
           strokeWidth={2}
           className="drop-shadow-sm"
@@ -84,14 +84,14 @@ export const ComposedVariant = ({ data }: Props) => {
         <Legend wrapperStyle={{ bottom: -15 }} />
 
         <Bar
-          dataKey="count"
+          dataKey="number"
           fill="#f43f5e"
           barSize={30}
           className="drop-shadow-sm"
         />
         <Line
           dot={true}
-          dataKey="count"
+          dataKey="amount"
           stroke="#3d82f6"
           strokeWidth={2}
           className="drop-shadow-sm"

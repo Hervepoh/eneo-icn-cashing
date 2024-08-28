@@ -35,6 +35,7 @@ export const useGetSummary = () => {
     }
   }, [defaultFrom, defaultTo, from, to]);
 
+  const dateRangeLabel = formatDateRange({ from, to });
 
   const query = useQuery({
     queryKey: ["summary", { from, to }],

@@ -11,6 +11,7 @@ export const summary = CatchAsyncError(
     try {
       const { from: fromDate, to: toDate } = req.query;
       console.log("req.query", req.query)
+      console.log("req.query", req.query)
       const defaultTo = new Date();
       const defaultFrom = subDays(defaultTo, 30);
 
@@ -66,12 +67,11 @@ async function fetchSummaryData(from: Date, to: Date) {
     { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', count: { $count: {} }} }
   ]);
-
   const transactions = countByStatus.reduce((acc, curr) => {
     acc[curr._id] = curr.count;
     return acc;
   }, {});
-
+ 
   const totalCount = countByStatus.reduce((acc, curr) => acc + curr.count, 0);
 
   const statusPercentages = countByStatus.map(item => ({
@@ -84,6 +84,7 @@ async function fetchSummaryData(from: Date, to: Date) {
 
   // Récupération du montant des requêtes par statut
   const sumAmountByStatus = await requestModel.aggregate([
+    { $match: { payment_date: { $gte: from, $lte: to } } },
     { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
   ]);
@@ -114,6 +115,7 @@ async function fetchSummaryData(from: Date, to: Date) {
   // Récupération des 10 principaux demandeurs de requêtes par statut
   const topRequestersByStatus = await requestModel.aggregate([
     { $match: { payment_date: { $gte: from, $lte: to } } },
+    { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: { status: '$status', userId: '$userId' }, count: { $count: {} } } },
     { $sort: { count: -1 } },
     { $group: { _id: '$_id.status', topRequesters: { $push: { userId: '$_id.userId', count: '$count' } } } },
@@ -121,6 +123,8 @@ async function fetchSummaryData(from: Date, to: Date) {
   ]);
 
   const activeDays = await requestModel.aggregate([
+    { $match: { payment_date: { $gte: from, $lte: to } } },
+    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$payment_date", }, }, count: { $sum: 1 }, }, },
     { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$payment_date", }, }, count: { $sum: 1 }, }, },
     { $sort: { _id: 1, }, },
@@ -162,11 +166,13 @@ export const analytics = CatchAsyncError(
       // Récupération du montant des requêtes par statut
       const amountByStatus = await requestModel.aggregate([
         { $match: { payment_date: { $gte: from, $lte: to }, userId } },
+        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
       ]);
 
       // Récupération des 10 principaux demandeurs de requêtes par statut
       const topRequestersByStatus = await requestModel.aggregate([
+        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $group: { _id: { status: '$status', userId: '$userId' }, count: { $count: {} } } },
         { $sort: { count: -1 } },

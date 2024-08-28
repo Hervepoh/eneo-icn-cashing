@@ -13,15 +13,8 @@ import { Suspense } from "react";
 
 export const DataGrid= () => {
 
-  // const { data, isLoading } = useGetSummary();
-  const isLoading = true;
-  const data = {
-    transactions: {initiated:0 , pending:0 , processing:0 , treated:0},
-    incomeChange:0,
-    expensesChange:0,
-    remainingChange: 0,
-    dateRangeLabel: "",
-  };
+  const { data, isLoading } = useGetSummary();
+
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">

@@ -55,6 +55,7 @@ import { useBulkRequestDetails } from "@/features/requests/api/use-bulk-create-r
 import { useBulkSaveRequestDetails } from "@/features/requests/api/use-bulk-save-request-details";
 import { InfoCard } from "@/components/info-card";
 import { useDeleteRequestDetails } from "@/features/requests/api/use-delete-request-details";
+import { toast } from "sonner";
 
 interface Invoice {
     id: string;
@@ -172,6 +173,8 @@ export default function TransactionsDetails() {
         if (data?.amount === newTotalToPaid && !newData.some((row) => row.isDuplicate)) {
             setDisableSubmit(false);
         }
+
+        toast.info("Quantity controle done !")
 
     };
 
@@ -317,6 +320,7 @@ export default function TransactionsDetails() {
                                     setIsFirstView={setIsFirstView}
                                     setError={setSearchError}
                                     setIsPending={setSearchIsLoading}
+                                    setViewRecap={setViewRecap}
                                 />
                             }
 

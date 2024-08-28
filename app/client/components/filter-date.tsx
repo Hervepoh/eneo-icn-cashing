@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CalendarIcon, ChevronDown } from 'lucide-react';
 import { format, subDays } from "date-fns";
 import { DateRange } from "react-day-picker";
@@ -37,6 +37,14 @@ export const DateFilter = (props: Props) => {
   const accountId = params.get('accountId');
   const from = params.get('from') || '';
   const to = params.get('to') || '';
+  // useEffect(() => {
+  //   // Récupération des données dans le localStorage au montage du composant
+  //   const storedData = localStorage.getItem('myData');
+  //   if (storedData) {
+  //     setMyData(JSON.parse(storedData));
+  //   }
+  // }, []);
+
 
   const defaultTo = new Date();
   const defaultFrom = subDays(defaultTo, 30);
@@ -56,6 +64,8 @@ export const DateFilter = (props: Props) => {
       to: format(dateRange?.to || defaultTo, "yyyy-MM-dd"),
       accountId
     }
+    localStorage.setItem('filter-query', JSON.stringify(query));
+
     const url = qs.stringifyUrl({
       url: pathname,
       query

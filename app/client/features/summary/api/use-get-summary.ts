@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
@@ -9,9 +9,12 @@ import { formatDate, format, subDays } from 'date-fns';
 
 export const useGetSummary = () => {
 
-  const [from, setFrom] = useState("");
-  const [to, setTo] = useState("");
-  const [dateRangeLabel, setDateRangeLabel] = useState("");
+  const [from, setFrom] = useState('');
+  const [to, setTo] = useState('');
+
+  // Memoize the default dates
+  const defaultTo = useMemo(() => new Date(), []);
+  const defaultFrom = useMemo(() => subDays(defaultTo, 30), [defaultTo]);
 
   // Fonction pour récupérer les filtres du localStorage
   const fetchFiltersFromLocalStorage = () => {
@@ -24,16 +27,13 @@ export const useGetSummary = () => {
   };
 
   useEffect(() => {
-    const defaultTo = new Date();
-    const defaultFrom = subDays(defaultTo, 30);
     fetchFiltersFromLocalStorage();
 
-    if (!from && !to) {
+    if (!from || !to) {
       setFrom(format(defaultFrom, "yyyy-MM-dd"));
       setTo(format(defaultTo, "yyyy-MM-dd"));
-      console.log("default value")
     }
-  }, [from,to]);
+  }, [defaultFrom, defaultTo, from, to]);
 
 
   const query = useQuery({

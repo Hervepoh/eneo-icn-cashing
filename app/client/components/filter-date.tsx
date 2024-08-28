@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { CalendarIcon, ChevronDown } from 'lucide-react';
 import { format, subDays } from "date-fns";
 import { DateRange } from "react-day-picker";
@@ -34,10 +34,29 @@ export const DateFilter = (props: Props) => {
   const pathname = usePathname();
 
   const params = useSearchParams();
-  const accountId = params.get('accountId');
-  const from = params.get('from') || '';
-  const to = params.get('to') || '';
+  //const accountId = params.get('accountId');
+  const [from, setFrom] = useState(params.get('from') || '');
+  const [to, setTo] = useState(params.get('to') || '');
 
+  // Fonction pour récupérer les filtres du localStorage
+  const fetchFiltersFromLocalStorage = () => {
+    const storedFilterQuery = localStorage.getItem('icn-filter-data-query');
+    if (storedFilterQuery) {
+      const result = JSON.parse(storedFilterQuery);
+      setFrom(result.from ?? "");
+      setTo(result.to ?? "");
+    }
+  };
+
+  useEffect(() => {
+    fetchFiltersFromLocalStorage();
+    const defaultDate = new Date();
+    if (!from || !to) {
+      setFrom(format(subDays(defaultDate, 30), "yyyy-MM-dd"));
+      setTo(format(defaultDate, "yyyy-MM-dd"));
+    }
+  }, [from, to]);
+  
   const defaultTo = new Date();
   const defaultFrom = subDays(defaultTo, 30);
 
@@ -55,7 +74,7 @@ export const DateFilter = (props: Props) => {
       from: format(dateRange?.from || defaultFrom, "yyyy-MM-dd"),
       to: format(dateRange?.to || defaultTo, "yyyy-MM-dd"),
     }
-    localStorage.setItem('icn-filter-data-query', JSON.stringify({ from:query.from, to:query.to }));
+    localStorage.setItem('icn-filter-data-query', JSON.stringify({ from: query.from, to: query.to }));
     const url = qs.stringifyUrl({
       url: pathname,
       query

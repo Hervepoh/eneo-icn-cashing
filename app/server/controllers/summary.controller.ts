@@ -31,13 +31,24 @@ export const summary = CatchAsyncError(
       return res.status(200).json({
         success: true,
         data: {
-          transactions: currentPeriod.requestCountByStatus,
-          categories:currentPeriod.categories,
-          incomeAmount: currentPeriod.amountByStatus,
-          transactions_last: lastPeriod.requestCountByStatus,
-          amount_last: lastPeriod.requestCountByStatus,
           days: currentPeriod.days,
+          transactions: {
+            nber : currentPeriod.transactions,
+            amount: currentPeriod.amountByStatus,
+          } ,
+          categories: {
+            nber : currentPeriod.categories,
+            amount: currentPeriod.categories_amount,
+          }, 
           days_last: currentPeriod.days,
+          transactions_last:{
+            nber : lastPeriod.transactions,
+            amount: lastPeriod.amountByStatus,
+          },
+          categories_last: {
+            nber : lastPeriod.categories,
+            amount: lastPeriod.categories_amount,
+          }, 
         }
 
       });
@@ -53,21 +64,14 @@ async function fetchSummaryData(from: Date, to: Date) {
   // Récupération du nombre de requêtes par statut
   const countByStatus = await requestModel.aggregate([
     { $match: { payment_date: { $gte: from, $lte: to } } },
-    { $group: { _id: '$status', count: { $count: {} } } }
+    { $group: { _id: '$status', count: { $count: {} }} }
   ]);
-   
-  //formatage pour l'api  categories: [ { name: 'Revenus', value: 11900 }, ] // Somme totale des revenus
-  const categories = countByStatus.map(categorie => {
-    return {
-      name: categorie._id,
-      value: categorie.count,
-    }
-  });
 
-  const requestCountByStatus = countByStatus.reduce((acc, curr) => {
+  const transactions = countByStatus.reduce((acc, curr) => {
     acc[curr._id] = curr.count;
     return acc;
   }, {});
+
   const totalCount = countByStatus.reduce((acc, curr) => acc + curr.count, 0);
 
   const statusPercentages = countByStatus.map(item => ({
@@ -83,10 +87,28 @@ async function fetchSummaryData(from: Date, to: Date) {
     { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
   ]);
+
   const amountByStatus = sumAmountByStatus.reduce((acc, curr) => {
-    acc[curr._id] = curr.count;
+    acc[curr._id] = curr.totalAmount;
     return acc;
   }, {});
+  console.log("amountByStatus",amountByStatus)
+  //formatage pour l'api  
+  const categories = countByStatus.map(categorie => {
+    return {
+      name: categorie._id,
+      value: categorie.count,
+    }
+  });
+  //formatage pour l'api
+  const categories_amount = sumAmountByStatus.map(categorie => {
+    return {
+      name: categorie._id,
+      value: categorie.totalAmount,
+    }
+  });
+
+
 
 
   // Récupération des 10 principaux demandeurs de requêtes par statut
@@ -107,7 +129,8 @@ async function fetchSummaryData(from: Date, to: Date) {
   const days = fillMissingDays(activeDays, from, to);
   return {
     categories,
-    requestCountByStatus,
+    categories_amount,
+    transactions,
     totalRequestCount,
     amountByStatus,
     topRequestersByStatus,

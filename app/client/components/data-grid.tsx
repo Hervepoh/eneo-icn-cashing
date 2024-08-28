@@ -13,29 +13,31 @@ import { Suspense } from "react";
 
 export const DataGrid= () => {
 
-  // const { data, isLoading } = useGetSummary();
-  const isLoading = true;
-  const data = {
-    transactions: {initiated:0 , pending:0 , processing:0 , treated:0},
-    incomeChange:0,
-    expensesChange:0,
-    remainingChange: 0,
-    dateRangeLabel: "",
-  };
-  if (isLoading) {
-    return (
-      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
-        {
-          [1, 2, 3 , 4].map((i) => <DataCardLoading key={i} />)
-        }
-      </div >
-    )
-  }
+   const { data, isLoading } = useGetSummary();
+   console.log(data)
+  // const isLoading = true;
+  // const data = {
+  //   transactions: {initiated:0 , pending:0 , processing:0 , treated:0},
+  //   incomeChange:0,
+  //   expensesChange:0,
+  //   remainingChange: 0,
+  //   dateRangeLabel: "",
+  // };
+  // if (isLoading) {
+  //   return (
+  //     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
+  //       {
+  //         [1, 2, 3 , 4].map((i) => <DataCardLoading key={i} />)
+  //       }
+  //     </div >
+  //   )
+  // }
+  // console.log(data)
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
       <DataCard
-        title="Initiated"
+        title= "RequestCount"//"Initiated"
         value={data?.transactions.initiated || 0}
         percentageChange={data?.remainingChange}
         icon={FaPiggyBank}
@@ -44,7 +46,7 @@ export const DataGrid= () => {
       />
 
       <DataCard
-        title="Pending validation"
+        title="TotalRequest"//"Pending validation"
         value={data?.transactions.pending || 0}
         percentageChange={data?.remainingChange}
         icon={MdPendingActions}
@@ -53,7 +55,7 @@ export const DataGrid= () => {
       />
 
       <DataCard
-        title="Processing"
+        title="Amount"//"Processing"
         value={data?.transactions.processing || 0}
         percentageChange={data?.expensesChange}
         icon={FaArrowTrendDown}

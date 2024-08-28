@@ -7,6 +7,8 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
+  YAxis,
 } from "recharts";
 
 import CustomTooltip from "./custom-tooltip";
@@ -55,6 +57,7 @@ export const BarVariant = ({ data }: Props) => {
           fill="#f43f5e"
           className="drop-shadow-sm"
         />
+        <Legend verticalAlign="bottom" wrapperStyle={{bottom:-15}} />
       </BarChart>
     </ResponsiveContainer>
   )

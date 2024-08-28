@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AreaVariant } from '@/components/chart-area-variant';
 import { BarVariant } from '@/components/chart-bar-variant';
 import { LineVariant } from '@/components/chart-line-variant';
+import { ComposedVariant } from '@/components/chart-line-variant';
 
 
 type Props = {
@@ -81,6 +82,14 @@ export const Chart = ({
                                 </p>
                             </div>
                         </SelectItem>
+                        <SelectItem value="composed">
+                            <div className='flex items-center'>
+                                <LineChart className='size-4 mr-2 shrink-0' />
+                                <p className='line-clamp-1'>
+                                    Composed Chart
+                                </p>
+                            </div>
+                        </SelectItem>
                     </SelectContent>
                 </Select>
 
@@ -99,6 +108,7 @@ export const Chart = ({
                                 {chartType === 'area' && <AreaVariant data={data} />}
                                 {chartType === 'bar' && <BarVariant data={data} />}
                                 {chartType === 'line' && <LineVariant data={data} />}
+                                {chartType === 'composed' && <ComposedVariant data={data} />}
                             </>
                         )
                 }

@@ -10,8 +10,7 @@ export const summary = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { from: fromDate, to: toDate } = req.query;
-      console.log("req.query", req.query)
-      console.log("req.query", req.query)      console.log("req.query", req.query)
+
       const defaultTo = new Date();
       const defaultFrom = subDays(defaultTo, 30);
 
@@ -81,7 +80,7 @@ async function fetchSummaryData(from: Date, to: Date) {
 
   // Récupération du nombre total de requêtes
   const totalRequestCount = await requestModel.countDocuments({ payment_date: { $gte: from, $lte: to } });
-  const totalRequestCount = await requestModel.countDocuments({ payment_date: { $gte: from, $lte: to } });
+
 
   // Récupération du montant des requêtes par statut
   const sumAmountByStatus = await requestModel.aggregate([

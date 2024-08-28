@@ -86,10 +86,11 @@ export default function TransactionsDetails() {
 
     const AddDeltailsTransactionsQuery = useBulkRequestDetails(params.id);
     const SaveDeltailsTransactionsQuery = useBulkSaveRequestDetails(params.id);
+    const DeleteDetailTransactionsQuery = useDeleteRequestDetails(params.id);
 
     const disable = AddDeltailsTransactionsQuery.isPending
         || SaveDeltailsTransactionsQuery.isPending
-        || DeleteDeltailTransactionsQuery.isPending 
+        || DeleteDetailTransactionsQuery.isPending 
         || details_isLoading
 
    const [disableSubmit, setDisableSubmit] = useState(true);
@@ -122,7 +123,7 @@ export default function TransactionsDetails() {
     const handleDelete = (id: string) => {
         const newData = [...finalData];
         setfinalData(newData.filter(r => r._id != id));
-        DeleteDeltailTransactionsQuery.mutate(id, {
+        DeleteDetailTransactionsQuery.mutate(id, {
             onSuccess: () => {
                console.log("success handleDelete")
             },
@@ -174,7 +175,7 @@ export default function TransactionsDetails() {
         const update = {
             status : "processing"
         }
-        EditStatusAfterSublit.mutate(update)
+        //EditStatusAfterSublit.mutate(update)
         router.push('/requests')
         return "Updated";
         

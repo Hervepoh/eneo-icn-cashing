@@ -1,36 +1,41 @@
 "use client"
 
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
 import { convertAmountFromMilliunits, formatDateRange } from "@/lib/utils";
-import { formatDate, subDays } from 'date-fns';
-
+import { formatDate,format, subDays } from 'date-fns';
 
 export const useGetSummary = () => {
 
-  const params = useSearchParams();
+  const [from, setFrom] = useState("");
+  const [to, setTo] = useState("");
+  const [dateRangeLabel, setDateRangeLabel] = useState("");
 
-  const fromParam = params.get('from') || "";
-  const toParam = params.get('to') || "";
-  const accountId = params.get('accountId') || "";
+  useEffect(() => {
+    const defaultTo = new Date();
+    const defaultFrom = subDays(defaultTo, 30);
+    // Récupération des données dans le localStorage au montage du composant
+    const storedFilterQuery = localStorage.getItem('filter-query');
+    if (storedFilterQuery) {
+      const result = JSON.parse(storedFilterQuery);
+      setFrom(result.from ??  format(defaultFrom, 'dd/MM/yyyy'));
+      setTo(result.to ?? defaultTo);
+      setDateRangeLabel(formatDateRange({ from, to }))
+    }
+    
+  
+     from =;
+     to = formatDate(to, 'dd/MM/yyyy');
 
-  const defaultTo = formatDate(new Date(), 'dd/MM/yyyy');
-  const defaultFrom = formatDate(subDays(defaultTo, 30), 'dd/MM/yyyy');
+  }, [fromParam,toParam]);
 
-  const from = fromParam ? formatDate(fromParam, 'dd/MM/yyyy') : defaultFrom;
-  const to = toParam ? formatDate(toParam, 'dd/MM/yyyy') : defaultTo;
-  const dateRangeLabel = formatDateRange({ from, to });
+
 
   const query = useQuery({
-    queryKey: ["summary", { from, to, accountId }],
+    queryKey: ["summary", { from, to }],
     queryFn: async () => {
-      let data = JSON.stringify({
-        "from": "01/08/2024",
-        "to": "09/08/2024"
-      });
-
       const config: AxiosRequestConfig = {
         method: 'get',
         maxBodyLength: Infinity,

@@ -109,6 +109,7 @@ export function formatDateRange(period: Period) {
   const DATEFORMATYEAR = "LLL dd, y";
   const defaultTo = new Date();
   const defaultFrom = subDays(defaultTo, 30);
+  console.log("period",period);
 
   if (!period?.from) {
     if (isSameYear(defaultFrom, defaultTo)){

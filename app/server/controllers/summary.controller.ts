@@ -10,7 +10,7 @@ export const summary = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { from: fromDate, to: toDate } = req.query;
-
+      console.log("req.query", req.query)
       const defaultTo = new Date();
       const defaultFrom = subDays(defaultTo, 30);
 
@@ -32,6 +32,7 @@ export const summary = CatchAsyncError(
         success: true,
         data: {
           transactions: currentPeriod.requestCountByStatus,
+          categories:currentPeriod.categories,
           incomeAmount: currentPeriod.amountByStatus,
           transactions_last: lastPeriod.requestCountByStatus,
           amount_last: lastPeriod.requestCountByStatus,
@@ -51,9 +52,18 @@ export const summary = CatchAsyncError(
 async function fetchSummaryData(from: Date, to: Date) {
   // Récupération du nombre de requêtes par statut
   const countByStatus = await requestModel.aggregate([
-    { $match: { createdAt: { $gte: from, $lte: to } } },
+    { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', count: { $count: {} } } }
   ]);
+   
+  //formatage pour l'api  categories: [ { name: 'Revenus', value: 11900 }, ] // Somme totale des revenus
+  const categories = countByStatus.map(categorie => {
+    return {
+      name: categorie._id,
+      value: categorie.count,
+    }
+  });
+
   const requestCountByStatus = countByStatus.reduce((acc, curr) => {
     acc[curr._id] = curr.count;
     return acc;
@@ -66,20 +76,22 @@ async function fetchSummaryData(from: Date, to: Date) {
   }));
 
   // Récupération du nombre total de requêtes
-  const totalRequestCount = await requestModel.countDocuments({ createdAt: { $gte: from, $lte: to } });
+  const totalRequestCount = await requestModel.countDocuments({ payment_date: { $gte: from, $lte: to } });
 
   // Récupération du montant des requêtes par statut
   const sumAmountByStatus = await requestModel.aggregate([
-    { $match: { createdAt: { $gte: from, $lte: to } } },
+    { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
   ]);
   const amountByStatus = sumAmountByStatus.reduce((acc, curr) => {
     acc[curr._id] = curr.count;
     return acc;
   }, {});
+
+
   // Récupération des 10 principaux demandeurs de requêtes par statut
   const topRequestersByStatus = await requestModel.aggregate([
-    { $match: { createdAt: { $gte: from, $lte: to } } },
+    { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: { status: '$status', userId: '$userId' }, count: { $count: {} } } },
     { $sort: { count: -1 } },
     { $group: { _id: '$_id.status', topRequesters: { $push: { userId: '$_id.userId', count: '$count' } } } },
@@ -87,13 +99,14 @@ async function fetchSummaryData(from: Date, to: Date) {
   ]);
 
   const activeDays = await requestModel.aggregate([
-    { $match: { createdAt: { $gte: from, $lte: to } } },
-    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", }, }, count: { $sum: 1 }, }, },
+    { $match: { payment_date: { $gte: from, $lte: to } } },
+    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$payment_date", }, }, count: { $sum: 1 }, }, },
     { $sort: { _id: 1, }, },
   ]);
 
   const days = fillMissingDays(activeDays, from, to);
   return {
+    categories,
     requestCountByStatus,
     totalRequestCount,
     amountByStatus,
@@ -116,22 +129,22 @@ export const analytics = CatchAsyncError(
 
       // Récupération du nombre de requêtes par statut
       const requestCountByStatus = await requestModel.aggregate([
-        { $match: { createdAt: { $gte: from, $lte: to }, userId } },
+        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $group: { _id: '$status', count: { $count: {} } } }
       ]);
 
       // Récupération du nombre total de requêtes
-      const totalRequestCount = await requestModel.countDocuments({ createdAt: { $gte: from, $lte: to }, userId });
+      const totalRequestCount = await requestModel.countDocuments({ payment_date: { $gte: from, $lte: to }, userId });
 
       // Récupération du montant des requêtes par statut
       const amountByStatus = await requestModel.aggregate([
-        { $match: { createdAt: { $gte: from, $lte: to }, userId } },
+        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
       ]);
 
       // Récupération des 10 principaux demandeurs de requêtes par statut
       const topRequestersByStatus = await requestModel.aggregate([
-        { $match: { createdAt: { $gte: from, $lte: to }, userId } },
+        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $group: { _id: { status: '$status', userId: '$userId' }, count: { $count: {} } } },
         { $sort: { count: -1 } },
         { $group: { _id: '$_id.status', topRequesters: { $push: { userId: '$_id.userId', count: '$count' } } } },

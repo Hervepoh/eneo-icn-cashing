@@ -226,7 +226,7 @@ export const update = CatchAsyncError(
           payment_date: parseDMY(req.body.payment_date),
         };
       }
-      // For pubish the request
+      // For publish the request
       if (req.body.status === appConfig.status[2]) {
 
         const request = await requestModel
@@ -391,6 +391,7 @@ export const bulkSolftDelete = CatchAsyncError(
 
 async function genereteICNRef(date: Date) {
   try {
+   
     // Récupération de la dernière référence
     const lastReference = await referenceModel.findOne({}, {}, { sort: { '_id': -1 } });
 

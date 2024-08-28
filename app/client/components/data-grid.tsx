@@ -1,14 +1,10 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
 import { FaPiggyBank } from "react-icons/fa";
 import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { MdPendingActions } from "react-icons/md";
-import { formatDateRange } from "@/lib/utils";
 import { useGetSummary } from "@/features/summary/api/use-get-summary";
 import { DataCard, DataCardLoading } from "@/components/data-card";
-import { Suspense } from "react";
-
 
 
 export const DataGrid= () => {

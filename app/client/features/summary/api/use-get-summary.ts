@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useSearchParams } from "next/navigation";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
 import { convertAmountFromMilliunits, formatDateRange } from "@/lib/utils";
-import { formatDate,format, subDays } from 'date-fns';
+import { formatDate, format, subDays } from 'date-fns';
 
 export const useGetSummary = () => {
 
@@ -13,20 +13,27 @@ export const useGetSummary = () => {
   const [to, setTo] = useState("");
   const [dateRangeLabel, setDateRangeLabel] = useState("");
 
+  // Fonction pour récupérer les filtres du localStorage
+  const fetchFiltersFromLocalStorage = () => {
+    const storedFilterQuery = localStorage.getItem('icn-filter-data-query');
+    if (storedFilterQuery) {
+      const result = JSON.parse(storedFilterQuery);
+      setFrom(result.from ?? "");
+      setTo(result.to ?? "");
+    }
+  };
+
   useEffect(() => {
     const defaultTo = new Date();
     const defaultFrom = subDays(defaultTo, 30);
-    // Récupération des données dans le localStorage au montage du composant
-    const storedFilterQuery = localStorage.getItem('filter-query');
-    if (storedFilterQuery) {
-      const result = JSON.parse(storedFilterQuery);
-      setFrom(result.from ??  format(defaultFrom, 'dd/MM/yyyy'));
-      setTo(result.to ?? defaultTo);
-      setDateRangeLabel(formatDateRange({ from, to }))
-    }
-    
-  }, [from,to]);
+    fetchFiltersFromLocalStorage();
 
+    if (!from && !to) {
+      setFrom(format(defaultFrom, "yyyy-MM-dd"));
+      setTo(format(defaultTo, "yyyy-MM-dd"));
+      console.log("default value")
+    }
+  }, [from,to]);
 
 
   const query = useQuery({
@@ -35,20 +42,16 @@ export const useGetSummary = () => {
       const config: AxiosRequestConfig = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:8000/api/v1/summary',
+        url: `http://localhost:8000/api/v1/summary?from=${from}&to=${to}`,
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true, // Set this to true
-        data: JSON.stringify({
-          "from": "01/08/2024",
-          "to": "09/08/2024"
-        })
       };
-
+      console.log(config);
       try {
         const response = await axios.request(config);
-        return {...response.data?.data , dateRangeLabel};
+        return { ...response.data?.data, dateRangeLabel };
       } catch (error) {
         if (axios.isAxiosError(error)) {
           throw error;

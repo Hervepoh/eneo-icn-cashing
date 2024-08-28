@@ -10,7 +10,7 @@ import { DataCard, DataCardLoading } from "@/components/data-card";
 export const DataGrid= () => {
 
   const { data, isLoading } = useGetSummary();
-
+   console.log("data DataGrid",data)
   if (isLoading) {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">

@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { CircleCheckBig, ListTodo, Loader2, Save,  ShoppingBag, Trash } from "lucide-react";
 import { BiPlusCircle, BiSearch } from "react-icons/bi";
+import { redirect, useRouter } from "next/navigation";
 
 import {
     Card,
@@ -53,6 +54,7 @@ import { useGetRequestDetails } from "@/features/requests/api/use-get-request-de
 import { Button } from "@/components/ui/button";
 import { useBulkRequestDetails } from "@/features/requests/api/use-bulk-create-request-details";
 import { useBulkSaveRequestDetails } from "@/features/requests/api/use-bulk-save-request-details";
+import { useEditRequest } from "@/features/requests/api/use-edit-request"
 import { InfoCard } from "@/components/info-card";
 import { useDeleteRequestDetails } from "@/features/requests/api/use-delete-request-details";
 import { toast } from "sonner";
@@ -66,6 +68,7 @@ interface Invoice {
 
 export default function TransactionsDetails() {
     const params = useParams<{ id: string }>();
+    const router = useRouter();
 
     const {
         isLoading,
@@ -83,8 +86,7 @@ export default function TransactionsDetails() {
 
     const AddDeltailsTransactionsQuery = useBulkRequestDetails(params.id);
     const SaveDeltailsTransactionsQuery = useBulkSaveRequestDetails(params.id);
-    const DeleteDeltailTransactionsQuery =useDeleteRequestDetails(params.id);
-      
+
     const disable = AddDeltailsTransactionsQuery.isPending
         || SaveDeltailsTransactionsQuery.isPending
         || DeleteDeltailTransactionsQuery.isPending 
@@ -97,7 +99,7 @@ export default function TransactionsDetails() {
     const [isFirstView, setIsFirstView] = useState(true);
 
     const [invoices, setInvoices] = useState([]);
-
+    const [isDisable, setIsDisable] = useState(true)
 
     const [searchError, setSearchError] = useState("")
     const [searchIsLoading, setSearchIsLoading] = useState(false)
@@ -158,6 +160,26 @@ export default function TransactionsDetails() {
         }));
         SaveDeltailsTransactionsQuery.mutate(updates);
     };
+    //My part
+    const handleDisable = () => {
+        const isOkay = !(totalToPaid === parseFloat(data?.amount) && !finalData.some(row => row.isDuplicate))
+        if (isOkay){
+            setIsDisable(false)
+        }
+       
+    }
+    const  handleSubmit = async () => {
+        handleSaveChange()
+        //EndPoint for status change of the request
+        const update = {
+            status : "processing"
+        }
+        EditStatusAfterSublit.mutate(update)
+        router.push('/requests')
+        return "Updated";
+        
+    }
+    /** */
 
     const handleQualityControl = () => {
         // Build finalData and give every element an attribut isDuplicate

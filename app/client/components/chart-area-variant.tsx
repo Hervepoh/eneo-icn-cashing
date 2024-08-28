@@ -8,6 +8,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Legend,
+  Bar,
+  Rectangle
 } from "recharts";
 
 import CustomTooltip from "@/components/custom-tooltip";
@@ -16,8 +19,8 @@ import CustomTooltip from "@/components/custom-tooltip";
 type Props = {
   data: {
     date: string;
-    income: number;
-    expenses: number;
+    count: number;
+    // expenses: number;
   }[];
 }
 
@@ -44,12 +47,19 @@ export const AreaVariant = ({ data }: Props) => {
           tickFormatter={(value) => format(value, "dd MMM")}
           style={{ fontSize: "12px" }}
           tickMargin={16}
-        />
+        /><YAxis
+        axisLine={false}
+        tickLine={false}
+        dataKey="count"
+        // tickFormatter={(value) => format(value, "dd MMM")}
+        style={{ fontSize: "12px" }}
+        tickMargin={16}
+      />
         <Tooltip content={<CustomTooltip />} />
         <Area
         type="monotone"
-        dataKey="income"
-        stackId="income"
+        dataKey="count"
+        stackId="count"
         strokeWidth={2}
         stroke="#3d82f6"
         fill="url(#income)"
@@ -64,7 +74,10 @@ export const AreaVariant = ({ data }: Props) => {
         fill="url(#expenses)"
         className="drop-shadow-sm"
         />
+        <Legend verticalAlign="bottom" wrapperStyle={{bottom:-15}}/>
+          
       </AreaChart>
+      
     </ResponsiveContainer>
   )
 };

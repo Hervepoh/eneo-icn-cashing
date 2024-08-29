@@ -109,10 +109,6 @@ async function fetchSummaryData(from: Date, to: Date) {
   });
 
 
-=========
->>>>>>>>> Temporary merge branch 2
-
-
   // Récupération des 10 principaux demandeurs de requêtes par statut
   const topRequestersByStatus = await requestModel.aggregate([
     { $match: { createdAt: { $gte: from, $lte: to } } },

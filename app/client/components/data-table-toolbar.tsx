@@ -10,11 +10,11 @@ import { statuses } from '@/config/status.config'
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
-  filterKey:string
+  filterKey: string
 }
 
 export function DataTableToolbar<TData>({
-  table,filterKey
+  table, filterKey
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0
 
@@ -37,7 +37,7 @@ export function DataTableToolbar<TData>({
               options={statuses}
             />
           )}
-          
+
         </div>
         {isFiltered && (
           <Button
@@ -49,8 +49,8 @@ export function DataTableToolbar<TData>({
             <Cross2Icon className='ml-2 h-4 w-4' />
           </Button>
         )}
+        <DataTableViewOptions table={table} />
       </div>
-      <DataTableViewOptions table={table} />
     </div>
   )
 }

@@ -10,7 +10,7 @@ export const summary = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { from: fromDate, to: toDate } = req.query;
-      console.log("req.query", req.query)
+
       const defaultTo = new Date();
       const defaultFrom = subDays(defaultTo, 30);
 
@@ -66,12 +66,11 @@ async function fetchSummaryData(from: Date, to: Date) {
     { $match: { payment_date: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', count: { $count: {} }} }
   ]);
-
   const transactions = countByStatus.reduce((acc, curr) => {
     acc[curr._id] = curr.count;
     return acc;
   }, {});
-
+ 
   const totalCount = countByStatus.reduce((acc, curr) => acc + curr.count, 0);
 
   const statusPercentages = countByStatus.map(item => ({
@@ -82,9 +81,10 @@ async function fetchSummaryData(from: Date, to: Date) {
   // Récupération du nombre total de requêtes
   const totalRequestCount = await requestModel.countDocuments({ payment_date: { $gte: from, $lte: to } });
 
+
   // Récupération du montant des requêtes par statut
   const sumAmountByStatus = await requestModel.aggregate([
-    { $match: { payment_date: { $gte: from, $lte: to } } },
+    { $match: { createdAt: { $gte: from, $lte: to } } },
     { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
   ]);
 
@@ -109,11 +109,13 @@ async function fetchSummaryData(from: Date, to: Date) {
   });
 
 
+=========
+>>>>>>>>> Temporary merge branch 2
 
 
   // Récupération des 10 principaux demandeurs de requêtes par statut
   const topRequestersByStatus = await requestModel.aggregate([
-    { $match: { payment_date: { $gte: from, $lte: to } } },
+    { $match: { createdAt: { $gte: from, $lte: to } } },
     { $group: { _id: { status: '$status', userId: '$userId' }, count: { $count: {} } } },
     { $sort: { count: -1 } },
     { $group: { _id: '$_id.status', topRequesters: { $push: { userId: '$_id.userId', count: '$count' } } } },
@@ -121,10 +123,11 @@ async function fetchSummaryData(from: Date, to: Date) {
   ]);
 
   const activeDays = await requestModel.aggregate([
-    { $match: { payment_date: { $gte: from, $lte: to } } },
-    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$payment_date", }, }, count: { $sum: 1 }, }, },
+    { $match: { createdAt: { $gte: from, $lte: to } } },
+    { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", }, }, count: { $sum: 1 },  totalAmount: { $sum: '$amount' }  }, },
     { $sort: { _id: 1, }, },
   ]);
+
 
   const days = fillMissingDays(activeDays, from, to);
   return {
@@ -161,13 +164,13 @@ export const analytics = CatchAsyncError(
 
       // Récupération du montant des requêtes par statut
       const amountByStatus = await requestModel.aggregate([
-        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
+        { $match: { createdAt: { $gte: from, $lte: to }, userId } },
         { $group: { _id: '$status', totalAmount: { $sum: '$amount' } } }
       ]);
 
       // Récupération des 10 principaux demandeurs de requêtes par statut
       const topRequestersByStatus = await requestModel.aggregate([
-        { $match: { payment_date: { $gte: from, $lte: to }, userId } },
+        { $match: { createdAt: { $gte: from, $lte: to }, userId } },
         { $group: { _id: { status: '$status', userId: '$userId' }, count: { $count: {} } } },
         { $sort: { count: -1 } },
         { $group: { _id: '$_id.status', topRequesters: { $push: { userId: '$_id.userId', count: '$count' } } } },
@@ -207,10 +210,10 @@ function calculatePercentageChange(
 
 
 function fillMissingDays(
-  activeDays: { _id: string; count: number }[],
+  activeDays: { _id: string; count: number ,totalAmount: number }[],
   startDate: Date,
   endDate: Date
-): { date: Date; count: number }[] {
+): { date: Date; number: number }[] {
   if (activeDays.length === 0) return [];
   const allDays = eachDayOfInterval({
     start: startDate,
@@ -222,12 +225,14 @@ function fillMissingDays(
     if (found) {
       return {
         date: day,
-        count: found.count,
+        number: found.count,
+        amount: found.totalAmount,
       };
     } else {
       return {
         date: day,
-        count: 0,
+        number: 0,
+        amount: 0
       };
     }
   });

@@ -1,7 +1,7 @@
 "use client"
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
-import { CircleCheckBig, ListTodo, Loader2, Save,  ShoppingBag, Trash } from "lucide-react";
+import { CircleCheckBig, ListTodo, Loader2, Save, ShoppingBag, Trash } from "lucide-react";
 import { BiPlusCircle, BiSearch } from "react-icons/bi";
 import { redirect, useRouter } from "next/navigation";
 
@@ -56,7 +56,6 @@ import { useBulkRequestDetails } from "@/features/requests/api/use-bulk-create-r
 import { useBulkSaveRequestDetails } from "@/features/requests/api/use-bulk-save-request-details";
 import { useEditRequest } from "@/features/requests/api/use-edit-request"
 import { InfoCard } from "@/components/info-card";
-import axios from "axios";
 import { useDeleteRequestDetails } from "@/features/requests/api/use-delete-request-details";
 import { toast } from "sonner";
 
@@ -87,13 +86,14 @@ export default function TransactionsDetails() {
 
     const AddDeltailsTransactionsQuery = useBulkRequestDetails(params.id);
     const SaveDeltailsTransactionsQuery = useBulkSaveRequestDetails(params.id);
+    const DeleteDetailTransactionsQuery = useDeleteRequestDetails(params.id);
 
     const disable = AddDeltailsTransactionsQuery.isPending
         || SaveDeltailsTransactionsQuery.isPending
-        || DeleteDeltailTransactionsQuery.isPending 
+        || DeleteDetailTransactionsQuery.isPending 
         || details_isLoading
 
-   const [disableSubmit, setDisableSubmit] = useState(true);
+    const [disableSubmit, setDisableSubmit] = useState(true);
 
     const [view, setView] = useState<"search" | "upload">("search");
     const [viewRecap, setViewRecap] = useState<boolean>(false);
@@ -123,9 +123,9 @@ export default function TransactionsDetails() {
     const handleDelete = (id: string) => {
         const newData = [...finalData];
         setfinalData(newData.filter(r => r._id != id));
-        DeleteDeltailTransactionsQuery.mutate(id, {
+        DeleteDetailTransactionsQuery.mutate(id, {
             onSuccess: () => {
-               console.log("success handleDelete")
+                console.log("success handleDelete")
             },
         });
     }
@@ -164,21 +164,21 @@ export default function TransactionsDetails() {
     //My part
     const handleDisable = () => {
         const isOkay = !(totalToPaid === parseFloat(data?.amount) && !finalData.some(row => row.isDuplicate))
-        if (isOkay){
+        if (isOkay) {
             setIsDisable(false)
         }
-       
+
     }
-    const  handleSubmit = async () => {
+    const handleSubmit = async () => {
         handleSaveChange()
         //EndPoint for status change of the request
         const update = {
-            status : "processing"
+            status: "processing"
         }
-        EditStatusAfterSublit.mutate(update)
+        //EditStatusAfterSublit.mutate(update)
         router.push('/requests')
         return "Updated";
-        
+
     }
     /** */
 
@@ -192,7 +192,7 @@ export default function TransactionsDetails() {
         setfinalData(newData);
         const selectedRows = newData.filter((row) => row.selected);
         const newTotalToPaid = selectedRows.reduce((acc, cur) => acc + cur.amountTopaid, 0);
-       
+
         if (data?.amount === newTotalToPaid && !newData.some((row) => row.isDuplicate)) {
             setDisableSubmit(false);
         }
@@ -201,7 +201,7 @@ export default function TransactionsDetails() {
 
     };
 
-    
+
     const recalculateSelectedInvoices = (data: any[]) => {
         // Get all selected invoices
         const selectedRows = data.filter((row) => row.selected);
@@ -405,8 +405,9 @@ export default function TransactionsDetails() {
                                                 </Button>
 
                                                 <Button
-                                                    disabled={isDisable}
-                                                    onClick={() => handleDisable()}
+                                                    disabled={disableSubmit}
+                                                    variant={ disableSubmit ? "default": "success" }
+                                                    onClick={() => ""}
                                                     size="sm"
                                                     className='w-full lg:w-auto'>
                                                     <CircleCheckBig className='size-4 mr-2' />
@@ -471,10 +472,10 @@ export default function TransactionsDetails() {
                                                                         variant="ghost">
                                                                         <Trash className='size-5' />
                                                                     </Button>
-                                                                    {row.isDuplicate && <InfoCard content={ 
+                                                                    {row.isDuplicate && <InfoCard content={
                                                                         row.isDuplicate
-                                                                         ? `Key contract-invoice : ${row.contract}-${row.invoice} is duplicate`
-                                                                         : `Data inconsistency` } />}
+                                                                            ? `Key contract-invoice : ${row.contract}-${row.invoice} is duplicate`
+                                                                            : `Data inconsistency`} />}
                                                                 </div>
                                                             </TableCell>
                                                         </TableRow>

@@ -27,7 +27,7 @@ export const DataGrid= () => {
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
       <DataCard
         title={statuses[2].label}
-        value={data?.transactions.draft || 0}
+        value={data?.transactions?.nber[statuses[2].value] || 0}
         percentageChange={data?.remainingChange}
         icon={FaPiggyBank}
         variant="default"
@@ -36,7 +36,7 @@ export const DataGrid= () => {
 
       <DataCard
         title={statuses[3].label}
-        value={data?.transactions.pending || 0}
+        value={data?.transactions?.nber[statuses[3].value] || 0}
         percentageChange={data?.remainingChange}
         icon={MdPendingActions}
         variant="danger"
@@ -45,7 +45,7 @@ export const DataGrid= () => {
 
       <DataCard
         title={statuses[5].label}
-        value={data?.transactions_last.draft|| 0}
+        value={data?.transactions?.nber[statuses[5].value] || 0}
         percentageChange={data?.expensesChange}
         icon={FaArrowTrendDown}
         variant="danger"
@@ -54,7 +54,7 @@ export const DataGrid= () => {
 
       <DataCard
         title={statuses[6].label}
-        value={data?.amount_last.draft || 0}
+        value={data?.transactions?.nber[statuses[6].label] || 0}
         percentageChange={data?.incomeChange}
         icon={FaArrowTrendUp}
         variant="success"

@@ -5,7 +5,13 @@ meta {
 }
 
 delete {
-  url: {{BASE_URL}}/api/v1/requests/66c5b25ffd28d05c3b2b1950
-  body: none
+  url: {{BASE_URL}}/api/v1/request-details
+  body: json
   auth: none
+}
+
+body:json {
+  {
+    "id":"66c5b25ffd28d05c3b2b1950"
+  }
 }

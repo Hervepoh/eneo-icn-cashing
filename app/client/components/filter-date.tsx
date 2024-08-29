@@ -54,8 +54,8 @@ export const DateFilter = (props: Props) => {
     const query = {
       from: format(dateRange?.from || defaultFrom, "yyyy-MM-dd"),
       to: format(dateRange?.to || defaultTo, "yyyy-MM-dd"),
-      accountId
     }
+    localStorage.setItem('icn-filter-data-query', JSON.stringify({ from:query.from, to:query.to }));
     const url = qs.stringifyUrl({
       url: pathname,
       query

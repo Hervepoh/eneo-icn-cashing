@@ -20,16 +20,17 @@ import { Label } from '@/components/ui/label';
 import * as XLSX from 'xlsx';
 import { toast } from 'sonner';
 
+
 const expectedHeaderSchema = z.array(z.string()).refine(
     (headers) =>
-      headers.length === 4 &&
-      headers[0] === 'NUMACI' &&
-      headers[1] === 'ID' &&
-      headers[2] === 'PK_BILL_GENERATED_ID' &&
-      headers[3] === 'DUE_AMT',
+        headers.length === 4 &&
+        headers[0] === 'NUMACI' &&
+        headers[1] === 'ID' &&
+        headers[2] === 'PK_BILL_GENERATED_ID' &&
+        headers[3] === 'DUE_AMT',
     'Invalid file header. Expected: NUMACI, ID, PK_BILL_GENERATED_ID, DUE_AMT'
-  );
-  
+);
+
 const excelSchema = z.object({
     NUMACI: z.string(),
     ID: z.number(),
@@ -55,6 +56,7 @@ type Props = {
     setInvoices: (value: any) => void;
     setError: (value: string) => void;
     setIsPending: (value: boolean) => void;
+    setViewRecap: (value: boolean) => void;
 }
 
 export const SearchByFileForm = ({
@@ -62,7 +64,7 @@ export const SearchByFileForm = ({
     placeholder,
     setIsFirstView,
     setInvoices,
-    setError, setIsPending }: Props) => {
+    setError, setIsPending, setViewRecap }: Props) => {
 
     const [isLoading, setIsLoading] = useState(false);
 
@@ -70,6 +72,8 @@ export const SearchByFileForm = ({
     const [excelData, setExcelData] = useState<ExcelData[]>([]);
 
     const onSubmit = (data: any) => {
+        setIsFirstView(false);
+        setViewRecap(false);
         const file = data.file[0];
 
         fileExtensionSchema.parse(file.name);
@@ -79,54 +83,84 @@ export const SearchByFileForm = ({
             const worksheet = workbook.Sheets[workbook.SheetNames[0]];
 
             const rows = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-            const headers = rows[0];
-            console.log("headers",headers)
-            // expectedHeaderSchema.parse(headers);
-      
-            const jsonData = XLSX.utils.sheet_to_json<ExcelData>(worksheet);
-            console.log("onSubmit jsonData", jsonData);
-            try {
-                //const validatedData = excelSchema.array().parse(jsonData);
-                //setExcelData(validatedData);
-            } catch (error) {
-                toast.error("Something went wrong");
+            const headers: any = rows[0];
+            const GoodHeaderFormat = [
+                "NUMACI",
+                "ID",
+                "PK_BILL_GENERATED_ID",
+                "DUE_AMT"
+            ];
+
+            if (GoodHeaderFormat.length === headers?.length
+                && headers.every((val: string, index: number) => val === GoodHeaderFormat[index])) {
+
+                console.log("Les en-têtes sont au bon format.");
+
+                const jsonData = XLSX.utils.sheet_to_json<ExcelData>(worksheet);
+                const invoices = jsonData.map((data) => {
+                       return  [
+                        null,
+                        data.ID,
+                        data.PK_BILL_GENERATED_ID,
+                        "DONGMO SABINE", // TODO fetch by invoice to get customer name
+                        "25/06/2010", // TODO fetch by invoice to get invoice date
+                        data.DUE_AMT
+                    ]     
+                });
+                console.log("invoices",invoices)
+          
+                setInvoices(invoices);
+                startTransition(async () => {
+                    setIsLoading(true);
+                    setIsPending(true);
+                 
+                 
+                    // jsonData.map(async (data) => {
+                    //     const newData = {
+                    //         reference : data.NUMACI,
+                    //         contract : data.ID,
+                    //         invoice : data.PK_BILL_GENERATED_ID,
+                    //         amount : data.DUE_AMT,
+                    //     }
+                    //     const config: AxiosRequestConfig = {
+                    //         method: 'get',
+                    //         maxBodyLength: Infinity,
+                    //         url: `http://localhost:8000/api/v1/search-unpaid?by=invoice&value=${newData.invoice}`,
+                    //         headers: {},
+                    //         withCredentials: true, // Set this to true
+                    //         data: ''
+                    //     };
+                   
+                    //     try {
+                    //         const response = await axios.request(config);
+                    //         if (response.data?.bills) {
+                                
+                    //         }
+                    //     } catch (error) {
+                    //         setError("something went wrong");
+                    //         setIsLoading(false);
+                    //         setIsPending(false);
+                    //         if (axios.isAxiosError(error)) {
+                    //             throw error;
+                    //         } else {
+                    //             throw new Error('Une erreur inconnue s\'est produite');
+                    //         }
+                    //     }
+                    // })
+                    
+
+                    setIsLoading(false);
+                    setIsPending(false);
+                 });
+            } else {
+                console.log("Les en-têtes ne sont pas au bon format.");
             }
-           
+
             reset();
         };
         reader.readAsBinaryString(file);
 
-
-
-        setIsFirstView(false);
-
-        // startTransition(async () => {
-        //     setIsLoading(true);
-        //     setIsPending(true);
-        //     const config: AxiosRequestConfig = {
-        //         method: 'get',
-        //         maxBodyLength: Infinity,
-        //         url: `http://localhost:8000/api/v1/search-unpaid?by=invoice&value=${values.value}`,
-        //         headers: {},
-        //         withCredentials: true, // Set this to true
-        //         data: ''
-        //     };
-        //     try {
-        //         const response = await axios.request(config);
-        //         setInvoices(response.data.bills ?? []);
-        //     } catch (error) {
-        //         setError("something went wrong");
-        //         setIsLoading(false);
-        //         setIsPending(false);
-        //         if (axios.isAxiosError(error)) {
-        //             throw error;
-        //         } else {
-        //             throw new Error('Une erreur inconnue s\'est produite');
-        //         }
-        //     }
-        //     setIsLoading(false);
-        //     setIsPending(false);
-        // });
+        
     }
 
     const disabled = isLoading;

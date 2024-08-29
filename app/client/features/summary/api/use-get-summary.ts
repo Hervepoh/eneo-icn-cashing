@@ -35,20 +35,16 @@ export const useGetSummary = () => {
       const config: AxiosRequestConfig = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:8000/api/v1/summary',
+        url: `http://localhost:8000/api/v1/summary?from=${from}&to=${to}`,
         headers: {
           'Content-Type': 'application/json',
         },
         withCredentials: true, // Set this to true
-        data: JSON.stringify({
-          "from": "01/08/2024",
-          "to": "09/08/2024"
-        })
       };
-
+      console.log(config);
       try {
         const response = await axios.request(config);
-        return {...response.data?.data , dateRangeLabel};
+        return { ...response.data?.data, dateRangeLabel };
       } catch (error) {
         if (axios.isAxiosError(error)) {
           throw error;

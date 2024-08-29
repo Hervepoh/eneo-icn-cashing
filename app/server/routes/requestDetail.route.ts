@@ -17,14 +17,10 @@ const requestDetailRouter = express.Router();
 requestDetailRouter.get('/request-details/:id', isAuthentificated, readAll);
 requestDetailRouter.post('/request-details-bulk/:id', isAuthentificated, authorizeRoles("user","admin"), bulkCreate); 
 requestDetailRouter.put('/request-details-bulk/:id', isAuthentificated, authorizeRoles("user","admin"), bulkUpdate);
-requestDetailRouter.delete('/request-details-bulk/:id', isAuthentificated,authorizeRoles("admin"), bulkSolftDelete); //TODO
 
 
 requestDetailRouter.post('/request-details/:id', isAuthentificated, create);
-requestDetailRouter.put('/request-details/:id', isAuthentificated, update);
-requestDetailRouter.delete('/request-details/:id', isAuthentificated, softDelete);
-
-requestDetailRouter.delete('/request-details-full/:id', isAuthentificated, authorizeRoles("admin"),fulldelete);
+requestDetailRouter.delete('/request-details', isAuthentificated, fulldelete);
 
 
 export default requestDetailRouter; 

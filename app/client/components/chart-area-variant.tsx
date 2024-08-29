@@ -67,7 +67,7 @@ export const AreaVariant = ({ data }: Props) => {
         />
         <Area
         type="monotone"
-        dataKey="expenses"
+        dataKey="test"
         stackId="expenses"
         strokeWidth={2}
         stroke="#f43f5e"

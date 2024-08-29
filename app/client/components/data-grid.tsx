@@ -5,6 +5,7 @@ import { FaArrowTrendUp, FaArrowTrendDown } from "react-icons/fa6";
 import { MdPendingActions } from "react-icons/md";
 import { useGetSummary } from "@/features/summary/api/use-get-summary";
 import { DataCard, DataCardLoading } from "@/components/data-card";
+import { statuses } from "@/config/status.config";
 
 
 export const DataGrid= () => {
@@ -24,7 +25,7 @@ export const DataGrid= () => {
   return (
     <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-2 mb-8">
       <DataCard
-        title="Transaction"
+        title={statuses[2].label}
         value={data?.transactions.draft || 0}
         percentageChange={data?.remainingChange}
         icon={FaPiggyBank}
@@ -33,7 +34,7 @@ export const DataGrid= () => {
       />
 
       <DataCard
-        title="Income Amount"
+        title={statuses[3].label}
         value={data?.transactions.pending || 0}
         percentageChange={data?.remainingChange}
         icon={MdPendingActions}
@@ -42,7 +43,7 @@ export const DataGrid= () => {
       />
 
       <DataCard
-        title="Transaction Last"
+        title={statuses[5].label}
         value={data?.transactions_last.draft|| 0}
         percentageChange={data?.expensesChange}
         icon={FaArrowTrendDown}
@@ -51,7 +52,7 @@ export const DataGrid= () => {
       />
 
       <DataCard
-        title="Amount Last"
+        title={statuses[6].label}
         value={data?.amount_last.draft || 0}
         percentageChange={data?.incomeChange}
         icon={FaArrowTrendUp}

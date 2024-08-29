@@ -93,7 +93,7 @@ export const authApi = apiSlice.injectEndpoints({
     logOut: builder.query({
       query: () => ({
         url: "http://localhost:8000/api/v1/logout",
-        method: "GET",
+        method: "POST",
         credentials: "include" as const,
       }),
       async onQueryStarted(arg, { queryFulfilled, dispatch }) {

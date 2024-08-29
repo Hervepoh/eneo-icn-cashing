@@ -10,17 +10,43 @@ import {
   DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { useCookies } from "react-cookie";
 import avatar from "../public/avatar.png";
 import Link from "next/link";
 import Image from "next/image";
 import { Loader2 } from "lucide-react";
 import { HiOutlineMenuAlt3, HiOutlineUserCircle } from "react-icons/hi";
+import { useLogOutQuery } from "@/lib/redux/features/auth/authApi";
+import { useState, useEffect } from 'react';
+import { toast } from 'sonner';
+import { useRouter } from "next/navigation";
 
 type Props = {
   user: { avatar: { url : any} ,name: string , email: string , user: string } 
 }
 
 export function UserNav({user} : Props) {
+  const router = useRouter();
+ 
+  const [log, setLog] = useState("");
+ 
+
+  const [logout, setLogout] = useState(false);
+
+  const logi = useLogOutQuery(undefined, {
+
+    skip: !logout ? true : false,
+
+  });
+  const handleContentChange = () => {
+    
+    setLogout(true)
+    console.log("Logout")
+    router.push("/login")
+    toast.success('Lougout Successfully')
+  };
+    useEffect(() => {
+    }, []);
 
     return (
       <DropdownMenu>
@@ -55,7 +81,7 @@ export function UserNav({user} : Props) {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            Log out
+          <button className='' onClick={() => handleContentChange()}>Log out</button>
             <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -63,4 +89,8 @@ export function UserNav({user} : Props) {
     )
   }
 
+
+function removeCookie(arg0: string, arg1: { path: string; domain: string; }) {
+  throw new Error('Function not implemented.');
+}
   

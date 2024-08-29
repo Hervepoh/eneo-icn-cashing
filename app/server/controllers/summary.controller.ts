@@ -154,6 +154,7 @@ export const analytics = CatchAsyncError(
         { $match: { payment_date: { $gte: from, $lte: to }, userId } },
         { $group: { _id: '$status', count: { $count: {} } } }
       ]);
+      console.log("Voici",res.cookie)
 
       // Récupération du nombre total de requêtes
       const totalRequestCount = await requestModel.countDocuments({ payment_date: { $gte: from, $lte: to }, userId });

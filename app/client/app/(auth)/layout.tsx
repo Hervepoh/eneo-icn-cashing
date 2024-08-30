@@ -10,16 +10,18 @@ import { style } from '@/config/layout.config';
 import Metadata from '@/components/metadata';
 import ThemeSwitcher from '@/components/theme-switcher';
 import LocaleSwitcher from '@/components/locale-switcher';
+import UserAuth from '@/components/security/userAuth';
 
 type Props = {
     children: React.ReactNode;
 }
 
 export default function AuthLayout({ children }: Props) {
+    const isAuthenticated = UserAuth();
     const { user } = useSelector((state: any) => state.auth);  // redux state
     const router = useRouter();
     if (user) {
-        router.back();
+        router.push('/');
         return 
     }
 

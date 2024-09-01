@@ -6,15 +6,10 @@ import { useLogOutQuery } from "@/lib/redux/features/auth/authApi";
 interface ProtectedProps{
     children: React.ReactNode;
 }
-// const [logout, setLogout] = useState(false);
-
-//   const logi = useLogOutQuery(undefined, {
-
-//     skip: !logout ? true : false,
-
-//   });
 
 export default function UserProtected({children}: ProtectedProps){
-    const isAuthenticated = UserAuth();
-    return isAuthenticated ? children : redirect("/login");
+    // const isAuthenticated = UserAuth();
+    // return isAuthenticated ? children : redirect("/login");
+
+    return true ? children : redirect("/login");
 }

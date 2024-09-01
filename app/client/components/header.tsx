@@ -10,6 +10,7 @@ import { WelcomeMsg } from "@/components/welcome-msg";
 import { UserNav } from "@/components/user-nav";
 import ThemeSwitcher from "@/components/theme-switcher";
 import LocaleSwitcher from "@/components/locale-switcher";
+import UserProtected from "@/components/security/userProtected";
 
 
 type Props = {}
@@ -18,6 +19,7 @@ export const Header = ({ }: Props) => {
     const { user } = useSelector((state: any) => state.auth);  // redux state
 
     return (
+        <UserProtected>
         <header className={cn(
             "px-4 py-8 pb-36  lg:px-14",
             style.linearGradiant,
@@ -44,5 +46,6 @@ export const Header = ({ }: Props) => {
                 </div>
             </div>
         </header>
+        </UserProtected>
     );
 }

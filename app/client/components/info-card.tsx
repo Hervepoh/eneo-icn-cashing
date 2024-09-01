@@ -6,9 +6,6 @@ import {
 import { Button } from "./ui/button"
 import { Info } from "lucide-react"
 
-type Props = {
-    content: string,
-}
 
 type Props = {
     content: string

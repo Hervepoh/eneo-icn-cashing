@@ -62,24 +62,49 @@ export const readAll = CatchAsyncError(
 export const bulkCreate = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Validate that the request body is an array
+      const requests = req.body;
+      console.log("requests", requests)
+      if (!Array.isArray(requests) || requests.length === 0) {
+        return next(new ErrorHandler("Request body must be a non-empty array", 400));
+      }
+
       // get the user information
       const user = await userModel.findById(req.user?._id);
       if (!user) {
         return next(new ErrorHandler("Unauthorize ressource", 401));
       }
 
-      const data = {
-        ...req.body,
-        payment_date: parseDMY(req.body.payment_date),
-        createdBy: user.name,
-        userId: user._id,
-      };
+      const validRequests = [];
+      const payMode = await payModeModel.findOne();
+      // Validate each request
+      for (const requestData of requests) {
+      
+        const { name, amount, bank, payment_date } = requestData;
+        console.log("requestData", requestData)
+        // Validate required fields for each request
+        if (!name || !amount || !bank || !payment_date ) {
+          return next(new ErrorHandler("All fields (payment_date, name, amount, bank) are required for each request", 400));
+        }
 
-      const request = await requestModel.create(data);
+        validRequests.push({
+          name,
+          amount,
+          bank,
+          payment_date: parseDMY(payment_date),
+          payment_mode:payMode?._id,
+          createdBy: user.name,
+          userId: user._id,
+        });
+
+      }
+      
+      // Insert all valid requests into the database
+      const createdRequests = await requestModel.insertMany(validRequests);
 
       res.status(201).json({
         success: true,
-        data: request,
+        data: createdRequests,
       });
     } catch (error: any) {
       return next(new ErrorHandler(error.message, 500));
@@ -96,6 +121,25 @@ export const bulkCreate = CatchAsyncError(
 export const create = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
+      // Validate required fields
+      const { name, amount, bank, payment_mode, payment_date, ...rest } = req.body;
+
+      if (!name) {
+        return next(new ErrorHandler("Name is required", 400));
+      }
+      if (!amount) {
+        return next(new ErrorHandler("Amount is required", 400));
+      }
+      if (!bank) {
+        return next(new ErrorHandler("Bank is required", 400));
+      }
+      if (!payment_mode) {
+        return next(new ErrorHandler("Bank is required", 400));
+      }
+      if (!payment_date) {
+        return next(new ErrorHandler("Payment date is required", 400));
+      }
+
       // get the user information
       const user = await userModel.findById(req.user?._id);
       if (!user) {
@@ -219,11 +263,9 @@ export const update = CatchAsyncError(
         modifiedBy: user._id,
       };
       if (req.body.payment_date) {
-        //TODO
-        console.log("TODO fix issue in edit request feature")
         data = {
           ...data,
-          payment_date: parseDMY(req.body.payment_date),
+          payment_date: new Date(req.body.payment_date),
         };
       }
       // For publish the request
@@ -234,7 +276,6 @@ export const update = CatchAsyncError(
           .select("reference payment_date");
 
         if (!request?.reference && request?.payment_date) {
-          console.log("generate reference")
           data = {
             ...data,
             reference: await genereteICNRef(request.payment_date)
@@ -391,7 +432,7 @@ export const bulkSolftDelete = CatchAsyncError(
 
 async function genereteICNRef(date: Date) {
   try {
-   
+
     // Récupération de la dernière référence
     const lastReference = await referenceModel.findOne({}, {}, { sort: { '_id': -1 } });
 
@@ -408,11 +449,11 @@ async function genereteICNRef(date: Date) {
 
     // Création d'un nouveau document dans la collection des références
     await referenceModel.create({ reference: newReference });
-    
+
     return newReference;
 
   } catch (error) {
-     throw  new Error("An error occurred while genereting ICNRef");
+    throw new Error("An error occurred while genereting ICNRef");
   }
 
 

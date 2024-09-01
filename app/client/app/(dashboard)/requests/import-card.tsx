@@ -24,8 +24,6 @@ const requredOptions = [
     "name",
     "amount",
     "payment_date",
-    "payment_mode",
-    "bank",
 ];
 
 interface SelectedColumnsState {
@@ -78,7 +76,7 @@ export const ImportCard = ({
         const getColumnIndex = (column: string) => {
             return column.split("_")[1]; //`column_${columnIndex}`
         }
-
+       
         const mappedData = {
             headers: headers.map((_header, index) => {
                 const columnIndex = getColumnIndex(`column_${index}`);
@@ -112,7 +110,8 @@ export const ImportCard = ({
             amount: convertAmountToMilliunits(parseFloat(item.amount)),
            // date: format(parse(item.date, dateFormat, new Date()), outputFormat)
         }));
-        console.log("import-card-data", formatedData)
+        formatedData.pop(); // remove the last element
+        //console.log("import-card-data", formatedData)
 
         onSubmit(formatedData);
     }

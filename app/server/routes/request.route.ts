@@ -19,8 +19,8 @@ requestRouter.post('/requests', isAuthentificated, create);
 requestRouter.get('/requests/:id', isAuthentificated, read);
 requestRouter.put('/requests/:id', isAuthentificated, update);
 requestRouter.delete('/requests/:id', isAuthentificated, softDelete);
-
-requestRouter.post('/requests-bulk', isAuthentificated, authorizeRoles("user","admin"), bulkCreate); //TODO
++
+requestRouter.post('/requests-bulk', isAuthentificated, authorizeRoles("user","admin"), bulkCreate);
 requestRouter.delete('/requests-full/:id', isAuthentificated, authorizeRoles("admin"),fulldelete);
 requestRouter.delete('/requests-bulk', isAuthentificated,authorizeRoles("admin"), bulkSolftDelete); //TODO
 

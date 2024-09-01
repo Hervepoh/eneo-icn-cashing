@@ -83,13 +83,12 @@ export function EditRequestSheet() {
         ? {
             name: transactionQuery.data.name,
             amount: transactionQuery.data.amount.toString(),
-            bank: transactionQuery.data.bank,
+            bank: transactionQuery.data.bank._id,
             payment_date: transactionQuery.data.payment_date
                 ? new Date(transactionQuery.data.payment_date)
                 : new Date(),
             
-            payment_mode: transactionQuery.data.payment_mode,
-            // accountId: transactionQuery.data.accountId,
+            payment_mode: transactionQuery.data.payment_mode._id,
             // categoryId: transactionQuery.data.categoryId,
             // notes: transactionQuery.data.notes,
         }

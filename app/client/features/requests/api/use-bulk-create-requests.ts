@@ -13,19 +13,19 @@ export const useBulkCreateRequests = () => {
       RequestType
     >({
       mutationFn: async (json) => {
-        const response = await axios.post(`http://localhost:8000/api/v1/request-bulk`, json, {
+        const response = await axios.post(`http://localhost:8000/api/v1/requests-bulk`, json, {
           withCredentials: true,
         });
         return response.data;
       },
       onSuccess: () => {
-        toast.success("Requests created successfully")
+        toast.success("Transactions created successfully")
         queryClient.invalidateQueries({ queryKey: ["requests"] });
         queryClient.invalidateQueries({ queryKey: ["summary"] });
   
       },
       onError: () => {
-        toast.error("Failed to create requests.")
+        toast.error("Failed to build create transactions.")
       },
     });
   

@@ -20,9 +20,6 @@ import { useLogOutQuery } from "@/lib/redux/features/auth/authApi";
 import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { useRouter } from "next/navigation";
-import Cookies from 'js-cookie'
-import UserAuth from './security/userAuth';
-
 
 
 type Props = {
@@ -31,35 +28,17 @@ type Props = {
 
 export function UserNav({ user }: Props) {
   const router = useRouter();
-
-  const [cookies, setCookie, removeCookie] = useCookies(['access_token']);
-
-  const [log, setLog] = useState("");
-
-
   const [logout, setLogout] = useState(false);
-
-  const logi = useLogOutQuery(undefined, {
-
+  const { } = useLogOutQuery(undefined, {
     skip: !logout ? true : false,
-
   });
-  const getcookie = (name: any) => {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) {return parts}
-  }
+
+
   const handleContentChange = () => {
-    setLogout(true)
-    console.log("Logout")
+    setLogout(true);
     router.push("/login")
-    toast.success('Lougout Successfully')
+    toast.success('Logout Successfully')
   };
-  const isAuthenticated = UserAuth();
-  useEffect(() => {
-    
-    console.log("Cookies", Cookies.get('access_token'))
-  }, []);
 
   return (
     <DropdownMenu>
@@ -94,8 +73,9 @@ export function UserNav({ user }: Props) {
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem>
-          <button className='' onClick={() => handleContentChange()}>Log out</button>
-          <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          <Button className='bg-white border-none hover:bg-white text-gray-500' onClick={() => handleContentChange()}>
+          Log out <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+          </Button>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

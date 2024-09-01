@@ -1,5 +1,5 @@
 "use client"
-import React from 'react'
+import React, { useEffect } from 'react'
 import { toast } from 'sonner';
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
@@ -17,13 +17,12 @@ type Props = {
 }
 
 export default function AuthLayout({ children }: Props) {
-    const isAuthenticated = UserAuth();
     const { user } = useSelector((state: any) => state.auth);  // redux state
     const router = useRouter();
     if (user) {
         router.push('/');
-        return 
     }
+    
 
     return (
         <>

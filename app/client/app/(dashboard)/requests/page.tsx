@@ -5,14 +5,12 @@ import { toast } from 'sonner';
 import { Loader2, Plus, Upload } from 'lucide-react';
 
 import { useNewRequest } from '@/features/requests/hooks/use-new-request';
-// import { useGetTransactions } from '@/features/transactions/api/use-get-transactions';
-// import { useBulkCreateTransactions } from '@/features/transactions/api/use-bulk-create-transactions';
+import { useGetRequests } from '@/features/requests/api/use-get-requests';
+import { useBulkCreateRequests } from '@/features/requests/api/use-bulk-create-requests';;
 // import { useBulkDeleteTransactions } from '@/features/transactions/api/use-bulk-delete-transactions';
-import { useBulkCreateRequests } from '@/features/requests/api/use-bulk-create-requests';
 
-// import { useSelectAccount } from '@/features/accounts/hooks/use-select-account';
 
-// import { transactions as transactionsSchema } from '@/db/schema';
+import { useSelectBank } from '@/features/banks/hooks/use-select-bank';
 
 import {
     Card,
@@ -29,11 +27,6 @@ import { DataTable } from '@/components/data-table';
 import { columns } from './columns';
 import { UploadButton } from './upload-button';
 import { ImportCard } from './import-card';
-import { useGetRequests } from '@/features/requests/api/use-get-requests';
-
-
-
-
 
 enum VARIANTS {
     LIST = "LIST",
@@ -49,7 +42,7 @@ const INITIAL_IMPORT_RESULTS = {
 type Props = {}
 
 export default function TransactionsPage(props: Props) {
-    
+
     const newRequest = useNewRequest()
     const createTransactionsQuery = useBulkCreateRequests();
     // const deleteTransactionsQuery = useBulkDeleteTransactions();
@@ -63,10 +56,9 @@ export default function TransactionsPage(props: Props) {
     const [importResults, setImportResults] = useState(INITIAL_IMPORT_RESULTS)
 
     // Import Select Account to continue importing
-    // const [AccountDialog, confirm] = useSelectAccount();
+    const [BankDialog, confirm] = useSelectBank();
 
     const onUpload = (results: typeof INITIAL_IMPORT_RESULTS) => {
-        // console.log(results)
         setImportResults(results);
         setVariant(VARIANTS.IMPORT);
     };
@@ -76,26 +68,29 @@ export default function TransactionsPage(props: Props) {
     };
 
     const onSubmitImport = async (
-       //  values
+         values: any[]
     ) => {
-        const accountId = await confirm();
 
-        if (!accountId) {
-            return toast.error("Please select an account to continue.");
+        const bankId = await confirm();
+
+        if (!bankId) {
+            return toast.error("Please select a bank to continue.");
         }
 
-        // const data = values.map((value) => ({
-        //     ...value,
-        //     accountId: accountId as string,
-        // }))
+        const data = values.map((value: any) => ({
+            ...value,
+            bank: bankId as string,
+        }))
+        
+        console.log("data",data);
 
-        // createTransactionsQuery.mutate(data, {
-        //     onSuccess: () => {
-        //         toast.success("Import ok.")
-        //         onCancelImport();
+        createTransactionsQuery.mutate(data, {
+            onSuccess: () => {
+                toast.success("Import ok.")
+                onCancelImport();
                 
-        //     }
-        // });
+            }
+        });
 
     };
     // Import features end
@@ -120,7 +115,7 @@ export default function TransactionsPage(props: Props) {
     if (variant === VARIANTS.IMPORT) {
         return (
             <>
-                {/* <AccountDialog /> */}
+                <BankDialog /> 
                 <ImportCard
                     data={importResults.data}
                     onCancel={onCancelImport}

@@ -1,15 +1,13 @@
 "use client"
-import { Header } from '@/components/header';
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import Metadata from '@/components/metadata';
+import { Header } from '@/components/header';
 
 type Props = {
     children: React.ReactNode;
 }
 
 export default function DashboardLayout({ children }: Props) {
-
-
     return (
         <>
             <Metadata

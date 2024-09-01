@@ -25,6 +25,7 @@ import { useLoginMutation } from "@/lib/redux/features/auth/authApi";
 import { toast } from "sonner"
 import { redirect, useRouter } from "next/navigation";
 
+
 type Props = {};
 
 export const LoginForm = (props: Props) => {
@@ -89,7 +90,7 @@ export const LoginForm = (props: Props) => {
       backButtonHref={ URI_REGISTER }
     >
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+        <form onSubmit={form.handleSubmit(onSubmit)} method="POST" className="space-y-6">
           <div className="space-y-4">
             <FormField
               control={form.control}

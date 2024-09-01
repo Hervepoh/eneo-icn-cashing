@@ -14,15 +14,15 @@ export const navbarRoutes: {href:string,label:string}[] = [
         label: language.demand["fr"]
     },
     {
-        href: "/categories",
+        href: "/requestsUnpaid",
         label: language.aci_unpaid["fr"]
     },
     {
-        href: "/categories",
+        href: "#",
         label: language.aci_journal["fr"],
     },
     {
-        href: "/settings",
+        href: "#",
         label: language.settings["fr"],
     },
 ];

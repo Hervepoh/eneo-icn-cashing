@@ -147,6 +147,17 @@ export const columns: ColumnDef<ResponseType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='validetedAt' />
     ),
+    cell: ({ row }) => {
+      const date = row.getValue("validetedAt") as Date;
+      if (date) {
+        return <span>{format(date, "dd/MM/yyyy HH:mm:ss")}</span>;
+      }else {
+        return null;
+      }
+
+     
+    },
+
   },
 
   {
@@ -154,13 +165,31 @@ export const columns: ColumnDef<ResponseType>[] = [
     header: ({ column }) => (
       <DataTableColumnHeader column={column} title='updated At' />
     ),
+    cell: ({ row }) => {
+      const date = row.getValue("updatedAt") as Date;
+
+      return <span>{format(date, "dd/MM/yyyy HH:mm:ss")}</span>;
+    },
   },
+
+  {
+    accessorKey: "modifiedBy",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title='Modified By' />
+    ),
+  },
+
 
   {
     accessorKey: "createdAt",
     header: ({ column }) => (
-      <DataTableColumnHeader column={column} title='create At' />
+      <DataTableColumnHeader column={column} title='Created At' />
     ),
+    cell: ({ row }) => {
+      const date = row.getValue("createdAt") as Date;
+
+      return <span>{format(date, "dd/MM/yyyy HH:mm:ss")}</span>;
+    },
   },
   
   {

@@ -22,9 +22,26 @@ import referenceModel from "../models/reference.model";
 export const readAll = CatchAsyncError(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const soft = req.user?.role === "user" ? { deleted: false } : {};
+      const soft = req.user?.role !== "admin" ? { deleted: false } : {};
+
+      // Extracting the status filter from the request query
+      const { status } = req.query;
+      if (status && !appConfig.status.includes(status as string)) {
+        return next(new ErrorHandler('Invalid status filter', 400));
+      }
+
+      // Build the query object
+      const query: any = { ...soft };
+      if (status) {
+        query.status = { $in: ['initiated', 'validated'] }; // Add the status filter
+      }
+      if (req.user?.role == "validator" && !status ) {
+        query.status = { $in: ['initiated'] }; // Add the status filter
+      }
+     
+
       const datas = await requestModel
-        .find(soft)
+        .find(query)
         .populate({
           path: "bank",
           select: "name _id",
@@ -64,7 +81,7 @@ export const bulkCreate = CatchAsyncError(
     try {
       // Validate that the request body is an array
       const requests = req.body;
-      console.log("requests", requests)
+
       if (!Array.isArray(requests) || requests.length === 0) {
         return next(new ErrorHandler("Request body must be a non-empty array", 400));
       }
@@ -75,30 +92,39 @@ export const bulkCreate = CatchAsyncError(
         return next(new ErrorHandler("Unauthorize ressource", 401));
       }
 
-      const validRequests = [];
       const payMode = await payModeModel.findOne();
+      if (!payMode) {
+        return next(new ErrorHandler("Payment mode not found", 400));
+      }
+
+      const validRequests = [];
       // Validate each request
       for (const requestData of requests) {
-      
+
         const { name, amount, bank, payment_date } = requestData;
         console.log("requestData", requestData)
         // Validate required fields for each request
-        if (!name || !amount || !bank || !payment_date ) {
+        if (!name || !amount || !bank || !payment_date) {
           return next(new ErrorHandler("All fields (payment_date, name, amount, bank) are required for each request", 400));
         }
 
+        // Generate a unique reference if it's not provided
+        const uniqueReference = await genereteICNRef(parseDMY(payment_date));
+
         validRequests.push({
+          reference: uniqueReference,
           name,
           amount,
           bank,
           payment_date: parseDMY(payment_date),
-          payment_mode:payMode?._id,
-          createdBy: user.name,
+          payment_mode: payMode?._id,
+          createdBy: user._id,
+          modifiedBy: user._id,
           userId: user._id,
         });
 
       }
-      
+
       // Insert all valid requests into the database
       const createdRequests = await requestModel.insertMany(validRequests);
 
@@ -150,6 +176,7 @@ export const create = CatchAsyncError(
         ...req.body,
         payment_date: parseDMY(req.body.payment_date),
         createdBy: user._id,
+        modifiedBy: user._id,
         userId: user._id,
       };
 
@@ -430,14 +457,25 @@ export const bulkSolftDelete = CatchAsyncError(
 );
 
 
+/**
+ * The function `generateICNRef` generates a new reference based on the current date and the last
+ * reference in the database collection.
+ * @param {Date} date - The `genereteICNRef` function is designed to generate a new reference based on
+ * the provided date. It retrieves the last reference from a database collection, extracts the sequence
+ * number from it, increments the sequence number, and creates a new reference using the current month
+ * and year along with the updated sequence
+ * @returns The `genereteICNRef` function returns a new ICN reference number that is generated based on
+ * the current date and the last reference number stored in the database. The function first retrieves
+ * the last reference number from the database, then calculates a new reference number by incrementing
+ * the sequence number part of the last reference number. If there is no last reference number found,
+ * it generates a new reference number
+ */
 async function genereteICNRef(date: Date) {
   try {
-
-    // Récupération de la dernière référence
+    // Get last reference in the references database collection
     const lastReference = await referenceModel.findOne({}, {}, { sort: { '_id': -1 } });
 
     let newReference;
-
     if (lastReference) {
       // Extraction du numéro de séquence à partir de la dernière référence
       const lastSequenceNumber = parseInt(lastReference.reference.slice(4));
@@ -446,7 +484,6 @@ async function genereteICNRef(date: Date) {
       // Première référence
       newReference = `${getCurrentMonthYear(date.toDateString())}000001`;
     }
-
     // Création d'un nouveau document dans la collection des références
     await referenceModel.create({ reference: newReference });
 

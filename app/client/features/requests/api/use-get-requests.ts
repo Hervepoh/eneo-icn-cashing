@@ -4,7 +4,7 @@ import { convertAmountFromMilliunits } from "@/lib/utils";
 import axios, { AxiosRequestConfig, AxiosError } from "axios";
 
 
-export const useGetRequests = () => {
+export const useGetRequests = (filter:string="") => {
   // const params = useSearchParams();
 
   // const from = params.get('from') || "";
@@ -15,12 +15,12 @@ export const useGetRequests = () => {
   const accountId = undefined;
 
   const query = useQuery({
-    queryKey: ["requests", { from, to, accountId }],
+    queryKey: ["requests"+filter, { from, to, accountId }],
     queryFn: async () => {
       const config: AxiosRequestConfig = {
         method: 'get',
         maxBodyLength: Infinity,
-        url: 'http://localhost:8000/api/v1/requests',
+        url: process.env.NEXT_PUBLIC_SERVER_URI+'/requests'+filter,
         headers: {
         },
         withCredentials: true, // Set this to true

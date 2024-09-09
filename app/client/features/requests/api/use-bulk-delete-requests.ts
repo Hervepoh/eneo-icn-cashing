@@ -23,6 +23,7 @@ export const useBulkDeleteRequests = () => {
       },
       onSuccess: () => {
         toast.success("Requests deleted successfully")
+        queryClient.invalidateQueries({ queryKey: ["requests?status=validated"] });
         queryClient.invalidateQueries({ queryKey: ["requests"] });
         queryClient.invalidateQueries({ queryKey: ["summary"] });
         

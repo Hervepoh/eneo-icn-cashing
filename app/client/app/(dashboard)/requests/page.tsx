@@ -27,6 +27,7 @@ import { DataTable } from '@/components/data-table';
 import { columns } from './columns';
 import { UploadButton } from './upload-button';
 import { ImportCard } from './import-card';
+import { useSelector } from 'react-redux';
 
 enum VARIANTS {
     LIST = "LIST",
@@ -42,7 +43,7 @@ const INITIAL_IMPORT_RESULTS = {
 type Props = {}
 
 export default function TransactionsPage(props: Props) {
-
+    const { user } = useSelector((state: any) => state.auth);
     const newRequest = useNewRequest()
     const createTransactionsQuery = useBulkCreateRequests();
     // const deleteTransactionsQuery = useBulkDeleteTransactions();
@@ -68,7 +69,7 @@ export default function TransactionsPage(props: Props) {
     };
 
     const onSubmitImport = async (
-         values: any[]
+        values: any[]
     ) => {
 
         const bankId = await confirm();
@@ -81,14 +82,14 @@ export default function TransactionsPage(props: Props) {
             ...value,
             bank: bankId as string,
         }))
-        
-        console.log("data",data);
+
+        console.log("data", data);
 
         createTransactionsQuery.mutate(data, {
             onSuccess: () => {
                 toast.success("Import ok.")
                 onCancelImport();
-                
+
             }
         });
 
@@ -115,7 +116,7 @@ export default function TransactionsPage(props: Props) {
     if (variant === VARIANTS.IMPORT) {
         return (
             <>
-                <BankDialog /> 
+                <BankDialog />
                 <ImportCard
                     data={importResults.data}
                     onCancel={onCancelImport}
@@ -130,21 +131,25 @@ export default function TransactionsPage(props: Props) {
             <Card className='border-none drop-shadow-sm'>
                 <CardHeader className='gap-y-2 lg:flex-row lg:items-center lg:justify-between'>
                     <CardTitle className='text-xl line-clamp-1'>Transactions History</CardTitle>
-                    <div className='flex flex-col lg:flex-row items-center gap-x-2 gap-y-2'>
-                        <Button 
-                            onClick={newRequest.onOpen} 
-                             size="sm" 
-                             className='w-full lg:w-auto'>
-                            <Plus className='size-4 mr-2' />
-                            Add New
-                        </Button> 
-                        <UploadButton
-                            onUpload={onUpload}
-                        />
-                    </div>
+                    {
+                        (user.role === 'user' || user.role === 'admin') &&
+                        <div className='flex flex-col lg:flex-row items-center gap-x-2 gap-y-2'>
+                            <Button
+                                onClick={newRequest.onOpen}
+                                size="sm"
+                                className='w-full lg:w-auto'>
+                                <Plus className='size-4 mr-2' />
+                                Add New
+                            </Button>
+                            <UploadButton
+                                onUpload={onUpload}
+                            />
+                        </div>
+                    }
+
                 </CardHeader>
                 <CardContent>
-                     <DataTable
+                    <DataTable
                         columns={columns}
                         data={transactions}
                         filterKey='reference'
@@ -154,7 +159,7 @@ export default function TransactionsPage(props: Props) {
                             // deleteTransactionsQuery.mutate({ ids });
                         }}
                         disabled={isDisabled}
-                    /> 
+                    />
                 </CardContent>
             </Card>
         </div>

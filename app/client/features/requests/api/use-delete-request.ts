@@ -18,6 +18,7 @@ export const useDeleteRequest = (id?: string) => {
     onSuccess: () => {
       toast.success("Requests deleted.")
       queryClient.invalidateQueries({ queryKey: ["request", { id }] });
+      queryClient.invalidateQueries({ queryKey: ["requests?status=validated"] });
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
     },

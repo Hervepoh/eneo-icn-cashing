@@ -8,7 +8,10 @@ import { ReduxProvider } from "@/providers/redux-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { SheetProvider } from "@/providers/sheet-provider";
 import { Toaster } from "@/components/ui/sonner"
-
+import { useLoadUserQuery } from "@/lib/redux/features/api/apiSlice";
+import { useEffect } from "react";
+import { Loader2 } from "lucide-react";
+import socketIO from "socket.io-client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -25,7 +28,9 @@ export default function RootLayout({
         <SheetProvider />
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <Toaster />
+            <Custom>
             {children}
+            </Custom>
           </ThemeProvider>
           <SheetProvider />
           </QueryProvider>
@@ -34,3 +39,20 @@ export default function RootLayout({
     </html>
   );
 }
+
+
+
+const socketId = socketIO(process.env.NEXT_PUBLIC_SOCKET_SERVER_URI || "", { transports: ["websocket"] });
+
+type Props = {
+  children: React.ReactNode
+}
+const Custom =  ({ children } : Props) => {
+  const { isLoading } = useLoadUserQuery({});
+
+  useEffect(() => {
+    socketId.on("connection", () => {});
+  }, []);
+
+  return <div>{isLoading ? <Loader2 /> : <div>{children} </div>}</div>;
+};

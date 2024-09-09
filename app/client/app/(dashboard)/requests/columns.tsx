@@ -14,7 +14,6 @@ import { Actions } from "./actions";
 import { status, statuses, statusStyles } from "@/config/status.config";
 import { ActionsValidations } from "./actions-validation";
 import { ActionsInvoicesAdd } from "./actions-invoiceAdd";
-import { LuCopyCheck } from "react-icons/lu";
 import { DataTableColumnHeader } from "@/components/data-table-column-header";
 // import { AccountColumn } from "./account-column";
 // import { CategoryColumn } from "./category-column";

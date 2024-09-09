@@ -59,6 +59,10 @@
   }
 }
 
+.data-\[disabled\]\:pointer-events-none[data-disabled] {
+  pointer-events: all !important;
+}
+
 @layer base {
   * {
     @apply border-border;

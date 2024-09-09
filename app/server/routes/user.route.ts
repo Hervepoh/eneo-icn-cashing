@@ -14,7 +14,7 @@ userRouter.post('/logout', isAuthentificated, logoutUser);
 
 userRouter.get('/user/refresh', updateAccessToken);
 
-userRouter.get('/user/me', isAuthentificated,authorizeRoles("user", "admin"), getUserInfo);
+userRouter.get('/user/me', isAuthentificated,authorizeRoles("user", "validator", "admin"), getUserInfo);
 
 userRouter.put('/user/update', isAuthentificated, updateUserInfo);
 

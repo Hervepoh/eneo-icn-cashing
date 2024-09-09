@@ -28,6 +28,7 @@ export const useCreateRequest = () => {
     },
     onSuccess: () => {
       toast.success("Request has been created.")
+      queryClient.invalidateQueries({ queryKey: ["requests?status=validated"] });
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
     },

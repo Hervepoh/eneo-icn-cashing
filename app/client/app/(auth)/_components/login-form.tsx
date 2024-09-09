@@ -64,7 +64,7 @@ export const LoginForm = (props: Props) => {
     // ✅ This will be type-safe and validated.
     // console.log(values);
 
-    startTransition(() => {
+    startTransition(async () => {
       setErrorMessage("");
       setSuccessMessage("");
       // or you can use api route
@@ -79,7 +79,7 @@ export const LoginForm = (props: Props) => {
       //   setSuccess(data.success);
       //  });
 
-      login(values);
+      await login(values);
     });
   };
 

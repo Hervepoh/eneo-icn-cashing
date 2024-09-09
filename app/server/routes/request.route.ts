@@ -14,11 +14,11 @@ import {
 
 const requestRouter = express.Router();
 
-requestRouter.get('/requests', isAuthentificated, authorizeRoles("user","admin"), readAll);
-requestRouter.post('/requests', isAuthentificated, create);
+requestRouter.get('/requests', isAuthentificated, readAll);
+requestRouter.post('/requests', isAuthentificated, authorizeRoles("user"), create);
 requestRouter.get('/requests/:id', isAuthentificated, read);
-requestRouter.put('/requests/:id', isAuthentificated, update);
-requestRouter.delete('/requests/:id', isAuthentificated, softDelete);
+requestRouter.put('/requests/:id', isAuthentificated, authorizeRoles("user","validador","admin"), update);
+requestRouter.delete('/requests/:id', isAuthentificated, authorizeRoles("user"), softDelete);
 +
 requestRouter.post('/requests-bulk', isAuthentificated, authorizeRoles("user","admin"), bulkCreate);
 requestRouter.delete('/requests-full/:id', isAuthentificated, authorizeRoles("admin"),fulldelete);

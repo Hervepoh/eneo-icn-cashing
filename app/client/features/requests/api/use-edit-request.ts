@@ -21,6 +21,7 @@ export const useEditRequest = (id?: string) => {
     onSuccess: () => {
       toast.success("Request updated.")
       queryClient.invalidateQueries({ queryKey: ["request", { id }] });
+      queryClient.invalidateQueries({ queryKey: ["requests?status=validated"] });
       queryClient.invalidateQueries({ queryKey: ["requests"] });
       queryClient.invalidateQueries({ queryKey: ["summary"] });
 

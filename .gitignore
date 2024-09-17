@@ -5,7 +5,10 @@
 /app/server/data
 /app/server/node_modules
 /app/client/.next
-
+/workdir
+/app/.env
+/app/Makefile
+/app/compose.yml
 #############################
 #######    Client
 #############################

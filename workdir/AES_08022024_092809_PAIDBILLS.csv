@@ -1,6 +1,0 @@
-File Generated on=Fri Aug 02 09:28:08 WAT 2024
-Data for Date=02/08/2024|5701473|640816|3
-Transaction_ID|Sub_transaction_Type|Bill_Partner_Company_name|Bill_partner_company_code|Bill_Number|Bill_Account_Number|Bill_Due_Date|Paid_Amount|Paid_Date|Paid_By_MSISDN|Transaction_Status|OM_Bill_Payment_Status
-AC724113.1140.I00001|BILL Payment|AES|AES|782833299|203416439||242490|02/08/2024 09:28:08|724113114|Success|Bill Paid
-AC724113.1140.I00002|BILL Payment|AES|AES|784236388|203490567||161857|02/08/2024 09:28:08|724113114|Success|Bill Paid
-AC724113.1140.I00003|BILL Payment|AES|AES|784234468|203505978||236469|02/08/2024 09:28:08|724113114|Success|Bill Paid
